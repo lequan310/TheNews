@@ -74,11 +74,9 @@ public class ArticleController implements Initializable{
             String bodyHTML = body.toString();
             String[] components = bodyHTML.trim().split("\n");
 
-            Label title = createTitle("Trường Tiền - chuyện chưa kể cây cầu lịch sử: Kỳ 4: Sự thật dấu ấn Eiffel");
             Label description = createDescription(body.select("h2").text());
 
             content.getChildren().clear();
-            content.getChildren().add(title);
             content.getChildren().add(createLabel("", WORDSIZE));
             content.getChildren().add(description);
 
@@ -191,7 +189,7 @@ public class ArticleController implements Initializable{
             String[] components = bodyHTML.trim().split("\n");
 
             Label description = createDescription(summary);
-            content.getChildren().addAll(title, createLabel("", WORDSIZE), description);
+            content.getChildren().addAll(createLabel("", WORDSIZE), description);
 
             Boolean inArticle = false, inDiv = false;
             for (int i = 0, j = 0, y = 0, z = 0, k = 0; k < components.length; k++) {
@@ -265,7 +263,7 @@ public class ArticleController implements Initializable{
             Label description = createDescription(body.select("div.box-des-detail p").text());
 
             content.getChildren().clear();
-            content.getChildren().addAll(title, createLabel("", WORDSIZE), thumbnail, createLabel("", WORDSIZE), description);
+            content.getChildren().addAll(createLabel("", WORDSIZE), description);
 
             // Article and Images
             Boolean inArticle = false, inBlockquote = false, inDiv = false;
