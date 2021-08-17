@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -28,7 +29,19 @@ public class MenuControl implements Initializable {
     @FXML private Button button9;
     @FXML private Button button10;
 
+    @FXML private Label header1;
+    @FXML private Label header2;
+    @FXML private Label header3;
+    @FXML private Label header4;
+    @FXML private Label header5;
+    @FXML private Label header6;
+    @FXML private Label header7;
+    @FXML private Label header8;
+    @FXML private Label header9;
+    @FXML private Label header10;
+
     private ArrayList<Button> buttons = new ArrayList<>();
+    private ArrayList<Label> headers = new ArrayList<>();
 
     private Stage stage;
     private Scene scene;
@@ -52,6 +65,7 @@ public class MenuControl implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("home1.fxml"));
             Controller controller = new Controller();
             controller.setCategoryIndex(0);
+            controller.setCategoryLabel("News Category");
             loader.setController(controller);
 
             root = loader.load();
@@ -70,6 +84,7 @@ public class MenuControl implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("home1.fxml"));
             Controller controller = new Controller();
             controller.setCategoryIndex(idx);
+            controller.setCategoryLabel(headers.get(idx).getText());
             loader.setController(controller);
 
             root = loader.load();
@@ -86,6 +101,10 @@ public class MenuControl implements Initializable {
     private void addNodeToList(){
         for (Button b : Arrays.asList(button1, button2, button3, button4, button5, button6, button7, button8, button9, button10)) {
             buttons.add(b);
+        }
+
+        for (Label l : Arrays.asList(header1, header2, header3, header4, header5, header6, header7, header8, header9, header10)) {
+            headers.add(l);
         }
     }
 }

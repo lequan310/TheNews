@@ -27,6 +27,7 @@ import java.net.URL;
 import java.util.*;
 
 public class Controller implements Initializable {
+    @FXML private Label categoryLabel;
     @FXML private Label header;
     @FXML private Label header1;
     @FXML private Label header2;
@@ -72,6 +73,8 @@ public class Controller implements Initializable {
     private ArrayList<Button> pages = new ArrayList<>();
     private ArrayList<Item> items;
     private NewsController newsController;
+
+    private String category = "";
     private int categoryIndex = 0;
     private final int itemsPerPage = 10;
 
@@ -79,8 +82,13 @@ public class Controller implements Initializable {
         categoryIndex = index;
     }
 
+    public void setCategoryLabel(String s){
+        category = s;
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        categoryLabel.setText(category);
         newsController = new NewsController();
         items = newsController.getItems();
 

@@ -18,7 +18,7 @@
    <children>
       <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="1000.0" spacing="20.0" styleClass="shadow" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Button graphicTextGap="20.0" mnemonicParsing="false" onAction="#menuHome1" styleClass="dark-background" stylesheets="@../css/style.css" text="CATEGORISE" textFill="#f6e74d">
+            <Button graphicTextGap="20.0" mnemonicParsing="false" onAction="#menuHome1" styleClass="dark-background" stylesheets="@../css/style.css" text="CATEGORISE" textFill="#f6e74d" textOverrun="CLIP" wrapText="true">
                <graphic>
                   <ImageView fitHeight="52.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -81,7 +81,7 @@
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="350.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <Label fx:id="header12" alignment="CENTER" prefHeight="68.0" prefWidth="221.0" text="COVID" textFill="WHITE">
+                                    <Label fx:id="header2" alignment="CENTER" prefHeight="68.0" prefWidth="221.0" text="COVID" textFill="WHITE">
                                        <font>
                                           <Font name="Bookman Old Style Bold" size="24.0" />
                                        </font>
@@ -113,7 +113,7 @@
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="350.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <Label fx:id="header121" alignment="CENTER" prefHeight="68.0" prefWidth="221.0" text="POLITICS" textFill="WHITE">
+                                    <Label fx:id="header3" alignment="CENTER" prefHeight="68.0" prefWidth="221.0" text="POLITICS" textFill="WHITE">
                                        <font>
                                           <Font name="Bookman Old Style Bold" size="24.0" />
                                        </font>
@@ -145,7 +145,7 @@
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="350.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <Label fx:id="header1211111111" alignment="CENTER" prefHeight="68.0" prefWidth="221.0" text="BUSINESS" textFill="WHITE">
+                                    <Label fx:id="header4" alignment="CENTER" prefHeight="68.0" prefWidth="221.0" text="BUSINESS" textFill="WHITE">
                                        <font>
                                           <Font name="Bookman Old Style Bold" size="24.0" />
                                        </font>
@@ -177,7 +177,7 @@
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="350.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <Label fx:id="header121111111" alignment="CENTER" prefHeight="68.0" prefWidth="221.0" text="TECHNOLOGY" textFill="WHITE">
+                                    <Label fx:id="header5" alignment="CENTER" prefHeight="68.0" prefWidth="221.0" text="TECHNOLOGY" textFill="WHITE">
                                        <font>
                                           <Font name="Bookman Old Style Bold" size="24.0" />
                                        </font>
@@ -209,7 +209,7 @@
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="350.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <Label fx:id="header12111111" alignment="CENTER" prefHeight="68.0" prefWidth="221.0" text="HEALTH" textFill="WHITE">
+                                    <Label fx:id="header6" alignment="CENTER" prefHeight="68.0" prefWidth="221.0" text="HEALTH" textFill="WHITE">
                                        <font>
                                           <Font name="Bookman Old Style Bold" size="24.0" />
                                        </font>
@@ -241,7 +241,7 @@
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="350.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <Label fx:id="header1211111" alignment="CENTER" prefHeight="68.0" prefWidth="221.0" text="SPORTS" textFill="WHITE">
+                                    <Label fx:id="header7" alignment="CENTER" prefHeight="68.0" prefWidth="221.0" text="SPORTS" textFill="WHITE">
                                        <font>
                                           <Font name="Bookman Old Style Bold" size="24.0" />
                                        </font>
@@ -273,7 +273,7 @@
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="350.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <Label fx:id="header121111" alignment="CENTER" prefHeight="68.0" prefWidth="221.0" text="ENTERTAINMENT" textFill="WHITE">
+                                    <Label fx:id="header8" alignment="CENTER" prefHeight="68.0" prefWidth="221.0" text="ENTERTAINMENT" textFill="WHITE">
                                        <font>
                                           <Font name="Bookman Old Style Bold" size="22.0" />
                                        </font>
@@ -305,7 +305,7 @@
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="350.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <Label fx:id="header12111" alignment="CENTER" prefHeight="68.0" prefWidth="221.0" text="WORLD" textFill="WHITE">
+                                    <Label fx:id="header9" alignment="CENTER" prefHeight="68.0" prefWidth="221.0" text="WORLD" textFill="WHITE">
                                        <font>
                                           <Font name="Bookman Old Style Bold" size="24.0" />
                                        </font>
@@ -337,7 +337,7 @@
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="350.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <Label fx:id="header1211" alignment="CENTER" prefHeight="68.0" prefWidth="221.0" text="OTHERS" textFill="WHITE">
+                                    <Label fx:id="header10" alignment="CENTER" prefHeight="68.0" prefWidth="221.0" text="OTHERS" textFill="WHITE">
                                        <font>
                                           <Font name="Bookman Old Style Bold" size="24.0" />
                                        </font>

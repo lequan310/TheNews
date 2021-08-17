@@ -40,14 +40,14 @@
             </Button>
             <AnchorPane prefHeight="95.0" prefWidth="198.0">
                <children>
-                  <Label alignment="CENTER" prefHeight="105.0" prefWidth="193.0" text="new category" textFill="#f6e74d">
+                  <Label fx:id="categoryLabel" alignment="CENTER" prefHeight="105.0" prefWidth="300.0" text="NEW" textFill="#f6e74d" textOverrun="CLIP" wrapText="true">
                      <font>
                         <Font name="Baskerville Old Face" size="31.0" />
                      </font>
                   </Label>
                </children>
             </AnchorPane>
-            <Label alignment="CENTER" prefHeight="95.0" prefWidth="975.0" styleClass="dark-background" stylesheets="@../css/style.css" text="the NEWS" textFill="WHITE" HBox.hgrow="ALWAYS">
+            <Label alignment="CENTER" prefHeight="95.0" prefWidth="900.0" styleClass="dark-background" stylesheets="@../css/style.css" text="the NEWS" textFill="WHITE" HBox.hgrow="ALWAYS">
                <font>
                   <Font name="Baskerville Old Face" size="55.0" />
                </font>
