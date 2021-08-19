@@ -132,12 +132,10 @@ public class Controller implements Initializable {
     }
 
     public void menuCategories(ActionEvent event) {
-        SceneSwitch ss = new SceneSwitch();
-        ss.menuCategories(event);
+        new SceneSwitch().menuCategories(event);
     }
 
     public void article(ActionEvent event, int index) {
-        SceneSwitch ss = new SceneSwitch();
-        ss.article(event, items, index);
+        new SceneSwitch().article(event, items, index);
     }
 }

@@ -59,8 +59,7 @@ public class MenuControl implements Initializable {
     }
 
     public void menuHome(ActionEvent event, int idx){
-        SceneSwitch ss = new SceneSwitch();
-        ss.menuHome(event, idx);
+        new SceneSwitch().menuHome(event, idx);
     }
 
     private void addNodeToList(){

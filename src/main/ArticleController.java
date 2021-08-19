@@ -436,12 +436,10 @@ public class ArticleController implements Initializable{
     }
 
     public void menuCategories(ActionEvent event)  {
-        SceneSwitch ss = new SceneSwitch();
-        ss.menuCategories(event);
+        new SceneSwitch().menuCategories(event);
     }
 
     public void menuHome(ActionEvent event){
-        SceneSwitch ss = new SceneSwitch();
-        ss.menuHome(event, 0);
+        new SceneSwitch().menuHome(event, index);
     }
 }
