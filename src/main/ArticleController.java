@@ -356,19 +356,6 @@ public class ArticleController implements Initializable{
         return label;
     }
 
-    public Label createTitle(String text){
-        final int size = WORDSIZE, HUNDRED = 100;
-
-        Label title = new Label(text);
-        title.setPrefWidth(800);
-        title.setFont(Font.font("Verdana", FontWeight.BOLD, 30));
-        title.setWrapText(true);
-        title.setTextOverrun(OverrunStyle.CLIP);
-        title.setTextFill(Paint.valueOf("#ff0000"));
-
-        return title;
-    }
-
     public Label createDescription(String text){
         final int SIZE = 20, HUNDRED = 100;
 
@@ -458,20 +445,7 @@ public class ArticleController implements Initializable{
     }
 
     public void menuHome(ActionEvent event){
-        try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/home1.fxml"));
-            Controller controller = new Controller();
-            controller.setCategoryIndex(0);
-            loader.setController(controller);
-
-            root = loader.load();
-            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
-        }
-        catch (IOException e){
-            System.out.println(e.getMessage());
-        }
+        SceneSwitch ss = new SceneSwitch();
+        ss.menuHome(event, 0);
     }
 }

@@ -69,7 +69,7 @@ public class Controller implements Initializable {
     private ArrayList<Button> pages = new ArrayList<>();
     private ArrayList<Item> items;
 
-    private String category = "NEW";
+    private String[] categories = {"NEW", "COVID", "POLITICS", "BUSINESS", "TECHNOLOGY", "HEALTH", "SPORTS", "ENTERTAINMENT", "WORLD", "OTHERS"};
     private int categoryIndex = 0;
     private final int itemsPerPage = 10;
 
@@ -77,13 +77,9 @@ public class Controller implements Initializable {
         categoryIndex = index;
     }
 
-    public void setCategoryLabel(String s){
-        category = s;
-    }
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        categoryLabel.setText(category);
+        categoryLabel.setText(categories[categoryIndex]);
         items = new NewsController(categoryIndex).getItems();
 
         addNodeToList();
