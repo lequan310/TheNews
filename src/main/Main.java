@@ -1,24 +1,22 @@
 package main;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+
+import java.io.IOException;
 
 public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("home1.fxml"));
-        Controller controller = new Controller();
-        controller.setCategoryIndex(0);
-        loader.setController(controller);
-
-        Parent root = loader.load();
-        Scene scene = new Scene(root);
+        SceneSwitch ss = new SceneSwitch();
+        Scene scene = ss.loadMenuScene(0);
 
         scene.getStylesheets().add("css/style.css");
         stage.setTitle("News Application");

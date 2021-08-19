@@ -1,5 +1,7 @@
 package main;
 
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,7 +15,10 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class NewsController {
     private ArrayList<Item> items = new ArrayList<>();
@@ -22,12 +27,18 @@ public class NewsController {
         return this.items;
     }
 
-    public NewsController() {
+    public NewsController(int categoryIndex) {
         String rssVE = "https://vnexpress.net/rss/tin-moi-nhat.rss";
         String rssTuoiTre = "https://tuoitre.vn/rss/tin-moi-nhat.rss";
         String rssThanhNien = "https://thanhnien.vn/rss/home.rss";
         String zing = "https://zingnews.vn/";
         String nhanDan = "https://nhandan.vn";
+
+        /*new Thread(() -> readRSSVe(rssVE)).start();
+        new Thread(() -> readRSSTuoiTre(rssTuoiTre)).start();
+        new Thread(() -> readRSSThanhNien(rssThanhNien)).start();
+        new Thread(() -> readZing(zing)).start();
+        new Thread(() -> readNhanDan(nhanDan)).start();*/
 
         readRSSVe(rssVE);
         readRSSTuoiTre(rssTuoiTre);
@@ -256,7 +267,8 @@ public class NewsController {
                 Item item = new Item(title, link, date, imgSrc, Source.ND);
                 items.add(item);
             }
-        }catch (IOException e){
+        }
+        catch (IOException e){
             System.out.println("Can't connect to " + urlAddress);
         }
     }

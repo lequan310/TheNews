@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class ArticleController implements Initializable{
@@ -43,15 +44,23 @@ public class ArticleController implements Initializable{
     @FXML private Button category;
 
     private final int WORDSIZE = 18;
-    private Item item;
+    private final int SPACE = 5;
+    private ArrayList<Item> items;
+    private Item item = null;
+    private int index = 0;
 
-    public void setItem(Item item){
-        this.item = item;
+    public ArticleController(ArrayList<Item> items, int index){
+        this.items = items;
+        this.index = index;
+        item = items.get(index);
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        thumbnail.setImage(new Image(item.getImgSrc()));
+        if (item.getImgSrc().compareTo("") != 0)
+            thumbnail.setImage(new Image(item.getImgSrc()));
+        else
+            thumbnail.setImage(null);
         title.setText(item.getTitle());
 
         if (item.getSource() == Source.TT)
@@ -77,7 +86,7 @@ public class ArticleController implements Initializable{
             Label description = createDescription(body.select("h2").text());
 
             content.getChildren().clear();
-            content.getChildren().add(createLabel("", WORDSIZE));
+            content.getChildren().add(createLabel("", SPACE));
             content.getChildren().add(description);
 
             Boolean inDiv = false, inWrapNote = false, inArticle = false;
@@ -98,7 +107,7 @@ public class ArticleController implements Initializable{
                             if (article.get(i).attr("style").compareTo("text-align:right") == 0)
                                 label.setAlignment(Pos.CENTER_RIGHT);
 
-                            content.getChildren().add(createLabel("", WORDSIZE));
+                            content.getChildren().add(createLabel("", SPACE));
                             content.getChildren().add(label);
                             i++;
                         }
@@ -110,7 +119,7 @@ public class ArticleController implements Initializable{
                             if (wrapNote.get(z).attr("style").compareTo("text-align: right;") == 0)
                                 label.setAlignment(Pos.CENTER_RIGHT);
 
-                            Label space = createLabel("", WORDSIZE);
+                            Label space = createLabel("", SPACE);
                             space.setBackground(new Background(new BackgroundFill(Color.valueOf("#dddddd"), new CornerRadii(0), new Insets(0))));
                             content.getChildren().add(space);
                             content.getChildren().add(label);
@@ -128,7 +137,7 @@ public class ArticleController implements Initializable{
                         Label label = createLabel(video.get(y).select("p").text(), 14);
                         label.setBackground(new Background(new BackgroundFill(Color.valueOf("#dddddd"), new CornerRadii(0), new Insets(0))));
 
-                        content.getChildren().add(createLabel("", WORDSIZE));
+                        content.getChildren().add(createLabel("", SPACE));
                         content.getChildren().add(btnPlayPause);
                         content.getChildren().add(label);
                         y++;
@@ -137,7 +146,7 @@ public class ArticleController implements Initializable{
                         Image image = new Image(images.get(j).select("img").attr("src"));
                         Label label = createImageLabel(image, images.get(j).select("p").text());
 
-                        content.getChildren().add(createLabel("", WORDSIZE));
+                        content.getChildren().add(createLabel("", SPACE));
                         content.getChildren().add(label);
                         j++;
                     }
@@ -167,7 +176,7 @@ public class ArticleController implements Initializable{
                 Label author = createDescription(body.select("div.author").text());
                 author.setAlignment(Pos.CENTER_RIGHT);
 
-                content.getChildren().add(createLabel("", WORDSIZE));
+                content.getChildren().add(createLabel("", SPACE));
                 content.getChildren().add(author);
             }
         }catch (Exception e){
@@ -189,7 +198,7 @@ public class ArticleController implements Initializable{
             String[] components = bodyHTML.trim().split("\n");
 
             Label description = createDescription(summary);
-            content.getChildren().addAll(createLabel("", WORDSIZE), description);
+            content.getChildren().addAll(createLabel("", SPACE), description);
 
             Boolean inArticle = false, inDiv = false;
             for (int i = 0, j = 0, y = 0, z = 0, k = 0; k < components.length; k++) {
@@ -202,7 +211,7 @@ public class ArticleController implements Initializable{
                     if (components[k].contains("<p") && i < articles.size()){
                         Label label = createLabel(articles.get(i).text(), WORDSIZE);
 
-                        content.getChildren().add(createLabel("", WORDSIZE));
+                        content.getChildren().add(createLabel("", SPACE));
                         content.getChildren().add(label);
                         i++;
                     }
@@ -210,7 +219,7 @@ public class ArticleController implements Initializable{
                         Image image = new Image(images.get(j).select("img").attr("data-src"));
                         Label label = createImageLabel(image, images.get(j).select("td[class=\"pCaption caption\"]").text());
 
-                        content.getChildren().add(createLabel("", WORDSIZE));
+                        content.getChildren().add(createLabel("", SPACE));
                         content.getChildren().add(label);
                         j++;
                     }
@@ -218,7 +227,7 @@ public class ArticleController implements Initializable{
                         Label label = createLabel(headers.get(z).text(), WORDSIZE);
                         label.setFont(Font.font("Times New Roman", FontWeight.BOLD, WORDSIZE));
 
-                        content.getChildren().add(createLabel("", WORDSIZE));
+                        content.getChildren().add(createLabel("", SPACE));
                         content.getChildren().add(label);
                         z++;
                     }
@@ -227,7 +236,7 @@ public class ArticleController implements Initializable{
                         Label label = createLabel(video.get(y).select("figcaption").text(), 14);
                         label.setBackground(new Background(new BackgroundFill(Color.valueOf("#dddddd"), new CornerRadii(0), new Insets(0))));
 
-                        content.getChildren().add(createLabel("", WORDSIZE));
+                        content.getChildren().add(createLabel("", SPACE));
                         content.getChildren().add(btnPlayPause);
                         content.getChildren().add(label);
                         y++;
@@ -237,7 +246,7 @@ public class ArticleController implements Initializable{
 
             Label author = createDescription(doc.getElementsByClass("author").text());
             author.setAlignment(Pos.CENTER_RIGHT);
-            content.getChildren().addAll(createLabel("", WORDSIZE), author);
+            content.getChildren().addAll(createLabel("", SPACE), author);
         }catch (Exception e){
             dealException(e, item);
         }
@@ -263,7 +272,7 @@ public class ArticleController implements Initializable{
             Label description = createDescription(body.select("div.box-des-detail p").text());
 
             content.getChildren().clear();
-            content.getChildren().addAll(createLabel("", WORDSIZE), description);
+            content.getChildren().addAll(createLabel("", SPACE), description);
 
             // Article and Images
             Boolean inArticle = false, inBlockquote = false, inDiv = false;
@@ -282,7 +291,7 @@ public class ArticleController implements Initializable{
                             if (article.get(i).attr("style").compareTo("text-align:right") == 0)
                                 label.setAlignment(Pos.CENTER_RIGHT);
 
-                            content.getChildren().add(createLabel("", WORDSIZE));
+                            content.getChildren().add(createLabel("", SPACE));
                             content.getChildren().add(label);
                             i++;
                         }else if (z < blockquote.size() && inBlockquote){
@@ -294,7 +303,7 @@ public class ArticleController implements Initializable{
                             if (blockquote.get(z).attr("style").compareTo("text-align:right") == 0)
                                 label.setAlignment(Pos.CENTER_RIGHT);
 
-                            Label space = createLabel("", WORDSIZE);
+                            Label space = createLabel("", SPACE);
                             space.setBackground(new Background(new BackgroundFill(Color.valueOf("#dddddd"), new CornerRadii(0), new Insets(0))));
                             content.getChildren().add(space);
                             content.getChildren().add(label);
@@ -305,12 +314,12 @@ public class ArticleController implements Initializable{
                         Image image = new Image(images.get(j).attr("data-src"));
                         Label label = createImageLabel(image, images.get(j).select("em").text());
 
-                        content.getChildren().add(createLabel("", WORDSIZE));
+                        content.getChildren().add(createLabel("", SPACE));
                         content.getChildren().add(label);
                         j++;
                     }
                     else if (components[k].contains("<li") && y < li.size()){
-                        content.getChildren().add(createLabel("", WORDSIZE / 3));
+                        content.getChildren().add(createLabel("", SPACE / 3));
                         content.getChildren().add(createLabel(li.get(y).text(), WORDSIZE));
                         y++;
                     }
@@ -327,7 +336,7 @@ public class ArticleController implements Initializable{
 
             Label author = createDescription(body.select("div.box-author strong").text());
             author.setAlignment(Pos.CENTER_RIGHT);
-            content.getChildren().add(createLabel("", WORDSIZE));
+            content.getChildren().add(createLabel("", SPACE));
             content.getChildren().add(author);
         } catch (Exception e){
             dealException(e, item);
@@ -444,21 +453,13 @@ public class ArticleController implements Initializable{
     private Parent root;
 
     public void menuCategories(ActionEvent event)  {
-        try{
-            root = FXMLLoader.load(getClass().getResource("Categories.fxml"));
-            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
-        }
-        catch (IOException e){
-            System.out.println(e.getMessage());
-        }
+        SceneSwitch ss = new SceneSwitch();
+        ss.menuCategories(event);
     }
 
     public void menuHome(ActionEvent event){
         try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("home1.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/home1.fxml"));
             Controller controller = new Controller();
             controller.setCategoryIndex(0);
             loader.setController(controller);

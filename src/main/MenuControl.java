@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class MenuControl implements Initializable {
+    @FXML private Button mainMenu;
     @FXML private Button button1;
     @FXML private Button button2;
     @FXML private Button button3;
@@ -49,6 +50,7 @@ public class MenuControl implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        mainMenu.setOnAction(e -> menuHome(e, 0));
         addNodeToList();
 
         for (int i = 0; i < buttons.size(); i++){
@@ -60,28 +62,9 @@ public class MenuControl implements Initializable {
         }
     }
 
-    public void menuHome1(ActionEvent event) throws IOException {
-        try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("home1.fxml"));
-            Controller controller = new Controller();
-            controller.setCategoryIndex(0);
-            controller.setCategoryLabel("News Category");
-            loader.setController(controller);
-
-            root = loader.load();
-            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
-        }
-        catch (IOException e){
-            System.out.println(e.getMessage());
-        }
-    }
-
     public void menuHome(ActionEvent event, int idx){
         try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("home1.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/home1.fxml"));
             Controller controller = new Controller();
             controller.setCategoryIndex(idx);
             controller.setCategoryLabel(headers.get(idx).getText());
