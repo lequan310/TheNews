@@ -44,10 +44,6 @@ public class MenuControl implements Initializable {
     private ArrayList<Button> buttons = new ArrayList<>();
     private ArrayList<Label> headers = new ArrayList<>();
 
-    private Stage stage;
-    private Scene scene;
-    private Parent root;
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         mainMenu.setOnAction(e -> menuHome(e, 0));

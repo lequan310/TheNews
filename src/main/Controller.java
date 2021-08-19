@@ -137,19 +137,7 @@ public class Controller implements Initializable {
     }
 
     public void article(ActionEvent event, int index) {
-        try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/NewsTemplate.fxml"));
-            ArticleController articleController = new ArticleController(items, index);
-            loader.setController(articleController);
-            root = loader.load();
-
-            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
+        SceneSwitch ss = new SceneSwitch();
+        ss.article(event, items, index);
     }
 }

@@ -9,13 +9,14 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class SceneSwitch {
     private Stage stage;
     private Scene scene;
     private Parent root;
 
-    class Handler implements EventHandler<KeyEvent>{
+    private class Handler implements EventHandler<KeyEvent>{
         private Controller controller = null;
 
         public Handler(Controller controller){
@@ -80,6 +81,23 @@ public class SceneSwitch {
         }
         catch (IOException e){
             System.out.println(e.getMessage());
+        }
+    }
+
+    public void article(ActionEvent event, ArrayList<Item> items, int index){
+        try{
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/NewsTemplate.fxml"));
+            ArticleController articleController = new ArticleController(items, index);
+            loader.setController(articleController);
+            root = loader.load();
+
+            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        }
+        catch (Exception e){
+            e.printStackTrace();
         }
     }
 }

@@ -435,10 +435,6 @@ public class ArticleController implements Initializable{
         alert.show();
     }
 
-    private Stage stage;
-    private Scene scene;
-    private Parent root;
-
     public void menuCategories(ActionEvent event)  {
         SceneSwitch ss = new SceneSwitch();
         ss.menuCategories(event);
