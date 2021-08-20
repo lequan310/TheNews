@@ -21,11 +21,11 @@ public class NewsController extends Task {
     private final ArrayList<Item> items = new ArrayList<>();
     private int categoryIndex = 0;
 
-    private String rssVE = "https://vnexpress.net/rss/tin-moi-nhat.rss";
-    private String rssTuoiTre = "https://tuoitre.vn/rss/tin-moi-nhat.rss";
-    private String rssThanhNien = "https://thanhnien.vn/rss/home.rss";
-    private String zing = "https://zingnews.vn/";
-    private String nhanDan = "https://nhandan.vn";
+    private final String rssVE = "https://vnexpress.net/rss/tin-moi-nhat.rss";
+    private final String rssTuoiTre = "https://tuoitre.vn/rss/tin-moi-nhat.rss";
+    private final String rssThanhNien = "https://thanhnien.vn/rss/home.rss";
+    private final String zing = "https://zingnews.vn/";
+    private final String nhanDan = "https://nhandan.vn";
 
     public ArrayList<Item> getItems() {
         return this.items;
@@ -70,11 +70,9 @@ public class NewsController extends Task {
             t.start();
         }
 
-        t1.join();
-        t2.join();
-        t3.join();
-        t4.join();
-        t5.join();
+        for (Thread t : Arrays.asList(t1, t2, t3, t4, t5)) {
+            t.join();
+        }
 
         Collections.sort(items);
         System.out.println(System.currentTimeMillis() - testStart + " ms");
@@ -87,19 +85,20 @@ public class NewsController extends Task {
 
         // Uncomment this and comment out the try catch block in Controller for no multi-threading
         /*readRSSVe(rssVE);
-        System.out.println(items.size());
+        System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
 
         readRSSTuoiTre(rssTuoiTre);
-        System.out.println(items.size());
+        System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
 
         readRSSThanhNien(rssThanhNien);
-        System.out.println(items.size());
+        System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
 
         readZing(zing);
-        System.out.println(items.size());
+        System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
 
         readNhanDan(nhanDan);
-        System.out.println(items.size());
+        System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
+
         Collections.sort(items);
         System.out.println(System.currentTimeMillis() - start + " ms");*/
     }
