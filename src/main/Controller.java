@@ -80,6 +80,7 @@ public class Controller implements Initializable {
     @FXML private Button page4;
     @FXML private Button page5;
     @FXML private AnchorPane anchorPane;
+    @FXML private ProgressBar pb;
 
     private ArrayList<ImageView> images = new ArrayList<>();
     private ArrayList<ImageView> icons = new ArrayList<>();
@@ -98,9 +99,27 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        categoryLabel.setText(categories[categoryIndex]);
-        items = new NewsController(categoryIndex).getItems();
+        // Multi-threading
+        try {
+            NewsController newsController = new NewsController(categoryIndex);
+            Thread load = new Thread(newsController);
+            load.start();
+            load.join();
+            loadAfterBar(newsController);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
+        // No multi-threading
+        /*NewsController newsController = new NewsController(categoryIndex);
+        items = newsController.getItems();
+        loadAfterBar(newsController);*/
+    }
+
+    private void loadAfterBar(NewsController newsController){
+        items = newsController.getItems();
+
+        categoryLabel.setText(categories[categoryIndex]);
         addNodeToList();
         changePage(0);
 
