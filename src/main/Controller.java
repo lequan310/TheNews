@@ -111,23 +111,12 @@ public class Controller implements Initializable {
     }
 
     private void addNodeToList(){
-        for (Label l : Arrays.asList(header, header1, header2, header3, header4, header5, header6, header7, header8, header9))
-            labels.add(l);
-
-        for (Button b : Arrays.asList(button, button1, button2, button3, button4, button5, button6, button7, button8, button9))
-            buttons.add(b);
-
-        for (Button b : Arrays.asList(page1, page2, page3, page4, page5))
-            pages.add(b);
-
-        for (ImageView i : Arrays.asList(image, image1, image2, image3, image4, image5, image6, image7, image8, image9))
-            images.add(i);
-
-        for (ImageView i : Arrays.asList(icon, icon1, icon2, icon3, icon4, icon5, icon6, icon7, icon8, icon9))
-            icons.add(i);
-
-        for (Label l : Arrays.asList(time, time1, time2, time3, time4, time5, time6, time7, time8, time9))
-            timeLabels.add(l);
+        labels.addAll(Arrays.asList(header, header1, header2, header3, header4, header5, header6, header7, header8, header9));
+        buttons.addAll(Arrays.asList(button, button1, button2, button3, button4, button5, button6, button7, button8, button9));
+        pages.addAll(Arrays.asList(page1, page2, page3, page4, page5));
+        images.addAll(Arrays.asList(image, image1, image2, image3, image4, image5, image6, image7, image8, image9));
+        icons.addAll(Arrays.asList(icon, icon1, icon2, icon3, icon4, icon5, icon6, icon7, icon8, icon9));
+        timeLabels.addAll(Arrays.asList(time, time1, time2, time3, time4, time5, time6, time7, time8, time9));
     }
 
     public void changePage(int page){

@@ -37,8 +37,8 @@ public class MenuControl implements Initializable {
     @FXML private Label header9;
     @FXML private Label header10;
 
-    private ArrayList<Button> buttons = new ArrayList<>();
-    private ArrayList<Label> headers = new ArrayList<>();
+    private final ArrayList<Button> buttons = new ArrayList<>();
+    private final ArrayList<Label> headers = new ArrayList<>();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -48,9 +48,7 @@ public class MenuControl implements Initializable {
         for (int i = 0; i < buttons.size(); i++){
             int categoryIndex = i;
 
-            buttons.get(i).setOnAction(e ->{
-                menuHome(e, categoryIndex);
-            });
+            buttons.get(i).setOnAction(e -> menuHome(e, categoryIndex));
         }
     }
 
@@ -59,12 +57,7 @@ public class MenuControl implements Initializable {
     }
 
     private void addNodeToList(){
-        for (Button b : Arrays.asList(button1, button2, button3, button4, button5, button6, button7, button8, button9, button10)) {
-            buttons.add(b);
-        }
-
-        for (Label l : Arrays.asList(header1, header2, header3, header4, header5, header6, header7, header8, header9, header10)) {
-            headers.add(l);
-        }
+        buttons.addAll(Arrays.asList(button1, button2, button3, button4, button5, button6, button7, button8, button9, button10));
+        headers.addAll(Arrays.asList(header1, header2, header3, header4, header5, header6, header7, header8, header9, header10));
     }
 }

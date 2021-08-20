@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class NewsController {
-    private ArrayList<Item> items = new ArrayList<>();
+    private final ArrayList<Item> items = new ArrayList<>();
     private int categoryIndex = 0;
 
     public ArrayList<Item> getItems(){
@@ -37,10 +37,19 @@ public class NewsController {
         new Thread(() -> readNhanDan(nhanDan)).start();*/
 
         readRSSVe(rssVE);
+        System.out.println(items.size());
+
         readRSSTuoiTre(rssTuoiTre);
+        System.out.println(items.size());
+
         readRSSThanhNien(rssThanhNien);
+        System.out.println(items.size());
+
         readZing(zing);
+        System.out.println(items.size());
+
         readNhanDan(nhanDan);
+        System.out.println(items.size());
         Collections.sort(items);
     }
 
@@ -110,7 +119,7 @@ public class NewsController {
                 }
                 else if (line.contains("<pubDate>") && inItem){
                     pubDate = extract(line, "<pubDate>", "</pubDate>");
-                    pubDate = extract(line, "<![CDATA[", " GMT+7");
+                    pubDate = extract(pubDate, "<![CDATA[", " GMT+7");
                     DateTimeFormatter df = DateTimeFormatter.ofPattern("E, dd MMM yyyy HH:mm:ss");
                     date = LocalDateTime.parse(pubDate, df);
                 }
@@ -153,15 +162,15 @@ public class NewsController {
             boolean inItem = false;
 
             while ((line = in.readLine()) != null){
-                if (line.contains("<item>")){
+                if (line.contains("<item>"))
                     inItem = true;
-                }
 
                 if (inItem){
                     try{
                         // Extract title
                         title = extract(line, "<title>", "</title>");
-                        title = extract(title, "<![CDATA[ ", "]]>");
+                        if (title.contains("<![CDATA[ "))
+                            title = extract(title, "<![CDATA[ ", "]]>");
 
                         // Extract link
                         link = extract(line, "<link>", "</link>");
@@ -177,8 +186,9 @@ public class NewsController {
                         Item item = new Item(title, link, date, imgSrc, Source.TN);
                         items.add(item);
                         inItem = false;
-                    }catch (StringIndexOutOfBoundsException e){
-                        continue;
+                    }
+                    catch (StringIndexOutOfBoundsException e){
+
                     }
                 }
             }
@@ -200,7 +210,7 @@ public class NewsController {
             Elements featured = doc.select("section[id~=.*-featured]");
             body.addAll(featured);
 
-            String title = "", pubDate = "", link = "", imgSrc = "", line;
+            String title = "", pubDate = "", link = "", imgSrc = "";
             LocalDateTime date = LocalDateTime.MIN;
 
             for (Element e : body.select("article.article-item")){
@@ -236,7 +246,7 @@ public class NewsController {
             Document doc = Jsoup.connect(urlAddress).get();
             Elements body = doc.getElementsByClass("swrapper");
 
-            String title = "", pubDate = "", link = "", imgSrc = "", line;
+            String title = "", pubDate = "", link = "", imgSrc = "";
 
             for (Element e : body.select("article")){
                 LocalDateTime date = LocalDateTime.MIN;

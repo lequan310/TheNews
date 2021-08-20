@@ -42,7 +42,7 @@ public class ArticleController implements Initializable{
 
     private final int WORDSIZE = 18;
     private final int SPACE = 5;
-    private ArrayList<Item> items;
+    private final ArrayList<Item> items;
     private Item item = null;
     private int index = 0;
 
@@ -193,7 +193,7 @@ public class ArticleController implements Initializable{
             Label description = createDescription(summary);
             content.getChildren().addAll(createLabel("", SPACE), description);
 
-            Boolean inArticle = false, inDiv = false;
+            Boolean inArticle = false;
             for (int i = 0, j = 0, y = 0, z = 0, k = 0; k < components.length; k++) {
                 if (components[k].contains("the-article-body")){
                     inArticle = true;
@@ -325,8 +325,6 @@ public class ArticleController implements Initializable{
     }
 
     public Label createLabel(String text, int size){
-        final int HUNDRED = 100;
-
         Label label = new Label(text);
         label.setFont(Font.font("Times New Roman", size));
         label.setTextFill(Color.valueOf("#ffffff"));
@@ -339,8 +337,6 @@ public class ArticleController implements Initializable{
     }
 
     public Label createDescription(String text){
-        final int SIZE = 20, HUNDRED = 100;
-
         Label description = new Label(text);
         description.setTextFill(Color.valueOf("#ffffff"));
         description.setFont(Font.font("Arial", FontWeight.BOLD, 20));
@@ -353,8 +349,7 @@ public class ArticleController implements Initializable{
 
     public Label createImageLabel(Image image, String caption){
         // Create ImageView and Label, and set label graphic to image view
-        final int SIZE = 14, TWO = 2, HUNDRED = 100, MAX_WIDTH = 1000;
-        double ratio = image.getWidth() / image.getHeight();
+        final int MAX_WIDTH = 1000;
         ImageView imageView = new ImageView(image);
         imageView.setPreserveRatio(true);
         Label label = new Label(caption);
@@ -408,12 +403,7 @@ public class ArticleController implements Initializable{
 
         TextArea area = new TextArea(sw.toString());
         alert.getDialogPane().setExpandableContent(area);
-        alert.setOnCloseRequest(new EventHandler<DialogEvent>() {
-            @Override
-            public void handle(DialogEvent dialogEvent) {
-                anchorPane.setEffect(null);
-            }
-        });
+        alert.setOnCloseRequest(dialogEvent -> anchorPane.setEffect(null));
         anchorPane.setEffect(new BoxBlur(anchorPane.getWidth(), anchorPane.getHeight(), 1));
         alert.show();
     }
