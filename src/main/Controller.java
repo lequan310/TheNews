@@ -133,6 +133,19 @@ public class Controller implements Initializable {
                     buttons.get(i).setDisable(false);
                     buttons.get(i).setOnAction(e -> article(e, idx));
 
+                    switch (items.get(idx).getSource()){
+                        case VE:
+                            icons.get(i).setImage(new Image("/image/iconVE.png")); break;
+                        case TT:
+                            icons.get(i).setImage(new Image("/image/iconTT.png")); break;
+                        case TN:
+                            icons.get(i).setImage(new Image("/image/iconTN.png")); break;
+                        case ZING:
+                            icons.get(i).setImage(new Image("/image/iconZING.png")); break;
+                        case ND:
+                            icons.get(i).setImage(new Image("/image/iconND.png")); break;
+                    }
+
                     if (!items.get(idx).getImgSrc().equals("")){
                         images.get(i).setImage(new Image(items.get(idx).getImgSrc()));
                     }else
@@ -142,6 +155,8 @@ public class Controller implements Initializable {
                     labels.get(i).setText("Empty");
                     buttons.get(i).setDisable(true);
                     images.get(i).setImage(null);
+                    timeLabels.get(i).setText("Not available");
+                    icons.get(i).setImage(null);
                 }
             }
         }

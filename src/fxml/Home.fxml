@@ -126,9 +126,9 @@
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <HBox alignment="CENTER" prefHeight="43.0" prefWidth="460.0">
+                                    <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
                                        <children>
-                                          <ImageView fx:id="icon" fitHeight="36.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fx:id="icon" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@../image/icon.png" />
                                              </image>
@@ -168,7 +168,7 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="button1" layoutX="681.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
+                  <Button fx:id="button1" layoutX="645.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
                      <graphic>
                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
@@ -179,9 +179,9 @@
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <HBox alignment="CENTER" prefHeight="43.0" prefWidth="460.0">
+                                    <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
                                        <children>
-                                          <ImageView fx:id="icon1" fitHeight="36.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fx:id="icon1" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@../image/icon.png" />
                                              </image>
@@ -221,7 +221,7 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="button2" layoutX="413.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
+                  <Button fx:id="button2" layoutX="377.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
                      <graphic>
                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
@@ -232,9 +232,9 @@
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <HBox alignment="CENTER" prefHeight="43.0" prefWidth="460.0">
+                                    <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
                                        <children>
-                                          <ImageView fx:id="icon2" fitHeight="36.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fx:id="icon2" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@../image/icon.png" />
                                              </image>
@@ -274,7 +274,7 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="button3" layoutX="145.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
+                  <Button fx:id="button3" layoutX="109.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
                      <graphic>
                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
@@ -285,9 +285,9 @@
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <HBox alignment="CENTER" prefHeight="43.0" prefWidth="460.0">
+                                    <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
                                        <children>
-                                          <ImageView fx:id="icon3" fitHeight="36.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fx:id="icon3" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@../image/icon.png" />
                                              </image>
@@ -327,7 +327,7 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="button4" layoutX="145.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
+                  <Button fx:id="button4" layoutX="109.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
                      <graphic>
                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
@@ -338,9 +338,9 @@
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <HBox alignment="CENTER" prefHeight="43.0" prefWidth="460.0">
+                                    <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
                                        <children>
-                                          <ImageView fx:id="icon4" fitHeight="36.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fx:id="icon4" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@../image/icon.png" />
                                              </image>
@@ -380,7 +380,7 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="button5" layoutX="145.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
+                  <Button fx:id="button5" layoutX="109.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
                      <graphic>
                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
@@ -391,9 +391,9 @@
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <HBox alignment="CENTER" prefHeight="43.0" prefWidth="460.0">
+                                    <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
                                        <children>
-                                          <ImageView fx:id="icon5" fitHeight="36.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fx:id="icon5" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@../image/icon.png" />
                                              </image>
@@ -433,7 +433,7 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="button6" layoutX="145.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
+                  <Button fx:id="button6" layoutX="109.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
                      <graphic>
                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
@@ -444,9 +444,9 @@
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <HBox alignment="CENTER" prefHeight="43.0" prefWidth="460.0">
+                                    <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
                                        <children>
-                                          <ImageView fx:id="icon6" fitHeight="36.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fx:id="icon6" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@../image/icon.png" />
                                              </image>
@@ -486,7 +486,7 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="button7" layoutX="139.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
+                  <Button fx:id="button7" layoutX="109.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
                      <graphic>
                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
@@ -497,9 +497,9 @@
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <HBox alignment="CENTER" prefHeight="43.0" prefWidth="460.0">
+                                    <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
                                        <children>
-                                          <ImageView fx:id="icon7" fitHeight="36.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fx:id="icon7" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@../image/icon.png" />
                                              </image>
@@ -539,7 +539,7 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="button8" layoutX="139.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
+                  <Button fx:id="button8" layoutX="109.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
                      <graphic>
                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
@@ -550,9 +550,9 @@
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <HBox alignment="CENTER" prefHeight="43.0" prefWidth="460.0">
+                                    <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
                                        <children>
-                                          <ImageView fx:id="icon8" fitHeight="36.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fx:id="icon8" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@../image/icon.png" />
                                              </image>
@@ -592,7 +592,7 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="button9" layoutX="139.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
+                  <Button fx:id="button9" layoutX="109.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
                      <graphic>
                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
@@ -603,9 +603,9 @@
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <HBox alignment="CENTER" prefHeight="43.0" prefWidth="460.0">
+                                    <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
                                        <children>
-                                          <ImageView fx:id="icon9" fitHeight="36.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fx:id="icon9" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@../image/icon.png" />
                                              </image>
