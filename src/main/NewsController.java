@@ -1,5 +1,7 @@
 package main;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
@@ -22,12 +24,13 @@ import java.util.concurrent.Executors;
 
 public class NewsController {
     private ArrayList<Item> items = new ArrayList<>();
+    private int categoryIndex = 0;
 
     public ArrayList<Item> getItems(){
         return this.items;
     }
-
     public NewsController(int categoryIndex) {
+        this.categoryIndex = categoryIndex;
         String rssVE = "https://vnexpress.net/rss/tin-moi-nhat.rss";
         String rssTuoiTre = "https://tuoitre.vn/rss/tin-moi-nhat.rss";
         String rssThanhNien = "https://thanhnien.vn/rss/home.rss";

@@ -16,10 +16,10 @@ public class SceneSwitch {
     private Scene scene;
     private Parent root;
 
-    private class Handler implements EventHandler<KeyEvent>{
+    class MenuHandler implements EventHandler<KeyEvent>{
         private Controller controller = null;
 
-        public Handler(Controller controller){
+        public MenuHandler(Controller controller){
             this.controller = controller;
         }
 
@@ -49,7 +49,7 @@ public class SceneSwitch {
         Parent root = loader.load();
         Scene scene = new Scene(root);
 
-        scene.setOnKeyPressed(new Handler(controller));
+        scene.setOnKeyPressed(new MenuHandler(controller));
         return scene;
     }
 
@@ -75,7 +75,7 @@ public class SceneSwitch {
             root = loader.load();
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
             scene = new Scene(root);
-            scene.setOnKeyPressed(new Handler(controller));
+            scene.setOnKeyPressed(new MenuHandler(controller));
             stage.setScene(scene);
             stage.show();
         }

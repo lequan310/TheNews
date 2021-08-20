@@ -1,5 +1,9 @@
 package main;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,10 +22,6 @@ import java.net.URL;
 import java.util.*;
 
 public class Controller implements Initializable {
-    private Stage stage;
-    private Scene scene;
-    private Parent root;
-
     @FXML private Label categoryLabel;
     @FXML private Label header;
     @FXML private Label header1;
@@ -62,6 +62,7 @@ public class Controller implements Initializable {
     @FXML private Button page4;
     @FXML private Button page5;
     @FXML private AnchorPane anchorPane;
+    @FXML private ProgressIndicator pi;
 
     private ArrayList<ImageView> images = new ArrayList<>();
     private ArrayList<Label> labels = new ArrayList<>();
@@ -137,5 +138,6 @@ public class Controller implements Initializable {
 
     public void article(ActionEvent event, int index) {
         new SceneSwitch().article(event, items, index);
+        System.out.println(items.get(index).getLink());
     }
 }
