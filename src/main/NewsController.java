@@ -33,8 +33,6 @@ public class NewsController extends Task {
 
     @Override
     protected Object call() throws Exception {
-        items.clear();
-
         long testStart = System.currentTimeMillis();
         Thread t1 = new Thread(() -> {
             long start = System.currentTimeMillis();
@@ -75,7 +73,7 @@ public class NewsController extends Task {
         }
 
         Collections.sort(items);
-        System.out.println(System.currentTimeMillis() - testStart + " ms");
+        System.out.println("Achieve item list: " + (System.currentTimeMillis() - testStart) + " ms");
         return null;
     }
 

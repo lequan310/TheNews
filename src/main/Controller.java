@@ -1,5 +1,6 @@
 package main;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -103,6 +104,7 @@ public class Controller implements Initializable {
         try {
             NewsController newsController = new NewsController(categoryIndex);
             Thread load = new Thread(newsController);
+
             load.start();
             load.join();
             loadAfterBar(newsController);
@@ -139,12 +141,14 @@ public class Controller implements Initializable {
     }
 
     public void changePage(int page){
+        long start = System.currentTimeMillis();
         if (currentPage != page){
             currentPage = page;
 
             final int ITEMCOUNT = 10;
             for (int i = 0; i < ITEMCOUNT; i++){
                 int idx = i + (page * ITEMCOUNT);
+                int current = i;
 
                 try{
                     labels.get(i).setText(items.get(idx).getTitle());
@@ -177,8 +181,43 @@ public class Controller implements Initializable {
                     timeLabels.get(i).setText("Not available");
                     icons.get(i).setImage(null);
                 }
+
+                /*new Thread(() -> {
+                    try{
+                        labels.get(current).setText(items.get(idx).getTitle());
+                        timeLabels.get(current).setText(items.get(idx).durationToString());
+                        buttons.get(current).setDisable(false);
+                        buttons.get(current).setOnAction(e -> article(e, idx));
+
+                        switch (items.get(idx).getSource()){
+                            case VE:
+                                icons.get(current).setImage(new Image("/image/iconVE.png")); break;
+                            case TT:
+                                icons.get(current).setImage(new Image("/image/iconTT.png")); break;
+                            case TN:
+                                icons.get(current).setImage(new Image("/image/iconTN.png")); break;
+                            case ZING:
+                                icons.get(current).setImage(new Image("/image/iconZING.png")); break;
+                            case ND:
+                                icons.get(current).setImage(new Image("/image/iconND.png")); break;
+                        }
+
+                        if (!items.get(idx).getImgSrc().equals("")){
+                            images.get(current).setImage(new Image(items.get(idx).getImgSrc()));
+                        }else
+                            images.get(current).setImage(null);
+                    }
+                    catch (IndexOutOfBoundsException e){
+                        labels.get(current).setText("Empty");
+                        buttons.get(current).setDisable(true);
+                        images.get(current).setImage(null);
+                        timeLabels.get(current).setText("Not available");
+                        icons.get(current).setImage(null);
+                    }
+                }).start();*/
             }
         }
+        System.out.println("Change page: " + (System.currentTimeMillis() - start) + " ms");
     }
 
     public void menuCategories(ActionEvent event) {
