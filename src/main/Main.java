@@ -1,9 +1,6 @@
 package main;
 
 import javafx.application.Application;
-import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
@@ -15,8 +12,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception{
-        SceneSwitch ss = new SceneSwitch();
-        Scene scene = ss.loadMenuScene(0);
+        Scene scene = new SceneSwitch().loadMenuScene(0);
 
         scene.getStylesheets().add("css/style.css");
         stage.setTitle("News Application");

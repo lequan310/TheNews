@@ -1,9 +1,5 @@
 package main;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -94,8 +90,7 @@ public class Controller implements Initializable {
     private ArrayList<Item> items;
 
     private String[] categories = {"NEW", "COVID", "POLITICS", "BUSINESS", "TECHNOLOGY", "HEALTH", "SPORTS", "ENTERTAINMENT", "WORLD", "OTHERS"};
-    private int categoryIndex = 0;
-    private final int itemsPerPage = 10;
+    private int categoryIndex = 0, currentPage = 1;
 
     public void setCategoryIndex(int index) {
         categoryIndex = index;
@@ -136,24 +131,29 @@ public class Controller implements Initializable {
     }
 
     public void changePage(int page){
-        for (int i = 0; i < itemsPerPage; i++){
-            int idx = i + (page * itemsPerPage);
+        if (currentPage != page){
+            currentPage = page;
 
-            try{
-                labels.get(i).setText(items.get(idx).getTitle());
-                timeLabels.get(i).setText(items.get(idx).durationToString());
-                buttons.get(i).setDisable(false);
-                buttons.get(i).setOnAction(e -> article(e, idx));
+            final int ITEMCOUNT = 10;
+            for (int i = 0; i < ITEMCOUNT; i++){
+                int idx = i + (page * ITEMCOUNT);
 
-                if (!items.get(idx).getImgSrc().equals("")){
-                    images.get(i).setImage(new Image(items.get(idx).getImgSrc()));
-                }else
+                try{
+                    labels.get(i).setText(items.get(idx).getTitle());
+                    timeLabels.get(i).setText(items.get(idx).durationToString());
+                    buttons.get(i).setDisable(false);
+                    buttons.get(i).setOnAction(e -> article(e, idx));
+
+                    if (!items.get(idx).getImgSrc().equals("")){
+                        images.get(i).setImage(new Image(items.get(idx).getImgSrc()));
+                    }else
+                        images.get(i).setImage(null);
+                }
+                catch (IndexOutOfBoundsException e){
+                    labels.get(i).setText("Empty");
+                    buttons.get(i).setDisable(true);
                     images.get(i).setImage(null);
-            }
-            catch (IndexOutOfBoundsException e){
-                labels.get(i).setText("Empty");
-                buttons.get(i).setDisable(true);
-                images.get(i).setImage(null);
+                }
             }
         }
     }

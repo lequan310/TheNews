@@ -16,7 +16,7 @@ public class SceneSwitch {
     private Scene scene;
     private Parent root;
 
-    class MenuHandler implements EventHandler<KeyEvent>{
+    class MenuHandler implements EventHandler<KeyEvent> {
         private Controller controller = null;
 
         public MenuHandler(Controller controller){
@@ -27,14 +27,19 @@ public class SceneSwitch {
         public void handle(KeyEvent keyEvent) {
             switch (keyEvent.getCode()){
                 case DIGIT1:
+                case NUMPAD1:
                     controller.changePage(0); break;
                 case DIGIT2:
+                case NUMPAD2:
                     controller.changePage(1); break;
                 case DIGIT3:
+                case NUMPAD3:
                     controller.changePage(2); break;
                 case DIGIT4:
+                case NUMPAD4:
                     controller.changePage(3); break;
                 case DIGIT5:
+                case NUMPAD5:
                     controller.changePage(4); break;
             }
         }
@@ -65,7 +70,7 @@ public class SceneSwitch {
         }
     }
 
-    public void menuHome(ActionEvent event, int idx){
+    public void menuHome(ActionEvent event, int idx) {
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/Home.fxml"));
             Controller controller = new Controller();

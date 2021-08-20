@@ -64,9 +64,53 @@
             <Pane prefHeight="95.0" prefWidth="214.0" />
          </children>
       </HBox>
-      <ScrollPane fitToWidth="true" layoutX="181.0" layoutY="95.0" prefHeight="975.0" prefWidth="1679.0" styleClass="dark-background" stylesheets="@../css/style.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="105.0">
+      <VBox alignment="CENTER" layoutY="105.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="975.0" prefWidth="120.0" spacing="20.0" style="-fx-background-color: #161616;" stylesheets="@../css/style.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="1800.0" AnchorPane.topAnchor="105.0">
+         <children>
+            <Button fx:id="page1" mnemonicParsing="false" prefHeight="55.0" prefWidth="120.0" style="-fx-background-color: #161616;" stylesheets="@../css/style.css" text="01" textFill="WHITE">
+               <font>
+                  <Font name="Book Antiqua" size="25.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="page2" layoutX="10.0" layoutY="335.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="120.0" style="-fx-background-color: #161616;" stylesheets="@../css/style.css" text="02" textFill="WHITE">
+               <font>
+                  <Font name="Book Antiqua" size="24.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="page3" layoutX="10.0" layoutY="373.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="120.0" style="-fx-background-color: #161616;" stylesheets="@../css/style.css" text="03" textFill="WHITE">
+               <font>
+                  <Font name="Book Antiqua" size="24.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="page4" layoutX="10.0" layoutY="411.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="120.0" style="-fx-background-color: #161616;" stylesheets="@../css/style.css" text="04" textFill="WHITE">
+               <font>
+                  <Font name="Book Antiqua" size="24.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="page5" layoutX="10.0" layoutY="449.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="120.0" style="-fx-background-color: #161616;" stylesheets="@../css/style.css" text="05" textFill="WHITE">
+               <font>
+                  <Font name="Book Antiqua" size="24.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+         </children>
+      </VBox>
+      <ScrollPane fitToWidth="true" layoutX="121.0" layoutY="105.0" prefHeight="975.0" prefWidth="1800.0" styleClass="dark-background" stylesheets="@../css/style.css">
          <content>
-            <FlowPane alignment="TOP_CENTER" columnHalignment="CENTER" hgap="20.0" prefHeight="783.0" prefWidth="1030.0" style="-fx-background-color: #161616;" stylesheets="@../css/style.css" vgap="20.0">
+            <FlowPane alignment="TOP_CENTER" columnHalignment="CENTER" hgap="20.0" prefHeight="1332.0" prefWidth="1810.0" style="-fx-background-color: #161616;" stylesheets="@../css/style.css" vgap="20.0">
                <padding>
                   <Insets bottom="20.0" left="5.0" right="5.0" top="20.0" />
                </padding>
@@ -605,49 +649,5 @@
             </FlowPane>
          </content>
       </ScrollPane>
-      <VBox alignment="CENTER" layoutX="1046.0" layoutY="105.0" prefHeight="975.0" prefWidth="60.0" spacing="20.0" style="-fx-background-color: #161616;" stylesheets="@../css/style.css" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="105.0">
-         <children>
-            <Button fx:id="page1" mnemonicParsing="false" prefHeight="55.0" prefWidth="60.0" style="-fx-background-color: #161616;" stylesheets="@../css/style.css" text="01" textFill="WHITE">
-               <font>
-                  <Font name="Book Antiqua" size="25.0" />
-               </font>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
-            <Button fx:id="page2" layoutX="10.0" layoutY="335.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="60.0" style="-fx-background-color: #161616;" stylesheets="@../css/style.css" text="02" textFill="WHITE">
-               <font>
-                  <Font name="Book Antiqua" size="24.0" />
-               </font>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
-            <Button fx:id="page3" layoutX="10.0" layoutY="373.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="60.0" style="-fx-background-color: #161616;" stylesheets="@../css/style.css" text="03" textFill="WHITE">
-               <font>
-                  <Font name="Book Antiqua" size="24.0" />
-               </font>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
-            <Button fx:id="page4" layoutX="10.0" layoutY="411.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="60.0" style="-fx-background-color: #161616;" stylesheets="@../css/style.css" text="04" textFill="WHITE">
-               <font>
-                  <Font name="Book Antiqua" size="24.0" />
-               </font>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
-            <Button fx:id="page5" layoutX="10.0" layoutY="449.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="60.0" style="-fx-background-color: #161616;" stylesheets="@../css/style.css" text="05" textFill="WHITE">
-               <font>
-                  <Font name="Book Antiqua" size="24.0" />
-               </font>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
-         </children>
-      </VBox>
    </children>
 </AnchorPane>
