@@ -67,6 +67,9 @@
       <ScrollPane fitToWidth="true" layoutX="181.0" layoutY="95.0" prefHeight="975.0" prefWidth="1679.0" styleClass="dark-background" stylesheets="@../css/style.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="105.0">
          <content>
             <FlowPane alignment="TOP_CENTER" columnHalignment="CENTER" hgap="20.0" prefHeight="783.0" prefWidth="1030.0" style="-fx-background-color: #161616;" stylesheets="@../css/style.css" vgap="20.0">
+               <padding>
+                  <Insets bottom="20.0" left="5.0" right="5.0" top="20.0" />
+               </padding>
                <children>
                   <Button fx:id="button" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
                      <graphic>
@@ -79,9 +82,14 @@
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <HBox prefHeight="43.0" prefWidth="460.0">
+                                    <HBox alignment="CENTER" prefHeight="43.0" prefWidth="460.0">
                                        <children>
-                                          <Label prefHeight="43.0" prefWidth="306.0" text="Source" textFill="WHITE">
+                                          <ImageView fx:id="icon" fitHeight="36.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../image/icon.png" />
+                                             </image>
+                                          </ImageView>
+                                          <Label prefHeight="43.0" prefWidth="270.0" textFill="WHITE">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>
@@ -89,14 +97,14 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <Label alignment="CENTER_RIGHT" prefHeight="48.0" prefWidth="293.0" text="Time" textFill="WHITE">
+                                          <Label fx:id="time" prefHeight="43.0" prefWidth="145.0" text="3 hours 40 minutes 32 seconds ago" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
                                              <font>
-                                                <Font size="20.0" />
+                                                <Font size="15.0" />
                                              </font>
                                           </Label>
                                        </children>
                                     </HBox>
-                                    <Label fx:id="header" alignment="CENTER" lineSpacing="5.0" prefHeight="130.0" prefWidth="460.0" style="-fx-wrap-text: true;" text="Sample Header" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                    <Label fx:id="header" alignment="CENTER" lineSpacing="5.0" prefHeight="115.0" prefWidth="460.0" style="-fx-wrap-text: true;" text="Sample Header" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                        <font>
                                           <Font name="System Bold" size="20.0" />
                                        </font>
@@ -116,20 +124,25 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="button1" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="dark-background" stylesheets="@../css/style.css" textFill="TRANSPARENT">
+                  <Button fx:id="button1" layoutX="681.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
                      <graphic>
-                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css">
+                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
                               <ImageView fx:id="image1" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true">
                                  <image>
-                                    <Image url="@../image/sampleimg(1).jpg" />
+                                    <Image url="@../image/sampleimg.jpg" />
                                  </image>
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <HBox prefHeight="43.0" prefWidth="460.0">
+                                    <HBox alignment="CENTER" prefHeight="43.0" prefWidth="460.0">
                                        <children>
-                                          <Label prefHeight="43.0" prefWidth="306.0" text="Source" textFill="WHITE">
+                                          <ImageView fx:id="icon1" fitHeight="36.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../image/icon.png" />
+                                             </image>
+                                          </ImageView>
+                                          <Label prefHeight="43.0" prefWidth="270.0" textFill="WHITE">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>
@@ -137,14 +150,14 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <Label alignment="CENTER_RIGHT" prefHeight="48.0" prefWidth="293.0" text="Time" textFill="WHITE">
+                                          <Label fx:id="time1" prefHeight="43.0" prefWidth="145.0" text="3 hours 40 minutes 32 seconds ago" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
                                              <font>
-                                                <Font size="20.0" />
+                                                <Font size="15.0" />
                                              </font>
                                           </Label>
                                        </children>
                                     </HBox>
-                                    <Label fx:id="header1" alignment="CENTER" lineSpacing="5.0" prefHeight="130.0" prefWidth="460.0" text="Sample Header" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                    <Label fx:id="header1" alignment="CENTER" lineSpacing="5.0" prefHeight="115.0" prefWidth="460.0" style="-fx-wrap-text: true;" text="Sample Header" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                        <font>
                                           <Font name="System Bold" size="20.0" />
                                        </font>
@@ -164,20 +177,25 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="button2" layoutX="949.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="dark-background" stylesheets="@../css/style.css" textFill="TRANSPARENT">
+                  <Button fx:id="button2" layoutX="413.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
                      <graphic>
-                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css">
+                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
                               <ImageView fx:id="image2" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true">
                                  <image>
-                                    <Image url="@../image/sampleimg(1).jpg" />
+                                    <Image url="@../image/sampleimg.jpg" />
                                  </image>
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <HBox prefHeight="43.0" prefWidth="460.0">
+                                    <HBox alignment="CENTER" prefHeight="43.0" prefWidth="460.0">
                                        <children>
-                                          <Label prefHeight="43.0" prefWidth="306.0" text="Source" textFill="WHITE">
+                                          <ImageView fx:id="icon2" fitHeight="36.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../image/icon.png" />
+                                             </image>
+                                          </ImageView>
+                                          <Label prefHeight="43.0" prefWidth="270.0" textFill="WHITE">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>
@@ -185,14 +203,14 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <Label alignment="CENTER_RIGHT" prefHeight="48.0" prefWidth="293.0" text="Time" textFill="WHITE">
+                                          <Label fx:id="time2" prefHeight="43.0" prefWidth="145.0" text="3 hours 40 minutes 32 seconds ago" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
                                              <font>
-                                                <Font size="20.0" />
+                                                <Font size="15.0" />
                                              </font>
                                           </Label>
                                        </children>
                                     </HBox>
-                                    <Label fx:id="header2" alignment="CENTER" lineSpacing="5.0" prefHeight="130.0" prefWidth="460.0" text="Sample Header" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                    <Label fx:id="header2" alignment="CENTER" lineSpacing="5.0" prefHeight="115.0" prefWidth="460.0" style="-fx-wrap-text: true;" text="Sample Header" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                        <font>
                                           <Font name="System Bold" size="20.0" />
                                        </font>
@@ -212,20 +230,25 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="button3" layoutX="1217.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="dark-background" stylesheets="@../css/style.css" textFill="TRANSPARENT">
+                  <Button fx:id="button3" layoutX="145.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
                      <graphic>
-                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css">
+                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
                               <ImageView fx:id="image3" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true">
                                  <image>
-                                    <Image url="@../image/sampleimg(1).jpg" />
+                                    <Image url="@../image/sampleimg.jpg" />
                                  </image>
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <HBox prefHeight="43.0" prefWidth="460.0">
+                                    <HBox alignment="CENTER" prefHeight="43.0" prefWidth="460.0">
                                        <children>
-                                          <Label prefHeight="43.0" prefWidth="306.0" text="Source" textFill="WHITE">
+                                          <ImageView fx:id="icon3" fitHeight="36.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../image/icon.png" />
+                                             </image>
+                                          </ImageView>
+                                          <Label prefHeight="43.0" prefWidth="270.0" textFill="WHITE">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>
@@ -233,14 +256,14 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <Label alignment="CENTER_RIGHT" prefHeight="48.0" prefWidth="293.0" text="Time" textFill="WHITE">
+                                          <Label fx:id="time3" prefHeight="43.0" prefWidth="145.0" text="3 hours 40 minutes 32 seconds ago" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
                                              <font>
-                                                <Font size="20.0" />
+                                                <Font size="15.0" />
                                              </font>
                                           </Label>
                                        </children>
                                     </HBox>
-                                    <Label fx:id="header3" alignment="CENTER" lineSpacing="5.0" prefHeight="130.0" prefWidth="460.0" text="Sample Header" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                    <Label fx:id="header3" alignment="CENTER" lineSpacing="5.0" prefHeight="115.0" prefWidth="460.0" style="-fx-wrap-text: true;" text="Sample Header" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                        <font>
                                           <Font name="System Bold" size="20.0" />
                                        </font>
@@ -260,20 +283,25 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="button4" layoutX="681.0" layoutY="358.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="dark-background" stylesheets="@../css/style.css" textFill="TRANSPARENT">
+                  <Button fx:id="button4" layoutX="145.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
                      <graphic>
-                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css">
+                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
                               <ImageView fx:id="image4" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true">
                                  <image>
-                                    <Image url="@../image/sampleimg(1).jpg" />
+                                    <Image url="@../image/sampleimg.jpg" />
                                  </image>
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <HBox prefHeight="43.0" prefWidth="460.0">
+                                    <HBox alignment="CENTER" prefHeight="43.0" prefWidth="460.0">
                                        <children>
-                                          <Label prefHeight="43.0" prefWidth="306.0" text="Source" textFill="WHITE">
+                                          <ImageView fx:id="icon4" fitHeight="36.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../image/icon.png" />
+                                             </image>
+                                          </ImageView>
+                                          <Label prefHeight="43.0" prefWidth="270.0" textFill="WHITE">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>
@@ -281,14 +309,14 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <Label alignment="CENTER_RIGHT" prefHeight="48.0" prefWidth="293.0" text="Time" textFill="WHITE">
+                                          <Label fx:id="time4" prefHeight="43.0" prefWidth="145.0" text="3 hours 40 minutes 32 seconds ago" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
                                              <font>
-                                                <Font size="20.0" />
+                                                <Font size="15.0" />
                                              </font>
                                           </Label>
                                        </children>
                                     </HBox>
-                                    <Label fx:id="header4" alignment="CENTER" lineSpacing="5.0" prefHeight="130.0" prefWidth="460.0" text="Sample Header" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                    <Label fx:id="header4" alignment="CENTER" lineSpacing="5.0" prefHeight="115.0" prefWidth="460.0" style="-fx-wrap-text: true;" text="Sample Header" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                        <font>
                                           <Font name="System Bold" size="20.0" />
                                        </font>
@@ -308,20 +336,25 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="button5" layoutX="949.0" layoutY="358.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="dark-background" stylesheets="@../css/style.css" textFill="TRANSPARENT">
+                  <Button fx:id="button5" layoutX="145.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
                      <graphic>
-                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css">
+                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
                               <ImageView fx:id="image5" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true">
                                  <image>
-                                    <Image url="@../image/sampleimg(1).jpg" />
+                                    <Image url="@../image/sampleimg.jpg" />
                                  </image>
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <HBox prefHeight="43.0" prefWidth="460.0">
+                                    <HBox alignment="CENTER" prefHeight="43.0" prefWidth="460.0">
                                        <children>
-                                          <Label prefHeight="43.0" prefWidth="306.0" text="Source" textFill="WHITE">
+                                          <ImageView fx:id="icon5" fitHeight="36.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../image/icon.png" />
+                                             </image>
+                                          </ImageView>
+                                          <Label prefHeight="43.0" prefWidth="270.0" textFill="WHITE">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>
@@ -329,14 +362,14 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <Label alignment="CENTER_RIGHT" prefHeight="48.0" prefWidth="293.0" text="Time" textFill="WHITE">
+                                          <Label fx:id="time5" prefHeight="43.0" prefWidth="145.0" text="3 hours 40 minutes 32 seconds ago" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
                                              <font>
-                                                <Font size="20.0" />
+                                                <Font size="15.0" />
                                              </font>
                                           </Label>
                                        </children>
                                     </HBox>
-                                    <Label fx:id="header5" alignment="CENTER" lineSpacing="5.0" prefHeight="130.0" prefWidth="460.0" text="Sample Header" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                    <Label fx:id="header5" alignment="CENTER" lineSpacing="5.0" prefHeight="115.0" prefWidth="460.0" style="-fx-wrap-text: true;" text="Sample Header" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                        <font>
                                           <Font name="System Bold" size="20.0" />
                                        </font>
@@ -356,20 +389,25 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="button6" layoutX="1217.0" layoutY="358.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="dark-background" stylesheets="@../css/style.css" textFill="TRANSPARENT">
+                  <Button fx:id="button6" layoutX="145.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
                      <graphic>
-                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css">
+                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
                               <ImageView fx:id="image6" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true">
                                  <image>
-                                    <Image url="@../image/sampleimg(1).jpg" />
+                                    <Image url="@../image/sampleimg.jpg" />
                                  </image>
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <HBox prefHeight="43.0" prefWidth="460.0">
+                                    <HBox alignment="CENTER" prefHeight="43.0" prefWidth="460.0">
                                        <children>
-                                          <Label prefHeight="43.0" prefWidth="306.0" text="Source" textFill="WHITE">
+                                          <ImageView fx:id="icon6" fitHeight="36.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../image/icon.png" />
+                                             </image>
+                                          </ImageView>
+                                          <Label prefHeight="43.0" prefWidth="270.0" textFill="WHITE">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>
@@ -377,14 +415,14 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <Label alignment="CENTER_RIGHT" prefHeight="48.0" prefWidth="293.0" text="Time" textFill="WHITE">
+                                          <Label fx:id="time6" prefHeight="43.0" prefWidth="145.0" text="3 hours 40 minutes 32 seconds ago" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
                                              <font>
-                                                <Font size="20.0" />
+                                                <Font size="15.0" />
                                              </font>
                                           </Label>
                                        </children>
                                     </HBox>
-                                    <Label fx:id="header6" alignment="CENTER" lineSpacing="5.0" prefHeight="130.0" prefWidth="457.0" text="Sample Header" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                    <Label fx:id="header6" alignment="CENTER" lineSpacing="5.0" prefHeight="115.0" prefWidth="460.0" style="-fx-wrap-text: true;" text="Sample Header" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                        <font>
                                           <Font name="System Bold" size="20.0" />
                                        </font>
@@ -404,20 +442,25 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="button7" layoutX="675.0" layoutY="686.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="dark-background" stylesheets="@../css/style.css" textFill="TRANSPARENT">
+                  <Button fx:id="button7" layoutX="139.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
                      <graphic>
-                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css">
+                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
                               <ImageView fx:id="image7" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true">
                                  <image>
-                                    <Image url="@../image/sampleimg(1).jpg" />
+                                    <Image url="@../image/sampleimg.jpg" />
                                  </image>
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <HBox prefHeight="43.0" prefWidth="460.0">
+                                    <HBox alignment="CENTER" prefHeight="43.0" prefWidth="460.0">
                                        <children>
-                                          <Label prefHeight="43.0" prefWidth="306.0" text="Source" textFill="WHITE">
+                                          <ImageView fx:id="icon7" fitHeight="36.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../image/icon.png" />
+                                             </image>
+                                          </ImageView>
+                                          <Label prefHeight="43.0" prefWidth="270.0" textFill="WHITE">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>
@@ -425,14 +468,14 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <Label alignment="CENTER_RIGHT" prefHeight="48.0" prefWidth="293.0" text="Time" textFill="WHITE">
+                                          <Label fx:id="time7" prefHeight="43.0" prefWidth="145.0" text="3 hours 40 minutes 32 seconds ago" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
                                              <font>
-                                                <Font size="20.0" />
+                                                <Font size="15.0" />
                                              </font>
                                           </Label>
                                        </children>
                                     </HBox>
-                                    <Label fx:id="header7" alignment="CENTER" lineSpacing="5.0" prefHeight="130.0" prefWidth="457.0" text="Sample Header" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                    <Label fx:id="header7" alignment="CENTER" lineSpacing="5.0" prefHeight="115.0" prefWidth="460.0" style="-fx-wrap-text: true;" text="Sample Header" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                        <font>
                                           <Font name="System Bold" size="20.0" />
                                        </font>
@@ -452,20 +495,25 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="button8" layoutX="943.0" layoutY="686.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="dark-background" stylesheets="@../css/style.css" textFill="TRANSPARENT">
+                  <Button fx:id="button8" layoutX="139.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
                      <graphic>
-                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css">
+                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
                               <ImageView fx:id="image8" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true">
                                  <image>
-                                    <Image url="@../image/sampleimg(1).jpg" />
+                                    <Image url="@../image/sampleimg.jpg" />
                                  </image>
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <HBox prefHeight="43.0" prefWidth="460.0">
+                                    <HBox alignment="CENTER" prefHeight="43.0" prefWidth="460.0">
                                        <children>
-                                          <Label prefHeight="43.0" prefWidth="306.0" text="Source" textFill="WHITE">
+                                          <ImageView fx:id="icon8" fitHeight="36.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../image/icon.png" />
+                                             </image>
+                                          </ImageView>
+                                          <Label prefHeight="43.0" prefWidth="270.0" textFill="WHITE">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>
@@ -473,14 +521,14 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <Label alignment="CENTER_RIGHT" prefHeight="48.0" prefWidth="293.0" text="Time" textFill="WHITE">
+                                          <Label fx:id="time8" prefHeight="43.0" prefWidth="145.0" text="3 hours 40 minutes 32 seconds ago" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
                                              <font>
-                                                <Font size="20.0" />
+                                                <Font size="15.0" />
                                              </font>
                                           </Label>
                                        </children>
                                     </HBox>
-                                    <Label fx:id="header8" alignment="CENTER" ellipsisString="" lineSpacing="5.0" prefHeight="130.0" prefWidth="457.0" text="Sample Header" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                    <Label fx:id="header8" alignment="CENTER" lineSpacing="5.0" prefHeight="115.0" prefWidth="460.0" style="-fx-wrap-text: true;" text="Sample Header" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                        <font>
                                           <Font name="System Bold" size="20.0" />
                                        </font>
@@ -500,20 +548,25 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="button9" layoutX="1211.0" layoutY="686.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="dark-background" stylesheets="@../css/style.css" textFill="TRANSPARENT">
+                  <Button fx:id="button9" layoutX="139.0" layoutY="30.0" mnemonicParsing="false" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css" textAlignment="CENTER" textFill="TRANSPARENT">
                      <graphic>
-                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" styleClass="shadow" stylesheets="@../css/style.css">
+                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
                               <ImageView fx:id="image9" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true">
                                  <image>
-                                    <Image url="@../image/sampleimg(1).jpg" />
+                                    <Image url="@../image/sampleimg.jpg" />
                                  </image>
                               </ImageView>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
-                                    <HBox prefHeight="43.0" prefWidth="460.0">
+                                    <HBox alignment="CENTER" prefHeight="43.0" prefWidth="460.0">
                                        <children>
-                                          <Label prefHeight="43.0" prefWidth="306.0" text="Source" textFill="WHITE">
+                                          <ImageView fx:id="icon9" fitHeight="36.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../image/icon.png" />
+                                             </image>
+                                          </ImageView>
+                                          <Label prefHeight="43.0" prefWidth="270.0" textFill="WHITE">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>
@@ -521,14 +574,14 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <Label alignment="CENTER_RIGHT" prefHeight="48.0" prefWidth="293.0" text="Time" textFill="WHITE">
+                                          <Label fx:id="time9" prefHeight="43.0" prefWidth="145.0" text="3 hours 40 minutes 32 seconds ago" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
                                              <font>
-                                                <Font size="20.0" />
+                                                <Font size="15.0" />
                                              </font>
                                           </Label>
                                        </children>
                                     </HBox>
-                                    <Label fx:id="header9" alignment="CENTER" lineSpacing="5.0" prefHeight="130.0" prefWidth="457.0" text="Sample Header" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                    <Label fx:id="header9" alignment="CENTER" lineSpacing="5.0" prefHeight="115.0" prefWidth="460.0" style="-fx-wrap-text: true;" text="Sample Header" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                        <font>
                                           <Font name="System Bold" size="20.0" />
                                        </font>
@@ -549,9 +602,6 @@
                      </cursor>
                   </Button>
                </children>
-               <padding>
-                  <Insets bottom="20.0" left="5.0" right="5.0" top="20.0" />
-               </padding>
             </FlowPane>
          </content>
       </ScrollPane>
