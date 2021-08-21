@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
@@ -18,11 +17,7 @@
 
 <AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" styleClass="dark-background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <HBox alignment="CENTER" prefHeight="105.0" prefWidth="1007.0" styleClass="dark-background" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-         <stylesheets>
-            <URL value="@../css/style.css" />
-            <URL value="@../css/style.css" />
-         </stylesheets>
+      <HBox alignment="CENTER" prefHeight="105.0" prefWidth="1007.0" styleClass="dark-background" stylesheets="@../css/style.css" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
             <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#menuCategories" prefHeight="105.0" prefWidth="161.0" styleClass="dark-background" stylesheets="@../css/style.css" textFill="TRANSPARENT" HBox.hgrow="ALWAYS">
                <graphic>
@@ -65,7 +60,7 @@
             <Pane prefHeight="95.0" prefWidth="214.0" />
          </children>
       </HBox>
-      <VBox alignment="CENTER" layoutY="105.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="975.0" prefWidth="120.0" spacing="20.0" style="-fx-background-color: #161616;" stylesheets="@../css/style.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="1800.0" AnchorPane.topAnchor="105.0">
+      <VBox alignment="CENTER" layoutY="118.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="962.0" prefWidth="120.0" spacing="20.0" style="-fx-background-color: #161616;" stylesheets="@../css/style.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="1800.0" AnchorPane.topAnchor="118.0">
          <children>
             <Button fx:id="page1" mnemonicParsing="false" prefHeight="55.0" prefWidth="120.0" style="-fx-background-color: #161616;" stylesheets="@../css/style.css" text="01" textFill="WHITE">
                <font>
@@ -109,9 +104,9 @@
             </Button>
          </children>
       </VBox>
-      <ScrollPane fitToWidth="true" layoutX="121.0" layoutY="105.0" prefHeight="975.0" prefWidth="1800.0" styleClass="dark-background" stylesheets="@../css/style.css">
+      <ScrollPane fitToWidth="true" layoutX="121.0" layoutY="118.0" prefHeight="962.0" prefWidth="1800.0" styleClass="dark-background" stylesheets="@../css/style.css">
          <content>
-            <FlowPane alignment="TOP_CENTER" columnHalignment="CENTER" hgap="20.0" prefHeight="1332.0" prefWidth="1810.0" style="-fx-background-color: #161616;" stylesheets="@../css/style.css" vgap="20.0">
+            <FlowPane alignment="TOP_CENTER" columnHalignment="CENTER" hgap="20.0" prefHeight="1332.0" prefWidth="1785.0" style="-fx-background-color: #161616;" stylesheets="@../css/style.css" vgap="20.0">
                <padding>
                   <Insets bottom="20.0" left="5.0" right="5.0" top="20.0" />
                </padding>
@@ -610,6 +605,6 @@
             </FlowPane>
          </content>
       </ScrollPane>
-      <ProgressBar fx:id="pb" layoutY="96.0" prefHeight="10.0" prefWidth="1920.0" progress="1.0" styleClass="green-bar" />
+      <ProgressBar fx:id="pb" layoutY="103.0" prefHeight="15.0" prefWidth="1920.0" progress="1.0" styleClass="green-bar" />
    </children>
 </AnchorPane>

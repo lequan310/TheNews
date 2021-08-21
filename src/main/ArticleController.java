@@ -427,10 +427,10 @@ public class ArticleController implements Initializable{
     }
 
     public void menuCategories(ActionEvent event)  {
-        new SceneSwitch().menuCategories(event);
+        new SceneSwitch(anchorPane).menuCategories();
     }
 
     public void menuHome(ActionEvent event){
-        new SceneSwitch().menuHome(event, 0);
+        new SceneSwitch(anchorPane).menuHome(0);
     }
 }

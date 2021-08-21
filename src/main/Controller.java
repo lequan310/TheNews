@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.effect.BoxBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -101,17 +102,31 @@ public class Controller implements Initializable {
 
             load.start();
             load.join();
+
+            items = newsController.getItems();
+            addNodeToList();
             loadAfterBar(newsController);
+
+            if (items.size() == 0) {
+                throwAlert();
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    private void loadAfterBar(NewsController newsController){
-        items = newsController.getItems();
+    public void throwAlert(){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Poor Internet Connection");
+        alert.setContentText("Please check your internet connection.");
 
+        anchorPane.setEffect(new BoxBlur(anchorPane.getWidth(), anchorPane.getHeight(), 1));
+        alert.setOnCloseRequest(dialogEvent -> anchorPane.setEffect(null));
+        alert.show();
+    }
+
+    private void loadAfterBar(NewsController newsController){
         categoryLabel.setText(categories[categoryIndex]);
-        addNodeToList();
         changePage(0);
 
         for (int i = 0; i < pages.size(); i++){
@@ -146,7 +161,6 @@ public class Controller implements Initializable {
                     try{
                         labels.get(current).setText(items.get(idx).getTitle());
                         timeLabels.get(current).setText(items.get(idx).durationToString());
-                        buttons.get(current).setDisable(false);
                         buttons.get(current).setOnAction(e -> article(e, idx));
 
                         switch (items.get(idx).getSource()){
@@ -166,10 +180,12 @@ public class Controller implements Initializable {
                             images.get(current).setImage(new Image(items.get(idx).getImgSrc()));
                         }else
                             images.get(current).setImage(null);
+
+                        buttons.get(current).setDisable(false);
                     }
                     catch (IndexOutOfBoundsException e){
-                        labels.get(current).setText("Empty");
                         buttons.get(current).setDisable(true);
+                        labels.get(current).setText("Empty");
                         images.get(current).setImage(null);
                         timeLabels.get(current).setText("Not available");
                         icons.get(current).setImage(null);
@@ -182,11 +198,11 @@ public class Controller implements Initializable {
     }
 
     public void menuCategories(ActionEvent event) {
-        new SceneSwitch().menuCategories(event);
+        new SceneSwitch(anchorPane).menuCategories();
     }
 
     public void article(ActionEvent event, int index) {
-        new SceneSwitch().article(event, items, index);
+        new SceneSwitch(anchorPane).article(items, index);
         System.out.println(items.get(index).getLink());
     }
 }

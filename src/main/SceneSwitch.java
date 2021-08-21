@@ -1,6 +1,5 @@
 package main;
 
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -8,17 +7,21 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.stage.Stage;
+import javafx.scene.layout.AnchorPane;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class SceneSwitch {
-    private Stage stage;
-    private Scene scene;
     private Parent root;
-    private int x = 1920, y = 1080;
+    private AnchorPane anchorPane;
 
-    class MenuHandler implements EventHandler<KeyEvent> {
+    public SceneSwitch(AnchorPane anchorPane){
+        this.anchorPane = anchorPane;
+    }
+
+    public SceneSwitch(){}
+
+    static class MenuHandler implements EventHandler<KeyEvent> {
         private Controller controller = null;
 
         public MenuHandler(Controller controller){
@@ -27,34 +30,12 @@ public class SceneSwitch {
 
         @Override
         public void handle(KeyEvent keyEvent) {
-            switch (keyEvent.getCode()){
-                case DIGIT1:
-                case NUMPAD1:
-                    controller.changePage(0); break;
-                case DIGIT2:
-                case NUMPAD2:
-                    controller.changePage(1); break;
-                case DIGIT3:
-                case NUMPAD3:
-                    controller.changePage(2); break;
-                case DIGIT4:
-                case NUMPAD4:
-                    controller.changePage(3); break;
-                case DIGIT5:
-                case NUMPAD5:
-                    controller.changePage(4); break;
-            }
-        }
-    }
-
-    class FullScreen implements EventHandler<KeyEvent> {
-        private boolean fullScreen = false;
-
-        @Override
-        public void handle(KeyEvent keyEvent) {
-            if (keyEvent.getCode() == KeyCode.F11){
-                fullScreen = !fullScreen;
-                stage.setFullScreen(fullScreen);
+            switch (keyEvent.getCode()) {
+                case DIGIT1, NUMPAD1 -> controller.changePage(0);
+                case DIGIT2, NUMPAD2 -> controller.changePage(1);
+                case DIGIT3, NUMPAD3 -> controller.changePage(2);
+                case DIGIT4, NUMPAD4 -> controller.changePage(3);
+                case DIGIT5, NUMPAD5 -> controller.changePage(4);
             }
         }
     }
@@ -72,21 +53,16 @@ public class SceneSwitch {
         return scene;
     }
 
-    public void menuCategories(ActionEvent event) {
+    public void menuCategories()   {
         try{
             root = FXMLLoader.load(getClass().getResource("../fxml/Categories.fxml"));
-            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            scene = new Scene(root);
-            scene.setOnKeyPressed(new FullScreen());
-            stage.setScene(scene);
-            stage.setMaximized(true);
-            stage.show();
+            anchorPane.getScene().setRoot(root);
         }catch (IOException e){
             System.out.println(e.getMessage());
         }
     }
 
-    public void menuHome(ActionEvent event, int idx) {
+    public void menuHome(int idx) {
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/Home.fxml"));
             Controller controller = new Controller();
@@ -94,30 +70,22 @@ public class SceneSwitch {
             loader.setController(controller);
 
             root = loader.load();
-            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            scene = new Scene(root);
-            scene.setOnKeyPressed(new MenuHandler(controller));
-            stage.setScene(scene);
-            stage.setMaximized(true);
-            stage.show();
+            root.setOnKeyPressed(new MenuHandler(controller));
+            anchorPane.getScene().setRoot(root);
         }
         catch (IOException e){
             System.out.println(e.getMessage());
         }
     }
 
-    public void article(ActionEvent event, ArrayList<Item> items, int index){
+    public void article(ArrayList<Item> items, int index){
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/NewsTemplate.fxml"));
             ArticleController articleController = new ArticleController(items, index);
             loader.setController(articleController);
-            root = loader.load();
 
-            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setMaximized(true);
-            stage.show();
+            root = loader.load();
+            anchorPane.getScene().setRoot(root);
         }
         catch (Exception e){
             e.printStackTrace();

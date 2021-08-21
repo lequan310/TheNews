@@ -5,12 +5,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class MenuControl implements Initializable {
+    @FXML private AnchorPane anchorPane;
     @FXML private Button mainMenu;
     @FXML private Button button1;
     @FXML private Button button2;
@@ -50,7 +53,7 @@ public class MenuControl implements Initializable {
     }
 
     public void menuHome(ActionEvent event, int idx){
-        new SceneSwitch().menuHome(event, idx);
+        new SceneSwitch(anchorPane).menuHome(idx);
     }
 
     private void addNodeToList(){
