@@ -278,6 +278,7 @@ public class ArticleController implements Initializable{
             Label description = createDescription(body.select("div.box-des-detail p").text());
 
             content.getChildren().clear();
+            content.getChildren().addAll(thumbnail, description);
 
             // Article and Images
             Boolean inArticle = false, inBlockquote = false, inDiv = false;
