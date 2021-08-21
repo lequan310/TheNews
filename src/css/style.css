@@ -42,4 +42,38 @@
     -fx-background-color: #111111;
 }
 
+.progress-bar .track {
+    -fx-border-color: forestgreen;
+    -fx-control-inner-background: palegreen;
+}
 
+.progress-bar .bar {
+    -fx-background-color: linear-gradient(to left, aqua, lightskyblue);
+}
+
+.scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+}
+
+.scroll-pane .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0em;
+    -fx-border-radius: 2em;
+}
+
+.scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: derive(black, 40%);
+}
+
+.scroll-pane .scroll-bar:vertical .increment-button,
+.scroll-pane .scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+}
+
+.scroll-pane .scroll-bar .increment-arrow,
+.scroll-pane .scroll-bar .decrement-arrow {
+    -fx-padding: 0 7.5 0 0;
+}

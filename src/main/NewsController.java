@@ -54,22 +54,27 @@ public class NewsController extends Task {
 
         Thread t1 = new Thread(() -> {
             readRSSVe(VNEXPRESS[categoryIndex]);
+            updateProgress(0.1, 1);
             System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
         });
         Thread t2 = new Thread(() -> {
             readRSSTuoiTre(TUOITRE[categoryIndex]);
+            updateProgress(0.2, 1);
             System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
         });
         Thread t3 = new Thread(() -> {
             readRSSThanhNien(THANHNIEN[categoryIndex]);
+            updateProgress(0.3, 1);
             System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
         });
         Thread t4 = new Thread(() -> {
             readZing(ZING[categoryIndex]);
+            updateProgress(0.4, 1);
             System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
         });
         Thread t5 = new Thread(() -> {
             readNhanDan(NHANDAN[categoryIndex]);
+            updateProgress(0.5, 1);
             System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
         });
 
@@ -134,33 +139,15 @@ public class NewsController extends Task {
             }
         }
 
+        updateProgress(0.5, 1);
         Collections.sort(items);
+        updateProgress(1, 1);
         System.out.println("Achieve item list: " + (System.currentTimeMillis() - start) + " ms");
         return null;
     }
 
     public NewsController(int categoryIndex) {
-        long start = System.currentTimeMillis();
         this.categoryIndex = categoryIndex;
-
-        // Uncomment this and comment out the try catch block in Controller for no multi-threading
-        /*readRSSVe(rssVE);
-        System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
-
-        readRSSTuoiTre(rssTuoiTre);
-        System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
-
-        readRSSThanhNien(rssThanhNien);
-        System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
-
-        readZing(zing);
-        System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
-
-        readNhanDan(nhanDan);
-        System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
-
-        Collections.sort(items);
-        System.out.println(System.currentTimeMillis() - start + " ms");*/
     }
 
     public void readRSSVe(String urlAddress) {

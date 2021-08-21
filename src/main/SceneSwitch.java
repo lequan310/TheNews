@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import java.io.IOException;
@@ -15,6 +16,7 @@ public class SceneSwitch {
     private Stage stage;
     private Scene scene;
     private Parent root;
+    private int x = 1920, y = 1080;
 
     class MenuHandler implements EventHandler<KeyEvent> {
         private Controller controller = null;
@@ -45,6 +47,18 @@ public class SceneSwitch {
         }
     }
 
+    class FullScreen implements EventHandler<KeyEvent> {
+        private boolean fullScreen = false;
+
+        @Override
+        public void handle(KeyEvent keyEvent) {
+            if (keyEvent.getCode() == KeyCode.F11){
+                fullScreen = !fullScreen;
+                stage.setFullScreen(fullScreen);
+            }
+        }
+    }
+
     public Scene loadMenuScene(int index) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/Home.fxml"));
         Controller controller = new Controller();
@@ -63,7 +77,9 @@ public class SceneSwitch {
             root = FXMLLoader.load(getClass().getResource("../fxml/Categories.fxml"));
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
             scene = new Scene(root);
+            scene.setOnKeyPressed(new FullScreen());
             stage.setScene(scene);
+            stage.setMaximized(true);
             stage.show();
         }catch (IOException e){
             System.out.println(e.getMessage());
@@ -82,6 +98,7 @@ public class SceneSwitch {
             scene = new Scene(root);
             scene.setOnKeyPressed(new MenuHandler(controller));
             stage.setScene(scene);
+            stage.setMaximized(true);
             stage.show();
         }
         catch (IOException e){
@@ -99,6 +116,7 @@ public class SceneSwitch {
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
             scene = new Scene(root);
             stage.setScene(scene);
+            stage.setMaximized(true);
             stage.show();
         }
         catch (Exception e){

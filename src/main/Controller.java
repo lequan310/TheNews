@@ -1,21 +1,13 @@
 package main;
 
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.stage.Stage;
-
-import java.io.*;
 import java.net.URL;
 import java.util.*;
 
@@ -105,6 +97,7 @@ public class Controller implements Initializable {
         try {
             NewsController newsController = new NewsController(categoryIndex);
             Thread load = new Thread(newsController);
+            pb.progressProperty().bind(newsController.progressProperty());
 
             load.start();
             load.join();
