@@ -26,38 +26,25 @@ public class MenuControl implements Initializable {
     @FXML private Button button9;
     @FXML private Button button10;
 
-    @FXML private Label header1;
-    @FXML private Label header2;
-    @FXML private Label header3;
-    @FXML private Label header4;
-    @FXML private Label header5;
-    @FXML private Label header6;
-    @FXML private Label header7;
-    @FXML private Label header8;
-    @FXML private Label header9;
-    @FXML private Label header10;
-
     private final ArrayList<Button> buttons = new ArrayList<>();
-    private final ArrayList<Label> headers = new ArrayList<>();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        mainMenu.setOnAction(e -> menuHome(e, 0));
+        mainMenu.setOnAction(e -> menuHome(0));
         addNodeToList();
 
         for (int i = 0; i < buttons.size(); i++){
             int categoryIndex = i;
 
-            buttons.get(i).setOnAction(e -> menuHome(e, categoryIndex));
+            buttons.get(i).setOnAction(e -> menuHome(categoryIndex));
         }
     }
 
-    public void menuHome(ActionEvent event, int idx){
+    public void menuHome(int idx){
         new SceneSwitch(anchorPane).menuHome(idx);
     }
 
     private void addNodeToList(){
         buttons.addAll(Arrays.asList(button1, button2, button3, button4, button5, button6, button7, button8, button9, button10));
-        headers.addAll(Arrays.asList(header1, header2, header3, header4, header5, header6, header7, header8, header9, header10));
     }
 }

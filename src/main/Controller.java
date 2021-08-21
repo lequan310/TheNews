@@ -77,15 +77,15 @@ public class Controller implements Initializable {
     @FXML private AnchorPane anchorPane;
     @FXML private ProgressBar pb;
 
-    private ArrayList<ImageView> images = new ArrayList<>();
-    private ArrayList<ImageView> icons = new ArrayList<>();
-    private ArrayList<Label> timeLabels = new ArrayList<>();
-    private ArrayList<Label> labels = new ArrayList<>();
-    private ArrayList<Button> buttons = new ArrayList<>();
-    private ArrayList<Button> pages = new ArrayList<>();
+    private final ArrayList<ImageView> images = new ArrayList<>();
+    private final ArrayList<ImageView> icons = new ArrayList<>();
+    private final ArrayList<Label> timeLabels = new ArrayList<>();
+    private final ArrayList<Label> labels = new ArrayList<>();
+    private final ArrayList<Button> buttons = new ArrayList<>();
+    private final ArrayList<Button> pages = new ArrayList<>();
     private ArrayList<Item> items;
 
-    private String[] categories = {"NEW", "COVID", "POLITICS", "BUSINESS", "TECHNOLOGY", "HEALTH", "SPORTS", "ENTERTAINMENT", "WORLD", "OTHERS"};
+    private final String[] categories = {"NEW", "COVID", "POLITICS", "BUSINESS", "TECHNOLOGY", "HEALTH", "SPORTS", "ENTERTAINMENT", "WORLD", "OTHERS"};
     private int categoryIndex = 0, currentPage = 1;
 
     public void setCategoryIndex(int index) {
@@ -161,19 +161,14 @@ public class Controller implements Initializable {
                     try{
                         labels.get(current).setText(items.get(idx).getTitle());
                         timeLabels.get(current).setText(items.get(idx).durationToString());
-                        buttons.get(current).setOnAction(e -> article(e, idx));
+                        buttons.get(current).setOnAction(e -> article(idx));
 
-                        switch (items.get(idx).getSource()){
-                            case VE:
-                                icons.get(current).setImage(new Image("/image/iconVE.png")); break;
-                            case TT:
-                                icons.get(current).setImage(new Image("/image/iconTT.png")); break;
-                            case TN:
-                                icons.get(current).setImage(new Image("/image/iconTN.jpeg")); break;
-                            case ZING:
-                                icons.get(current).setImage(new Image("/image/iconZING.png")); break;
-                            case ND:
-                                icons.get(current).setImage(new Image("/image/iconND.png")); break;
+                        switch (items.get(idx).getSource()) {
+                            case VE -> icons.get(current).setImage(new Image("/image/iconVE.png"));
+                            case TT -> icons.get(current).setImage(new Image("/image/iconTT.png"));
+                            case TN -> icons.get(current).setImage(new Image("/image/iconTN.jpeg"));
+                            case ZING -> icons.get(current).setImage(new Image("/image/iconZING.png"));
+                            case ND -> icons.get(current).setImage(new Image("/image/iconND.png"));
                         }
 
                         if (!items.get(idx).getImgSrc().equals("")){
@@ -197,11 +192,11 @@ public class Controller implements Initializable {
         }
     }
 
-    public void menuCategories(ActionEvent event) {
+    public void menuCategories() {
         new SceneSwitch(anchorPane).menuCategories();
     }
 
-    public void article(ActionEvent event, int index) {
+    public void article(int index) {
         new SceneSwitch(anchorPane).article(items, index);
         System.out.println(items.get(index).getLink());
     }

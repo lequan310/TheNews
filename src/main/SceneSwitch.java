@@ -22,7 +22,7 @@ public class SceneSwitch {
     public SceneSwitch(){}
 
     static class MenuHandler implements EventHandler<KeyEvent> {
-        private Controller controller = null;
+        private final Controller controller;
 
         public MenuHandler(Controller controller){
             this.controller = controller;

@@ -38,13 +38,11 @@ public class ArticleController implements Initializable{
     @FXML private FlowPane content;
     @FXML private ImageView thumbnail;
     @FXML private Label title;
-    @FXML private Button home;
-    @FXML private Button category;
 
     private final int WORDSIZE = 18;
     private final int SPACE = 5;
     private final ArrayList<Item> items;
-    private Item item = null;
+    private Item item;
     private int index = 0;
 
     public ArticleController(ArrayList<Item> items, int index){
@@ -184,8 +182,8 @@ public class ArticleController implements Initializable{
             // Video article
             if (urlAddress.contains("https://zingnews.vn/video")){
                 Elements body = doc.select("div[id=video-featured]");
-                Elements videos = doc.select("video");
-                Elements articles = doc.select("div.video-info");
+                Elements videos = body.select("video");
+                Elements articles = body.select("div.video-info");
 
                 Button btnPlayPause = createVideoButton(videos.first().attr("src"));
                 Label summary = createLabel(articles.select("p.video-summary").text(), WORDSIZE);
@@ -426,11 +424,11 @@ public class ArticleController implements Initializable{
         alert.show();
     }
 
-    public void menuCategories(ActionEvent event)  {
+    public void menuCategories()  {
         new SceneSwitch(anchorPane).menuCategories();
     }
 
-    public void menuHome(ActionEvent event){
+    public void menuHome(){
         new SceneSwitch(anchorPane).menuHome(0);
     }
 }
