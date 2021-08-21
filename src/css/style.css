@@ -43,8 +43,8 @@
 }
 
 .progress-bar .track {
-    -fx-border-color: forestgreen;
-    -fx-control-inner-background: palegreen;
+    -fx-border-color: black;
+    -fx-control-inner-background: black;
 }
 
 .progress-bar .bar {
@@ -76,4 +76,8 @@
 .scroll-pane .scroll-bar .increment-arrow,
 .scroll-pane .scroll-bar .decrement-arrow {
     -fx-padding: 0 7.5 0 0;
+}
+
+.blacker-gradient{
+    -fx-background-color: linear-gradient(to top, #000000,transparent);
 }

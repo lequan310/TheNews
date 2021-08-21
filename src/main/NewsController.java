@@ -352,8 +352,7 @@ public class NewsController extends Task {
 
                 // Create and add news item to list
                 Item item = new Item(title, link, date, imgSrc, Source.ND);
-                if (!items.contains(item))
-                    items.add(item);
+                items.add(item);
             }
         }
         catch (IOException e) {

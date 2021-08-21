@@ -53,7 +53,7 @@ public class SceneSwitch {
         return scene;
     }
 
-    public void menuCategories()   {
+    public void menuCategories() {
         try{
             root = FXMLLoader.load(getClass().getResource("../fxml/Categories.fxml"));
             anchorPane.getScene().setRoot(root);

@@ -99,7 +99,6 @@ public class Controller implements Initializable {
             NewsController newsController = new NewsController(categoryIndex);
             Thread load = new Thread(newsController);
             pb.progressProperty().bind(newsController.progressProperty());
-
             load.start();
             load.join();
 
@@ -110,7 +109,7 @@ public class Controller implements Initializable {
             if (items.size() == 0) {
                 throwAlert();
             }
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
