@@ -5,7 +5,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,11 +20,29 @@ public class NewsController extends Task {
     private final ArrayList<Item> items = new ArrayList<>();
     private int categoryIndex = 0;
 
-    private final String rssVE = "https://vnexpress.net/rss/tin-moi-nhat.rss";
-    private final String rssTuoiTre = "https://tuoitre.vn/rss/tin-moi-nhat.rss";
-    private final String rssThanhNien = "https://thanhnien.vn/rss/home.rss";
-    private final String zing = "https://zingnews.vn/";
-    private final String nhanDan = "https://nhandan.vn";
+    private final String[] VNEXPRESS = {"https://vnexpress.net/rss/tin-moi-nhat.rss", "https://vnexpress.net/rss/suc-khoe.rss", "https://vnexpress.net/rss/phap-luat.rss",
+            "https://vnexpress.net/rss/kinh-doanh.rss", "https://vnexpress.net/rss/so-hoa.rss", "https://vnexpress.net/rss/suc-khoe.rss",
+            "https://vnexpress.net/rss/the-thao.rss", "https://vnexpress.net/rss/giai-tri.rss", "https://vnexpress.net/rss/the-gioi.rss",
+            "https://vnexpress.net/rss/du-lich.rss", "https://vnexpress.net/rss/giao-duc.rss", "https://vnexpress.net/rss/khoa-hoc.rss"};
+
+    private final String[] TUOITRE = {"https://tuoitre.vn/rss/tin-moi-nhat.rss", "https://tuoitre.vn/rss/suc-khoe.rss", "https://tuoitre.vn/rss/phap-luat.rss",
+            "https://tuoitre.vn/rss/kinh-doanh.rss", "https://tuoitre.vn/rss/cong-nghe.rss", "https://tuoitre.vn/rss/suc-khoe.rss",
+            "https://tuoitre.vn/rss/the-thao.rss", "https://tuoitre.vn/rss/giai-tri.rss", "https://tuoitre.vn/rss/the-gioi.rss",
+            "https://tuoitre.vn/rss/xe.rss", "https://tuoitre.vn/rss/giao-duc.rss", "https://tuoitre.vn/rss/khoa-hoc.rss"};
+
+    private final String[] THANHNIEN = {"https://thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/suc-khoe.rss", "https://thanhnien.vn/rss/thoi-su/chinh-tri.rss",
+            "https://thanhnien.vn/rss/tai-chinh-kinh-doanh.rss", "https://thanhnien.vn/rss/cong-nghe.rss", "https://thanhnien.vn/rss/suc-khoe.rss",
+            "https://thethao.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giai-tri.rss", "https://thanhnien.vn/rss/the-gioi.rss",
+            "https://game.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giao-duc.rss", "https://thanhnien.vn/rss/gioi-tre.rss"};
+
+    private final String[] ZING = {"https://zingnews.vn/", "https://zingnews.vn/suc-khoe.html", "https://zingnews.vn/chinh-tri.html",
+            "https://zingnews.vn/kinh-doanh-tai-chinh.html", "https://zingnews.vn/cong-nghe.html", "https://zingnews.vn/suc-khoe.html",
+            "https://zingnews.vn/the-thao.html", "https://zingnews.vn/giai-tri.html", "https://zingnews.vn/the-gioi.html",
+            "https://zingnews.vn/doi-song.html", "https://zingnews.vn/giao-duc.html", "https://zingnews.vn/du-lich.html"};
+
+    private final String[] NHANDAN = {"https://nhandan.vn/", "https://nhandan.vn/y-te", "https://nhandan.vn/chinhtri",
+            "https://nhandan.vn/kinhte", "https://nhandan.vn/khoahoc-congnghe", "https://nhandan.vn/y-te", "https://nhandan.vn/thethao",
+            "https://nhandan.vn/vanhoa", "https://nhandan.vn/thegioi", "https://nhandan.vn/xahoi", "https://nhandan.vn/giaoduc", "https://nhandan.vn/bandoc"};
 
     public ArrayList<Item> getItems() {
         return this.items;
@@ -33,47 +50,92 @@ public class NewsController extends Task {
 
     @Override
     protected Object call() throws Exception {
-        long testStart = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
+
         Thread t1 = new Thread(() -> {
-            long start = System.currentTimeMillis();
-            readRSSVe(rssVE);
+            readRSSVe(VNEXPRESS[categoryIndex]);
             System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
         });
-
         Thread t2 = new Thread(() -> {
-            long start = System.currentTimeMillis();
-            readRSSTuoiTre(rssTuoiTre);
+            readRSSTuoiTre(TUOITRE[categoryIndex]);
             System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
         });
-
         Thread t3 = new Thread(() -> {
-            long start = System.currentTimeMillis();
-            readRSSThanhNien(rssThanhNien);
+            readRSSThanhNien(THANHNIEN[categoryIndex]);
             System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
         });
-
         Thread t4 = new Thread(() -> {
-            long start = System.currentTimeMillis();
-            readZing(zing);
+            readZing(ZING[categoryIndex]);
             System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
         });
-
         Thread t5 = new Thread(() -> {
-            long start = System.currentTimeMillis();
-            readNhanDan(nhanDan);
+            readNhanDan(NHANDAN[categoryIndex]);
             System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
         });
 
-        for (Thread t : Arrays.asList(t1, t2, t3, t4, t5)) {
-            t.start();
-        }
+        if (categoryIndex == 9){
+            System.out.println("Others");
+            Thread t6 = new Thread(() -> {
+                readRSSVe(VNEXPRESS[categoryIndex + 1]);
+                System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
+            });
+            Thread t7 = new Thread(() -> {
+                readRSSTuoiTre(TUOITRE[categoryIndex + 1]);
+                System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
+            });
+            Thread t8 = new Thread(() -> {
+                readRSSThanhNien(THANHNIEN[categoryIndex + 1]);
+                System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
+            });
+            Thread t9 = new Thread(() -> {
+                readZing(ZING[categoryIndex + 1]);
+                System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
+            });
+            Thread t10 = new Thread(() -> {
+                readNhanDan(NHANDAN[categoryIndex + 1]);
+                System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
+            });
+            Thread t11 = new Thread(() -> {
+                readRSSVe(VNEXPRESS[categoryIndex + 2]);
+                System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
+            });
+            Thread t12 = new Thread(() -> {
+                readRSSTuoiTre(TUOITRE[categoryIndex + 2]);
+                System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
+            });
+            Thread t13 = new Thread(() -> {
+                readRSSThanhNien(THANHNIEN[categoryIndex + 2]);
+                System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
+            });
+            Thread t14 = new Thread(() -> {
+                readZing(ZING[categoryIndex + 2]);
+                System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
+            });
+            Thread t15 = new Thread(() -> {
+                readNhanDan(NHANDAN[categoryIndex + 2]);
+                System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
+            });
 
-        for (Thread t : Arrays.asList(t1, t2, t3, t4, t5)) {
-            t.join();
+            for (Thread t : Arrays.asList(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15)) {
+                t.start();
+            }
+
+            for (Thread t : Arrays.asList(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15)) {
+                t.join();
+            }
+        }
+        else{
+            for (Thread t : Arrays.asList(t1, t2, t3, t4, t5)) {
+                t.start();
+            }
+
+            for (Thread t : Arrays.asList(t1, t2, t3, t4, t5)) {
+                t.join();
+            }
         }
 
         Collections.sort(items);
-        System.out.println("Achieve item list: " + (System.currentTimeMillis() - testStart) + " ms");
+        System.out.println("Achieve item list: " + (System.currentTimeMillis() - start) + " ms");
         return null;
     }
 
@@ -274,6 +336,7 @@ public class NewsController extends Task {
 
     public void readNhanDan(String urlAddress) {
         try {
+            int count = 0;
             Document doc = Jsoup.connect(urlAddress).get();
             Elements body = doc.getElementsByClass("swrapper");
 
@@ -291,7 +354,7 @@ public class NewsController extends Task {
 
                 // Get link
                 link = e.select("a").attr("href");
-                if (!link.contains("https://nhandan.vn")) link = "https://nhandan.vn" + link;
+                if (!link.contains("https://")) link = "https://nhandan.vn" + link;
 
                 // Get pubDate
                 pubDate = e.getElementsByClass("box-meta-small").text();
@@ -304,7 +367,8 @@ public class NewsController extends Task {
                 Item item = new Item(title, link, date, imgSrc, Source.ND);
                 items.add(item);
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
         }
     }

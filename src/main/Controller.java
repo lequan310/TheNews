@@ -1,6 +1,7 @@
 package main;
 
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -111,11 +112,6 @@ public class Controller implements Initializable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        // No multi-threading
-        /*NewsController newsController = new NewsController(categoryIndex);
-        items = newsController.getItems();
-        loadAfterBar(newsController);*/
     }
 
     private void loadAfterBar(NewsController newsController){
@@ -140,49 +136,20 @@ public class Controller implements Initializable {
         timeLabels.addAll(Arrays.asList(time, time1, time2, time3, time4, time5, time6, time7, time8, time9));
     }
 
-    public void changePage(int page){
-        long start = System.currentTimeMillis();
+    public void changePage(int page) {
         if (currentPage != page){
+            System.out.println("\nInitializing new items:");
             currentPage = page;
 
             final int ITEMCOUNT = 10;
+
             for (int i = 0; i < ITEMCOUNT; i++){
                 int idx = i + (page * ITEMCOUNT);
                 int current = i;
 
-                try{
-                    labels.get(i).setText(items.get(idx).getTitle());
-                    timeLabels.get(i).setText(items.get(idx).durationToString());
-                    buttons.get(i).setDisable(false);
-                    buttons.get(i).setOnAction(e -> article(e, idx));
+                Platform.runLater(() -> {
+                    long start = System.currentTimeMillis();
 
-                    switch (items.get(idx).getSource()){
-                        case VE:
-                            icons.get(i).setImage(new Image("/image/iconVE.png")); break;
-                        case TT:
-                            icons.get(i).setImage(new Image("/image/iconTT.png")); break;
-                        case TN:
-                            icons.get(i).setImage(new Image("/image/iconTN.png")); break;
-                        case ZING:
-                            icons.get(i).setImage(new Image("/image/iconZING.png")); break;
-                        case ND:
-                            icons.get(i).setImage(new Image("/image/iconND.png")); break;
-                    }
-
-                    if (!items.get(idx).getImgSrc().equals("")){
-                        images.get(i).setImage(new Image(items.get(idx).getImgSrc()));
-                    }else
-                        images.get(i).setImage(null);
-                }
-                catch (IndexOutOfBoundsException e){
-                    labels.get(i).setText("Empty");
-                    buttons.get(i).setDisable(true);
-                    images.get(i).setImage(null);
-                    timeLabels.get(i).setText("Not available");
-                    icons.get(i).setImage(null);
-                }
-
-                /*new Thread(() -> {
                     try{
                         labels.get(current).setText(items.get(idx).getTitle());
                         timeLabels.get(current).setText(items.get(idx).durationToString());
@@ -195,7 +162,7 @@ public class Controller implements Initializable {
                             case TT:
                                 icons.get(current).setImage(new Image("/image/iconTT.png")); break;
                             case TN:
-                                icons.get(current).setImage(new Image("/image/iconTN.png")); break;
+                                icons.get(current).setImage(new Image("/image/iconTN.jpeg")); break;
                             case ZING:
                                 icons.get(current).setImage(new Image("/image/iconZING.png")); break;
                             case ND:
@@ -214,10 +181,11 @@ public class Controller implements Initializable {
                         timeLabels.get(current).setText("Not available");
                         icons.get(current).setImage(null);
                     }
-                }).start();*/
+
+                    System.out.println("Item " + current + " " + (System.currentTimeMillis() - start) + " ms");
+                });
             }
         }
-        System.out.println("Change page: " + (System.currentTimeMillis() - start) + " ms");
     }
 
     public void menuCategories(ActionEvent event) {

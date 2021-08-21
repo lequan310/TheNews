@@ -24,6 +24,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -129,7 +130,7 @@ public class ArticleController implements Initializable{
                         videoSrc = "https://" + videoSrc;
 
                         Button btnPlayPause = createVideoButton(videoSrc);
-                        Label label = createLabel(video.get(y).select("p").text(), 14);
+                        Label label = createLabel(video.get(y).select("p").text(), 16);
                         label.setBackground(new Background(new BackgroundFill(Color.valueOf("#dddddd"), new CornerRadii(0), new Insets(0))));
 
                         content.getChildren().add(btnPlayPause);
@@ -168,11 +169,10 @@ public class ArticleController implements Initializable{
             if (body.select("div.author").size() > 0){
                 Label author = createDescription(body.select("div.author").text());
                 author.setAlignment(Pos.TOP_RIGHT);
-
-                content.getChildren().add(createLabel("", WORDSIZE));
                 content.getChildren().add(author);
             }
-        }catch (Exception e){
+        }
+        catch (Exception e){
             dealException(e, item);
         }
     }
@@ -180,63 +180,80 @@ public class ArticleController implements Initializable{
     public void readArticleZing(String urlAddress){
         try{
             Document doc = Jsoup.connect(urlAddress).get();
-            Elements body = doc.select("section.main");
-            Elements images = body.select("table.picture");
-            Elements articles = body.select("div.the-article-body > p");
-            Elements headers = body.select("div.the-article-body > h3");
-            Elements video = body.select("figure.video");
-            String summary = doc.select("p.the-article-summary").text();
 
-            String bodyHTML = body.toString();
-            String[] components = bodyHTML.trim().split("\n");
+            // Video article
+            if (urlAddress.contains("https://zingnews.vn/video")){
+                Elements body = doc.select("div[id=video-featured]");
+                Elements videos = doc.select("video");
+                Elements articles = doc.select("div.video-info");
 
-            Label description = createDescription(summary);
-            content.getChildren().addAll(createLabel("", SPACE), description);
-
-            Boolean inArticle = false;
-            for (int i = 0, j = 0, y = 0, z = 0, k = 0; k < components.length; k++) {
-                if (components[k].contains("the-article-body")){
-                    inArticle = true;
-                    continue;
-                }
-
-                if (inArticle){
-                    if (components[k].contains("<p") && i < articles.size()){
-                        Label label = createLabel(articles.get(i).text(), WORDSIZE);
-
-                        content.getChildren().add(label);
-                        i++;
-                    }
-                    else if (components[k].contains("<img") && j < images.size()){
-                        Image image = new Image(images.get(j).select("img").attr("data-src"));
-                        Label label = createImageLabel(image, images.get(j).select("td[class=\"pCaption caption\"]").text());
-
-                        content.getChildren().add(label);
-                        j++;
-                    }
-                    else if (components[k].contains("<h3") && z < headers.size()){
-                        Label label = createLabel(headers.get(z).text(), WORDSIZE);
-                        label.setFont(Font.font("Times New Roman", FontWeight.BOLD, WORDSIZE));
-
-                        content.getChildren().add(label);
-                        z++;
-                    }
-                    else if (components[k].contains("data-video-src")){
-                        Button btnPlayPause = createVideoButton(video.get(y).attr("data-video-src"));
-                        Label label = createLabel(video.get(y).select("figcaption").text(), 14);
-                        label.setBackground(new Background(new BackgroundFill(Color.valueOf("#dddddd"), new CornerRadii(0), new Insets(0))));
-
-                        content.getChildren().add(btnPlayPause);
-                        content.getChildren().add(label);
-                        y++;
-                    }
-                }
+                Button btnPlayPause = createVideoButton(videos.first().attr("src"));
+                Label summary = createLabel(articles.select("p.video-summary").text(), WORDSIZE);
+                Label author = createDescription(articles.select("span.video-author").text());
+                author.setAlignment(Pos.CENTER_RIGHT);
+                content.getChildren().addAll(btnPlayPause, summary, author);
             }
+            // Normal article
+            else{
+                Elements body = doc.select("section.main");
+                Elements images = body.select("table.picture");
+                Elements articles = body.select("div.the-article-body > p");
+                Elements headers = body.select("div.the-article-body > h3");
+                Elements video = body.select("figure.video");
+                String summary = doc.select("p.the-article-summary").text();
 
-            Label author = createDescription(doc.getElementsByClass("author").text());
-            author.setAlignment(Pos.CENTER_RIGHT);
-            content.getChildren().addAll(createLabel("", SPACE), author);
-        }catch (Exception e){
+                String bodyHTML = body.toString();
+                String[] components = bodyHTML.trim().split("\n");
+
+                Label description = createDescription(summary);
+                content.getChildren().addAll(createLabel("", SPACE), description);
+
+                Boolean inArticle = false;
+                for (int i = 0, j = 0, y = 0, z = 0, k = 0; k < components.length; k++) {
+                    if (components[k].contains("the-article-body")){
+                        inArticle = true;
+                        continue;
+                    }
+
+                    if (inArticle){
+                        if (components[k].contains("<p") && i < articles.size()){
+                            Label label = createLabel(articles.get(i).text(), WORDSIZE);
+
+                            content.getChildren().add(label);
+                            i++;
+                        }
+                        else if (components[k].contains("<img") && j < images.size()){
+                            Image image = new Image(images.get(j).select("img").attr("data-src"));
+                            Label label = createImageLabel(image, images.get(j).select("td[class=\"pCaption caption\"]").text());
+
+                            content.getChildren().add(label);
+                            j++;
+                        }
+                        else if (components[k].contains("<h3") && z < headers.size()){
+                            Label label = createLabel(headers.get(z).text(), WORDSIZE);
+                            label.setFont(Font.font("Times New Roman", FontWeight.BOLD, WORDSIZE));
+
+                            content.getChildren().add(label);
+                            z++;
+                        }
+                        else if (components[k].contains("data-video-src")){
+                            Button btnPlayPause = createVideoButton(video.get(y).attr("data-video-src"));
+                            Label label = createLabel(video.get(y).select("figcaption").text(), 16);
+                            label.setBackground(new Background(new BackgroundFill(Color.valueOf("#dddddd"), new CornerRadii(0), new Insets(0))));
+
+                            content.getChildren().add(btnPlayPause);
+                            content.getChildren().add(label);
+                            y++;
+                        }
+                    }
+                }
+
+                Label author = createDescription(doc.getElementsByClass("author").text());
+                author.setAlignment(Pos.CENTER_RIGHT);
+                content.getChildren().addAll(createLabel("", SPACE), author);
+            }
+        }
+        catch (Exception e){
             dealException(e, item);
         }
     }
@@ -361,7 +378,7 @@ public class ArticleController implements Initializable{
             label.setBackground(new Background(new BackgroundFill(Color.valueOf("#dddddd"), new CornerRadii(0), new Insets(0))));
         label.setContentDisplay(ContentDisplay.TOP);
         label.setAlignment(Pos.TOP_CENTER);
-        label.setFont(Font.font("Arial", FontPosture.ITALIC, 14));
+        label.setFont(Font.font("Arial", FontPosture.ITALIC, 16));
         label.setTextOverrun(OverrunStyle.CLIP);
         label.setWrapText(true);
         label.setPrefWidth(imageView.getFitWidth());

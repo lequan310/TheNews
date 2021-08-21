@@ -119,11 +119,7 @@
                      <graphic>
                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
-                              <ImageView fx:id="image" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true">
-                                 <image>
-                                    <Image url="@../image/sampleimg.jpg" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fx:id="image" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true" />
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
                                     <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
@@ -141,7 +137,7 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <Label fx:id="time" prefHeight="43.0" prefWidth="145.0" text="3 hours 40 minutes 32 seconds ago" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
+                                          <Label fx:id="time" prefHeight="43.0" prefWidth="145.0" text="Not Available" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
                                              <font>
                                                 <Font size="15.0" />
                                              </font>
@@ -172,11 +168,7 @@
                      <graphic>
                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
-                              <ImageView fx:id="image1" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true">
-                                 <image>
-                                    <Image url="@../image/sampleimg.jpg" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fx:id="image1" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true" />
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
                                     <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
@@ -194,7 +186,7 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <Label fx:id="time1" prefHeight="43.0" prefWidth="145.0" text="3 hours 40 minutes 32 seconds ago" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
+                                          <Label fx:id="time1" prefHeight="43.0" prefWidth="145.0" text="Not Available" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
                                              <font>
                                                 <Font size="15.0" />
                                              </font>
@@ -225,11 +217,7 @@
                      <graphic>
                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
-                              <ImageView fx:id="image2" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true">
-                                 <image>
-                                    <Image url="@../image/sampleimg.jpg" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fx:id="image2" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true" />
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
                                     <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
@@ -247,7 +235,7 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <Label fx:id="time2" prefHeight="43.0" prefWidth="145.0" text="3 hours 40 minutes 32 seconds ago" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
+                                          <Label fx:id="time2" prefHeight="43.0" prefWidth="145.0" text="Not Available" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
                                              <font>
                                                 <Font size="15.0" />
                                              </font>
@@ -278,11 +266,7 @@
                      <graphic>
                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
-                              <ImageView fx:id="image3" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true">
-                                 <image>
-                                    <Image url="@../image/sampleimg.jpg" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fx:id="image3" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true" />
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
                                     <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
@@ -300,7 +284,7 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <Label fx:id="time3" prefHeight="43.0" prefWidth="145.0" text="3 hours 40 minutes 32 seconds ago" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
+                                          <Label fx:id="time3" prefHeight="43.0" prefWidth="145.0" text="Not Available" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
                                              <font>
                                                 <Font size="15.0" />
                                              </font>
@@ -331,11 +315,7 @@
                      <graphic>
                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
-                              <ImageView fx:id="image4" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true">
-                                 <image>
-                                    <Image url="@../image/sampleimg.jpg" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fx:id="image4" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true" />
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
                                     <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
@@ -353,7 +333,7 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <Label fx:id="time4" prefHeight="43.0" prefWidth="145.0" text="3 hours 40 minutes 32 seconds ago" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
+                                          <Label fx:id="time4" prefHeight="43.0" prefWidth="145.0" text="Not Available" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
                                              <font>
                                                 <Font size="15.0" />
                                              </font>
@@ -384,11 +364,7 @@
                      <graphic>
                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
-                              <ImageView fx:id="image5" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true">
-                                 <image>
-                                    <Image url="@../image/sampleimg.jpg" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fx:id="image5" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true" />
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
                                     <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
@@ -406,7 +382,7 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <Label fx:id="time5" prefHeight="43.0" prefWidth="145.0" text="3 hours 40 minutes 32 seconds ago" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
+                                          <Label fx:id="time5" prefHeight="43.0" prefWidth="145.0" text="Not Available" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
                                              <font>
                                                 <Font size="15.0" />
                                              </font>
@@ -437,11 +413,7 @@
                      <graphic>
                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
-                              <ImageView fx:id="image6" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true">
-                                 <image>
-                                    <Image url="@../image/sampleimg.jpg" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fx:id="image6" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true" />
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
                                     <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
@@ -459,7 +431,7 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <Label fx:id="time6" prefHeight="43.0" prefWidth="145.0" text="3 hours 40 minutes 32 seconds ago" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
+                                          <Label fx:id="time6" prefHeight="43.0" prefWidth="145.0" text="Not Available" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
                                              <font>
                                                 <Font size="15.0" />
                                              </font>
@@ -490,11 +462,7 @@
                      <graphic>
                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
-                              <ImageView fx:id="image7" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true">
-                                 <image>
-                                    <Image url="@../image/sampleimg.jpg" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fx:id="image7" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true" />
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
                                     <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
@@ -512,7 +480,7 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <Label fx:id="time7" prefHeight="43.0" prefWidth="145.0" text="3 hours 40 minutes 32 seconds ago" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
+                                          <Label fx:id="time7" prefHeight="43.0" prefWidth="145.0" text="Not Available" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
                                              <font>
                                                 <Font size="15.0" />
                                              </font>
@@ -543,11 +511,7 @@
                      <graphic>
                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
-                              <ImageView fx:id="image8" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true">
-                                 <image>
-                                    <Image url="@../image/sampleimg.jpg" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fx:id="image8" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true" />
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
                                     <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
@@ -565,7 +529,7 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <Label fx:id="time8" prefHeight="43.0" prefWidth="145.0" text="3 hours 40 minutes 32 seconds ago" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
+                                          <Label fx:id="time8" prefHeight="43.0" prefWidth="145.0" text="Not Available" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
                                              <font>
                                                 <Font size="15.0" />
                                              </font>
@@ -596,11 +560,7 @@
                      <graphic>
                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" style="-fx-background-radius: 50;" styleClass="shadow" stylesheets="@../css/style.css">
                            <children>
-                              <ImageView fx:id="image9" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true">
-                                 <image>
-                                    <Image url="@../image/sampleimg.jpg" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fx:id="image9" fitHeight="300.0" fitWidth="500.0" pickOnBounds="true" />
                               <VBox alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="500.0" styleClass="black-gradient" stylesheets="@../css/style.css">
                                  <children>
                                     <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
@@ -618,7 +578,7 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <Label fx:id="time9" prefHeight="43.0" prefWidth="145.0" text="3 hours 40 minutes 32 seconds ago" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
+                                          <Label fx:id="time9" prefHeight="43.0" prefWidth="145.0" text="Not Available" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
                                              <font>
                                                 <Font size="15.0" />
                                              </font>
