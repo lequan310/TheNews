@@ -40,11 +40,12 @@ public class ArticleController implements Initializable{
     private final int WORDSIZE = 18;
     private final ArrayList<Item> items;
     private Item item;
-    private int index = 0;
+    private int index = 0, categoryIndex;
 
-    public ArticleController(ArrayList<Item> items, int index){
+    public ArticleController(ArrayList<Item> items, int index, int categoryIndex){
         this.items = items;
         this.index = index;
+        this.categoryIndex = categoryIndex;
         item = items.get(index);
     }
 
@@ -194,7 +195,7 @@ public class ArticleController implements Initializable{
             System.out.println(urlAddress);
             Document doc = Jsoup.connect(urlAddress).get();
 
-            // Normal article
+            // Video article
             if (urlAddress.contains("https://thanhnien.vn/video")){
                 Label label = createLabel(doc.select("div.sapo").text(), WORDSIZE);
 
@@ -203,6 +204,7 @@ public class ArticleController implements Initializable{
                 Label videoButton = createVideoButton(videoSrc, "");
                 content.getChildren().addAll(label, videoButton);
             }
+            // Normal article
             else{
                 Elements body = doc.select("div.pswp-content");
                 Elements article = body.select("div[id=abody] > div");
@@ -235,6 +237,8 @@ public class ArticleController implements Initializable{
                         if (components[k].contains("<div")) {
                             divCounter++;
                             text = article.get(i).text();
+
+                            if (divCounter >= 2) text = "";
                         }
                         if (components[k].contains("</div>")) {
                             divCounter--;
@@ -254,7 +258,7 @@ public class ArticleController implements Initializable{
                         }
                         else if (components[k].contains("<h2")) {
                             Label label = createLabel(headers.get(z).text(), WORDSIZE);
-                            label.setFont(Font.font("Times New Roman", FontWeight.BOLD, WORDSIZE));
+                            label.setFont(Font.font("Times New Roman", FontWeight.BOLD, WORDSIZE + 2));
                             content.getChildren().add(label);
                             z++;
                         }
@@ -266,9 +270,17 @@ public class ArticleController implements Initializable{
                         }
                     }
                 }
+
+                Label author = createDescription(doc.select("div.left h4").text());
+                author.setAlignment(Pos.TOP_RIGHT);
+                content.getChildren().add(author);
             }
-        } catch (IOException e) {
+        }
+        catch (Exception e) {
             System.out.println(e.getMessage());
+
+            if (e instanceof IOException)
+                dealException(e, item);
         }
     }
 
@@ -536,7 +548,7 @@ public class ArticleController implements Initializable{
     }
 
     public void menuHome(){
-        new SceneSwitch(anchorPane).menuHome(0);
+        new SceneSwitch(anchorPane).menuHome(categoryIndex);
     }
 
     public void nextArticle(){

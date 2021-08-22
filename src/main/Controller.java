@@ -163,7 +163,7 @@ public class Controller implements Initializable {
                     try{
                         labels.get(i).setText(items.get(idx).getTitle());
                         timeLabels.get(i).setText(items.get(idx).durationToString());
-                        buttons.get(i).setOnAction(e -> article(idx));
+                        buttons.get(i).setOnAction(e -> article(idx, categoryIndex));
 
                         switch (items.get(idx).getSource()) {
                             case VE -> icons.get(i).setImage(new Image("/image/iconVE.png"));
@@ -199,7 +199,7 @@ public class Controller implements Initializable {
         new SceneSwitch(anchorPane).menuCategories();
     }
 
-    public void article(int index) {
-        new SceneSwitch(anchorPane).article(items, index);
+    public void article(int index, int categoryIndex) {
+        new SceneSwitch(anchorPane).article(items, index, categoryIndex);
     }
 }

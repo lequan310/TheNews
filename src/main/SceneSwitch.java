@@ -93,10 +93,10 @@ public class SceneSwitch {
         }
     }
 
-    public void article(ArrayList<Item> items, int index){
+    public void article(ArrayList<Item> items, int index, int categoryIndex){
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/NewsTemplate.fxml"));
-            ArticleController articleController = new ArticleController(items, index);
+            ArticleController articleController = new ArticleController(items, index, categoryIndex);
             loader.setController(articleController);
 
             root = loader.load();
