@@ -1,6 +1,7 @@
 package main;
 
 import javafx.concurrent.Task;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -54,27 +55,22 @@ public class NewsController extends Task {
 
         Thread t1 = new Thread(() -> {
             readRSSVe(VNEXPRESS[categoryIndex]);
-            updateProgress(0.1, 1);
             System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
         });
         Thread t2 = new Thread(() -> {
             readRSSTuoiTre(TUOITRE[categoryIndex]);
-            updateProgress(0.2, 1);
             System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
         });
         Thread t3 = new Thread(() -> {
             readRSSThanhNien(THANHNIEN[categoryIndex]);
-            updateProgress(0.3, 1);
             System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
         });
         Thread t4 = new Thread(() -> {
             readZing(ZING[categoryIndex]);
-            updateProgress(0.4, 1);
             System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
         });
         Thread t5 = new Thread(() -> {
             readNhanDan(NHANDAN[categoryIndex]);
-            updateProgress(0.5, 1);
             System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
         });
 
@@ -225,7 +221,7 @@ public class NewsController extends Task {
                 } else if (line.contains("</item>") && inItem) {
                     inItem = false;
                     Item item = new Item(title, link, date, imgSrc, Source.TT);
-                    items.add(item);
+                    items.add(item);;
                 }
             }
 
@@ -268,7 +264,7 @@ public class NewsController extends Task {
                         imgSrc = extract(line, "<image>", "</image>");
 
                         Item item = new Item(title, link, date, imgSrc, Source.TN);
-                        items.add(item);
+                        items.add(item);;
                         inItem = false;
                     } catch (StringIndexOutOfBoundsException e) {
 
@@ -287,6 +283,9 @@ public class NewsController extends Task {
     public void readZing(String urlAddress) {
         try {
             Document doc = Jsoup.connect(urlAddress).get();
+            final int statusCode = doc.connection().response().statusCode();
+            System.out.println(statusCode);
+
             Elements body = doc.select("section[id~=.*-latest]");
             Elements featured = doc.select("section[id~=.*-featured]");
             body.addAll(featured);
@@ -314,7 +313,7 @@ public class NewsController extends Task {
 
                 // Create and add news item to list
                 Item item = new Item(title, link, date, imgSrc, Source.ZING);
-                items.add(item);
+                items.add(item);;
             }
         } catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
@@ -323,8 +322,10 @@ public class NewsController extends Task {
 
     public void readNhanDan(String urlAddress) {
         try {
-            int count = 0;
             Document doc = Jsoup.connect(urlAddress).get();
+            final int statusCode = doc.connection().response().statusCode();
+            System.out.println(statusCode);
+
             Elements body = doc.getElementsByClass("swrapper");
 
             String title = "", pubDate = "", link = "", imgSrc = "";
@@ -352,7 +353,7 @@ public class NewsController extends Task {
 
                 // Create and add news item to list
                 Item item = new Item(title, link, date, imgSrc, Source.ND);
-                items.add(item);
+                items.add(item);;
             }
         }
         catch (IOException e) {
@@ -367,5 +368,14 @@ public class NewsController extends Task {
         int lastPos = temp.indexOf(end);
         temp = temp.substring(0, lastPos);
         return temp;
+    }
+
+    private int getNextIndex(Item item) {
+        for (int i = 0; i < items.size(); i++){
+            if (item.compareTo(items.get(i)) <= 0)
+                return i;
+        }
+        
+        return items.size();
     }
 }

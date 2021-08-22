@@ -2,7 +2,6 @@ package main;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -36,6 +35,23 @@ public class SceneSwitch {
                 case DIGIT3, NUMPAD3 -> controller.changePage(2);
                 case DIGIT4, NUMPAD4 -> controller.changePage(3);
                 case DIGIT5, NUMPAD5 -> controller.changePage(4);
+            }
+        }
+    }
+
+    static class ArticleHandler implements EventHandler<KeyEvent> {
+        private ArticleController articleController;
+
+        public ArticleHandler(ArticleController articleController){
+            this.articleController = articleController;
+        }
+
+        @Override
+        public void handle(KeyEvent keyEvent) {
+            switch (keyEvent.getCode()){
+                case RIGHT, CLOSE_BRACKET -> articleController.nextArticle();
+                case LEFT, OPEN_BRACKET -> articleController.previousArticle();
+                case F5 -> articleController.readArticle();
             }
         }
     }
@@ -85,6 +101,7 @@ public class SceneSwitch {
             loader.setController(articleController);
 
             root = loader.load();
+            root.setOnKeyPressed(new ArticleHandler(articleController));
             anchorPane.getScene().setRoot(root);
         }
         catch (Exception e){

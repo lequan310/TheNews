@@ -1,9 +1,6 @@
 package main;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -16,15 +13,12 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Stage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -38,9 +32,12 @@ public class ArticleController implements Initializable{
     @FXML private FlowPane content;
     @FXML private ImageView thumbnail;
     @FXML private Label title;
+    @FXML private Label timeLabel;
+    @FXML private Label sourceLabel;
+    @FXML private Button previousButton;
+    @FXML private Button nextButton;
 
     private final int WORDSIZE = 18;
-    private final int SPACE = 5;
     private final ArrayList<Item> items;
     private Item item;
     private int index = 0;
@@ -53,11 +50,26 @@ public class ArticleController implements Initializable{
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        readArticle();
+        previousButton.setOnAction(e -> previousArticle());
+        nextButton.setOnAction(e -> nextArticle());
+
+        if (index == 0)
+            previousButton.setDisable(true);
+        else if (index == items.size() - 1)
+            nextButton.setDisable(true);
+    }
+
+    public void readArticle(){
+        content.getChildren().clear();
+        title.setText(item.getTitle());
+        timeLabel.setText(item.getPubDate());
+        sourceLabel.setText(item.getLink());
+
         if (item.getImgSrc().compareTo("") != 0)
             thumbnail.setImage(new Image(item.getImgSrc()));
         else
             thumbnail.setImage(null);
-        title.setText(item.getTitle());
 
         if (item.getSource() == Source.TT)
             readArticleTT(item.getLink());
@@ -66,12 +78,15 @@ public class ArticleController implements Initializable{
         else if (item.getSource() == Source.ND)
             readArticleND(item.getLink());
 
-        content.getChildren().addAll(createLabel("", WORDSIZE), createLabel("", WORDSIZE));
+        content.getChildren().addAll(createLabel("", WORDSIZE));
     }
 
     public void readArticleTT(String urlAddress){
         try{
             Document doc = Jsoup.connect(urlAddress).get();
+            final int statusCode = doc.connection().response().statusCode();
+            System.out.println("Status code: " + statusCode + " " + urlAddress);
+
             Elements body = doc.select("div.main-content-body"); // Select elements in the div with class main-content-body
             Elements images = body.select("div[type=Photo]"); // Select image elements from the main-content-body
             Elements article = body.select("div[id=main-detail-body] > p"); // Select text elements from the main-content-body
@@ -83,8 +98,6 @@ public class ArticleController implements Initializable{
 
             Label description = createDescription(body.select("h2").text());
 
-            content.getChildren().clear();
-            content.getChildren().add(createLabel("", SPACE));
             content.getChildren().add(description);
 
             Boolean inDiv = false, inWrapNote = false, inArticle = false;
@@ -127,12 +140,9 @@ public class ArticleController implements Initializable{
                         videoSrc = videoSrc.replace("&vid=", "/");
                         videoSrc = "https://" + videoSrc;
 
-                        Button btnPlayPause = createVideoButton(videoSrc);
-                        Label label = createLabel(video.get(y).select("p").text(), 16);
-                        label.setBackground(new Background(new BackgroundFill(Color.valueOf("#dddddd"), new CornerRadii(0), new Insets(0))));
+                        Label videoButton = createVideoButton(videoSrc, video.get(y).select("p").text());
 
-                        content.getChildren().add(btnPlayPause);
-                        content.getChildren().add(label);
+                        content.getChildren().add(videoButton);
                         y++;
                     }
                     else if (components[k].contains("<img") && j < images.size()){
@@ -171,13 +181,18 @@ public class ArticleController implements Initializable{
             }
         }
         catch (Exception e){
-            dealException(e, item);
+            System.out.println(e.getMessage());
+
+            if (e instanceof IOException)
+                dealException(e, item);
         }
     }
 
     public void readArticleZing(String urlAddress){
         try{
             Document doc = Jsoup.connect(urlAddress).get();
+            final int statusCode = doc.connection().response().statusCode();
+            System.out.println("Status code: " + statusCode + " " + urlAddress);
 
             // Video article
             if (urlAddress.contains("https://zingnews.vn/video")){
@@ -185,11 +200,10 @@ public class ArticleController implements Initializable{
                 Elements videos = body.select("video");
                 Elements articles = body.select("div.video-info");
 
-                Button btnPlayPause = createVideoButton(videos.first().attr("src"));
-                Label summary = createLabel(articles.select("p.video-summary").text(), WORDSIZE);
+                Label btnPlayPause = createVideoButton(videos.first().attr("src"), articles.select("p.video-summary").text());
                 Label author = createDescription(articles.select("span.video-author").text());
                 author.setAlignment(Pos.CENTER_RIGHT);
-                content.getChildren().addAll(btnPlayPause, summary, author);
+                content.getChildren().addAll(btnPlayPause, author);
             }
             // Normal article
             else{
@@ -204,7 +218,7 @@ public class ArticleController implements Initializable{
                 String[] components = bodyHTML.trim().split("\n");
 
                 Label description = createDescription(summary);
-                content.getChildren().addAll(createLabel("", SPACE), description);
+                content.getChildren().add(description);
 
                 Boolean inArticle = false;
                 for (int i = 0, j = 0, y = 0, z = 0, k = 0; k < components.length; k++) {
@@ -235,12 +249,9 @@ public class ArticleController implements Initializable{
                             z++;
                         }
                         else if (components[k].contains("data-video-src")){
-                            Button btnPlayPause = createVideoButton(video.get(y).attr("data-video-src"));
-                            Label label = createLabel(video.get(y).select("figcaption").text(), 16);
-                            label.setBackground(new Background(new BackgroundFill(Color.valueOf("#dddddd"), new CornerRadii(0), new Insets(0))));
+                            Label videoButton = createVideoButton(video.get(y).attr("data-video-src"), video.get(y).select("figcaption").text());
 
-                            content.getChildren().add(btnPlayPause);
-                            content.getChildren().add(label);
+                            content.getChildren().add(videoButton);
                             y++;
                         }
                     }
@@ -248,17 +259,23 @@ public class ArticleController implements Initializable{
 
                 Label author = createDescription(doc.getElementsByClass("author").text());
                 author.setAlignment(Pos.CENTER_RIGHT);
-                content.getChildren().addAll(createLabel("", SPACE), author);
+                content.getChildren().add(author);
             }
         }
         catch (Exception e){
-            dealException(e, item);
+            System.out.println(e.getMessage());
+
+            if (e instanceof IOException)
+                dealException(e, item);
         }
     }
 
-    public void readArticleND(String urlAddress){
+    public void readArticleND(String urlAddress) {
         try {
             Document doc = Jsoup.connect(urlAddress).get();
+            final int statusCode = doc.connection().response().statusCode();
+            System.out.println("Status code: " + statusCode + " " + urlAddress);
+
             Elements body = doc.select("div.box-content-detail");
             Elements images = body.select("div.detail-content-body figure");
             Elements article = body.select("div.detail-content-body > p");
@@ -275,7 +292,6 @@ public class ArticleController implements Initializable{
             // Description
             Label description = createDescription(body.select("div.box-des-detail p").text());
 
-            content.getChildren().clear();
             content.getChildren().addAll(thumbnail, description);
 
             // Article and Images
@@ -335,8 +351,12 @@ public class ArticleController implements Initializable{
             Label author = createDescription(body.select("div.box-author strong").text());
             author.setAlignment(Pos.TOP_RIGHT);
             content.getChildren().add(author);
-        } catch (Exception e){
-            dealException(e, item);
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+
+            if (e instanceof IOException)
+                dealException(e, item);
         }
     }
 
@@ -348,6 +368,7 @@ public class ArticleController implements Initializable{
         label.setTextOverrun(OverrunStyle.CLIP);
         label.setWrapText(true);
         label.setPrefWidth(800);
+        label.setAlignment(Pos.CENTER);
 
         return label;
     }
@@ -368,11 +389,35 @@ public class ArticleController implements Initializable{
         final int MAX_WIDTH = 1000;
         ImageView imageView = new ImageView(image);
         imageView.setPreserveRatio(true);
-        Label label = new Label(caption);
         imageView.setFitWidth(Math.min(image.getWidth(), MAX_WIDTH));
-        label.setGraphic(imageView);
 
         // Adjust label position and size
+        Label label = createGraphicLabel(caption);
+        label.setGraphic(imageView);
+        label.setPrefWidth(imageView.getFitWidth());
+
+        return label;
+    }
+
+    public Label createVideoButton(String videoSrc, String caption){
+        // Create media player
+        Media media = new Media(videoSrc);
+        MediaPlayer mediaPlayer = new MediaPlayer(media);
+        MediaView mediaView = new MediaView(mediaPlayer);
+        mediaView.setFitWidth(800);
+        mediaView.setPreserveRatio(true);
+        mediaView.setOnMouseEntered(e -> mediaPlayer.play());
+        mediaView.setOnMouseExited(e -> mediaPlayer.pause());
+
+        // Adjust label position and size
+        Label label = createGraphicLabel("DRAG MOUSE IN TO PLAY: " + caption);
+        label.setGraphic(mediaView);
+        label.setPrefWidth(mediaView.getFitWidth());
+        return label;
+    }
+
+    private Label createGraphicLabel(String caption) {
+        Label label = new Label(caption);
         if (caption.compareTo("") != 0)
             label.setBackground(new Background(new BackgroundFill(Color.valueOf("#dddddd"), new CornerRadii(0), new Insets(0))));
         label.setContentDisplay(ContentDisplay.TOP);
@@ -380,31 +425,8 @@ public class ArticleController implements Initializable{
         label.setFont(Font.font("Arial", FontPosture.ITALIC, 16));
         label.setTextOverrun(OverrunStyle.CLIP);
         label.setWrapText(true);
-        label.setPrefWidth(imageView.getFitWidth());
 
         return label;
-    }
-
-    public Button createVideoButton(String videoSrc){
-        // Create media player
-        Media media = new Media(videoSrc);
-        MediaPlayer mediaPlayer = new MediaPlayer(media);
-        MediaView mediaView = new MediaView(mediaPlayer);
-        mediaView.setFitWidth(800);
-        mediaView.setPreserveRatio(true);
-
-        // Assign media player to button
-        Button btnPlayPause = new Button();
-        btnPlayPause.setGraphic(mediaView);
-        btnPlayPause.setDefaultButton(false);
-        btnPlayPause.setOnAction(e -> {
-            if (mediaPlayer.getStatus().equals(MediaPlayer.Status.PLAYING))
-                mediaPlayer.pause();
-            else
-                mediaPlayer.play();
-        });
-
-        return btnPlayPause;
     }
 
     public void dealException(Exception e, Item item){
@@ -430,5 +452,28 @@ public class ArticleController implements Initializable{
 
     public void menuHome(){
         new SceneSwitch(anchorPane).menuHome(0);
+    }
+
+    public void nextArticle(){
+        if (index == items.size() - 1) return;
+
+        index++;
+        item = items.get(index);
+        readArticle();
+        previousButton.setDisable(false);
+
+        if (index == items.size())
+            nextButton.setDisable(true);
+    }
+
+    public void previousArticle(){
+        if (index == 0) return;
+
+        index--;
+        item = items.get(index);
+        readArticle();
+        nextButton.setDisable(false);
+
+        if (index == 0) previousButton.setDisable(true);
     }
 }

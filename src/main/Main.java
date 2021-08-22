@@ -17,8 +17,8 @@ public class Main extends Application {
         stage.getIcons().add(new Image("image/book.jpg"));
         stage.setScene(scene);
         stage.setMaximized(true);
-        stage.setMinHeight(700);
-        stage.setMinWidth(870);
+        stage.setMinHeight(800);
+        stage.setMinWidth(600);
         //remove the app bar
         //stage.initStyle(StageStyle.UNDECORATED);
 

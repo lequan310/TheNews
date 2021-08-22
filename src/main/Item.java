@@ -2,6 +2,7 @@ package main;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 enum Source { VE, TT, TN, ZING, ND}
 
@@ -32,6 +33,11 @@ public class Item implements Comparable<Item> {
 
     public Duration getDuration() {
         return duration;
+    }
+
+    public String getPubDate() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm a");
+        return dtf.format(pubDate);
     }
 
     public String getImgSrc() {

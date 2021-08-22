@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" styleClass="dark-background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
@@ -77,36 +78,101 @@
             <Pane prefHeight="95.0" prefWidth="214.0" />
          </children>
       </HBox>
-      <HBox alignment="CENTER" layoutX="865.0" layoutY="105.0" prefHeight="345.0" prefWidth="1920.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <HBox alignment="CENTER" layoutX="865.0" layoutY="105.0" prefHeight="345.0" prefWidth="1920.0" spacing="7.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <Pane prefHeight="345.0" prefWidth="850.0">
-               <children>
-                  <ImageView fx:id="thumbnail" fitHeight="345.0" fitWidth="850.0" pickOnBounds="true">
+            <Pane prefHeight="200.0" prefWidth="200.0" />
+            <Button fx:id="previousButton" ellipsisString=" " mnemonicParsing="false" prefHeight="68.0" prefWidth="175.0" style="-fx-background-color: #505050; -fx-background-radius: 30;" text="Previous" textFill="#e0e0e0" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="46.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../image/sampleimg.jpg" />
+                        <Image url="@../image/baseline_chevron_left_white_48dp.png" />
                      </image>
                   </ImageView>
-                  <Pane prefHeight="345.0" prefWidth="850.0" styleClass="black-gradient" stylesheets="@../css/style.css" />
-                  <Label fx:id="title" alignment="BOTTOM_CENTER" prefHeight="319.0" prefWidth="850.0" text="Header" textFill="WHITE" textOverrun="CLIP" wrapText="true">
-                     <font>
-                        <Font name="Baskerville Old Face" size="60.0" />
-                     </font>
-                  </Label>
+               </graphic>
+               <cursor>
+                  <Cursor fx:constant="CLOSED_HAND" />
+               </cursor>
+            </Button>
+            <FlowPane alignment="CENTER" prefHeight="345.0" prefWidth="700.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Pane prefHeight="345.0" prefWidth="700.0">
+                     <children>
+                        <FlowPane alignment="CENTER" prefHeight="345.0" prefWidth="700.0">
+                           <children>
+                              <ImageView fx:id="thumbnail" fitHeight="345.0" fitWidth="700.0" pickOnBounds="true" />
+                           </children>
+                        </FlowPane>
+                        <Pane prefHeight="345.0" prefWidth="700.0" styleClass="blacker-gradient" stylesheets="@../css/style.css" />
+                        <Label fx:id="title" alignment="BOTTOM_CENTER" prefHeight="320.0" prefWidth="700.0" text="Header" textAlignment="CENTER" textFill="WHITE" textOverrun="CLIP" wrapText="true">
+                           <font>
+                              <Font size="40.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </Pane>
                </children>
-            </Pane>
+            </FlowPane>
+            <Button fx:id="nextButton" mnemonicParsing="false" prefHeight="68.0" prefWidth="180.0" style="-fx-background-color: #505050; -fx-background-radius: 30;" textFill="#e0e0e0">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+               <graphic>
+                  <HBox alignment="CENTER" prefHeight="55.0" prefWidth="119.0" spacing="7.0">
+                     <children>
+                        <Label ellipsisString=" " prefHeight="30.0" prefWidth="46.0" text="Next" textFill="WHITE" wrapText="true">
+                           <font>
+                              <Font name="System Bold" size="20.0" />
+                           </font>
+                        </Label>
+                        <ImageView fitHeight="20.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/outline_arrow_forward_ios_white_48dp.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </HBox>
+               </graphic>
+               <cursor>
+                  <Cursor fx:constant="CLOSED_HAND" />
+               </cursor>
+            </Button>
+            <Pane prefHeight="200.0" prefWidth="200.0" />
          </children>
       </HBox>
-      <HBox alignment="CENTER" layoutY="453.0" prefHeight="627.0" prefWidth="1920.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="440.0">
+      <HBox alignment="CENTER_RIGHT" layoutY="453.0" prefHeight="627.0" prefWidth="1920.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="440.0">
          <children>
-            <ScrollPane fitToWidth="true" prefHeight="605.0" prefWidth="1330.0" styleClass="dark-background" stylesheets="@../css/style.css">
+            <ScrollPane fx:id="scrollPane" fitToWidth="true" prefHeight="605.0" prefWidth="1330.0" styleClass="dark-background" stylesheets="@../css/style.css">
                <content>
-                  <FlowPane fx:id="content" alignment="TOP_CENTER" columnHalignment="CENTER" hgap="20.0" prefHeight="915.0" prefWidth="1668.0" styleClass="dark-background" stylesheets="@../css/style.css" vgap="20.0">
+                  <FlowPane fx:id="content" alignment="TOP_CENTER" columnHalignment="CENTER" hgap="20.0" styleClass="dark-background" stylesheets="@../css/style.css" vgap="20.0">
                      <padding>
                         <Insets bottom="20.0" left="5.0" right="5.0" top="20.0" />
                      </padding>
                   </FlowPane>
                </content>
             </ScrollPane>
+            <VBox prefHeight="640.0" prefWidth="281.0">
+               <children>
+                  <Label fx:id="timeLabel" ellipsisString="" prefHeight="119.0" prefWidth="281.0" text="Time" textFill="WHITE" textOverrun="CLIP" wrapText="true">
+                     <font>
+                        <Font name="Baskerville Old Face" size="26.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label fx:id="sourceLabel" ellipsisString="" prefHeight="273.0" prefWidth="287.0" text="Source" textFill="WHITE" textOverrun="CLIP" wrapText="true">
+                     <font>
+                        <Font name="Baskerville Old Face" size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="10.0" />
+                     </VBox.margin>
+                  </Label>
+               </children>
+            </VBox>
          </children>
       </HBox>
    </children>
