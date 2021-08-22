@@ -148,11 +148,14 @@ public class ArticleController implements Initializable{
                         y++;
                     }
                     else if (components[k].contains("<img") && j < images.size()){
-                        Image image = new Image(images.get(j).select("img").attr("src"));
-                        Label label = createImageLabel(image, images.get(j).select("p").text());
+                        try {
+                            Image image = new Image(images.get(j).select("img").attr("src"));
+                            Label label = createImageLabel(image, images.get(j).select("p").text());
 
-                        content.getChildren().add(label);
-                        j++;
+                            content.getChildren().add(label);
+                            j++;
+                        }
+                        catch (IllegalArgumentException e) { }
                     }
                     else if (components[k].contains("<div")){
                         inDiv = true;
@@ -192,8 +195,9 @@ public class ArticleController implements Initializable{
 
     private void readArticleTN(String urlAddress) {
         try {
-            System.out.println(urlAddress);
             Document doc = Jsoup.connect(urlAddress).get();
+            final int statusCode = doc.connection().response().statusCode();
+            System.out.println("Status code: " + statusCode + " " + urlAddress);
 
             // Video article
             if (urlAddress.contains("https://thanhnien.vn/video")){
@@ -219,9 +223,13 @@ public class ArticleController implements Initializable{
                 Label description = createDescription(body.select("div.sapo").text());
 
                 // Thumbnail image
-                Image thumbnail = new Image(body.select("div[id=contentAvatar] img").attr("src"));
-                Label tnImage = createImageLabel(thumbnail, body.select("div[id=contentAvatar] div.imgcaption").text());
-                content.getChildren().addAll(description, tnImage);
+                try {
+                    Image thumbnail = new Image(body.select("div[id=contentAvatar] img").attr("src"));
+                    Label tnImage = createImageLabel(thumbnail, body.select("div[id=contentAvatar] div.imgcaption").text());
+                    content.getChildren().addAll(description, tnImage);
+                }
+                // If no thumbnail image
+                catch (IllegalArgumentException e) { }
 
                 int divCounter = 0;
                 boolean inArticle = false;
@@ -252,9 +260,12 @@ public class ArticleController implements Initializable{
                         }
 
                         if (components[k].contains("class=\"imagefull\"")) {
-                            Image image = new Image(images.get(j).select("img").attr("data-src"));
-                            content.getChildren().add(createImageLabel(image, images.get(j).select("div.imgcaption").text()));
-                            j++;
+                            try {
+                                Image image = new Image(images.get(j).select("img").attr("data-src"));
+                                content.getChildren().add(createImageLabel(image, images.get(j).select("div.imgcaption").text()));
+                                j++;
+                            }
+                            catch (IllegalArgumentException e) { }
                         }
                         else if (components[k].contains("<h2")) {
                             Label label = createLabel(headers.get(z).text(), WORDSIZE);
@@ -278,6 +289,7 @@ public class ArticleController implements Initializable{
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
+            e.printStackTrace();
 
             if (e instanceof IOException)
                 dealException(e, item);
@@ -307,7 +319,7 @@ public class ArticleController implements Initializable{
                 Elements body = doc.select("section.main");
                 Elements images = body.select("table.picture");
                 Elements articles = body.select("div.the-article-body > p");
-                Elements headers = body.select("div.the-article-body > h3");
+                Elements headers = body.select("div.the-article-body h3");
                 Elements video = body.select("figure.video");
                 String summary = doc.select("p.the-article-summary").text();
 
@@ -332,11 +344,18 @@ public class ArticleController implements Initializable{
                             i++;
                         }
                         else if (components[k].contains("<img") && j < images.size()){
-                            Image image = new Image(images.get(j).select("img").attr("data-src"));
-                            Label label = createImageLabel(image, images.get(j).select("td[class=\"pCaption caption\"]").text());
+                            try {
+                                String imageURL = images.get(j).select("img").attr("data-src");
+                                if (imageURL.compareTo("") == 0)
+                                    imageURL = images.get(j).select("img").attr("src");
 
-                            content.getChildren().add(label);
-                            j++;
+                                Image image = new Image(imageURL);
+                                Label label = createImageLabel(image, images.get(j).select("td[class=\"pCaption caption\"]").text());
+
+                                content.getChildren().add(label);
+                                j++;
+                            }
+                            catch (IllegalArgumentException e) { }
                         }
                         else if (components[k].contains("<h3") && z < headers.size()){
                             Label label = createLabel(headers.get(z).text(), WORDSIZE);
@@ -361,6 +380,7 @@ public class ArticleController implements Initializable{
         }
         catch (Exception e){
             System.out.println(e.getMessage());
+            e.printStackTrace();
 
             if (e instanceof IOException)
                 dealException(e, item);
@@ -424,11 +444,14 @@ public class ArticleController implements Initializable{
                         }
                     }
                     else if (components[k].contains("<figure") && j < images.size()){
-                        Image image = new Image(images.get(j).attr("data-src"));
-                        Label label = createImageLabel(image, images.get(j).select("em").text());
+                        try {
+                            Image image = new Image(images.get(j).attr("data-src"));
+                            Label label = createImageLabel(image, images.get(j).select("em").text());
 
-                        content.getChildren().add(label);
-                        j++;
+                            content.getChildren().add(label);
+                            j++;
+                        }
+                        catch (IllegalArgumentException e) {}
                     }
                     else if (components[k].contains("<li") && y < li.size()){
                         content.getChildren().add(createLabel(li.get(y).text(), WORDSIZE));
