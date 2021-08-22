@@ -26,7 +26,7 @@
                   <URL value="@../css/style.css" />
                </stylesheets>
                <children>
-                  <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#menuCategories" prefHeight="105.0" prefWidth="161.0" styleClass="dark-background" stylesheets="@../css/style.css" textFill="TRANSPARENT" HBox.hgrow="ALWAYS">
+                  <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#menuCategories" prefHeight="105.0" prefWidth="160.0" styleClass="dark-background" stylesheets="@../css/style.css" textFill="TRANSPARENT" HBox.hgrow="ALWAYS">
                      <graphic>
                         <ImageView blendMode="SCREEN" fitHeight="46.0" fitWidth="53.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -43,7 +43,7 @@
                   </Button>
                   <AnchorPane prefHeight="95.0" prefWidth="198.0">
                      <children>
-                        <Label fx:id="categoryLabel" alignment="CENTER" prefHeight="105.0" prefWidth="300.0" text="NEW" textFill="#f6e74d" textOverrun="CLIP" wrapText="true">
+                        <Label fx:id="categoryLabel" alignment="CENTER" prefHeight="105.0" prefWidth="300.0" text="NEW" textAlignment="CENTER" textFill="#f6e74d" textOverrun="CLIP" wrapText="true">
                            <font>
                               <Font name="Baskerville Old Face" size="31.0" />
                            </font>
@@ -114,7 +114,7 @@
                         </Button>
                      </children>
                   </VBox>
-                  <ScrollPane fitToWidth="true" prefHeight="975.0" prefWidth="1840.0" styleClass="dark-background" stylesheets="@../css/style.css">
+                  <ScrollPane fx:id="scrollPane" fitToWidth="true" prefHeight="975.0" prefWidth="1840.0" styleClass="dark-background" stylesheets="@../css/style.css">
                      <content>
                         <FlowPane alignment="TOP_CENTER" columnHalignment="CENTER" hgap="20.0" prefHeight="1332.0" prefWidth="1818.0" style="-fx-background-color: #161616;" stylesheets="@../css/style.css" vgap="20.0">
                            <padding>

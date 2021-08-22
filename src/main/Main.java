@@ -13,7 +13,6 @@ public class Main extends Application {
 
         scene.getStylesheets().add("css/style.css");
         stage.setTitle("News Application");
-        stage.setResizable(true);
         stage.getIcons().add(new Image("image/book.jpg"));
         stage.setScene(scene);
         stage.setMaximized(true);

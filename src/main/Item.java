@@ -7,12 +7,12 @@ import java.time.format.DateTimeFormatter;
 enum Source { VE, TT, TN, ZING, ND}
 
 public class Item implements Comparable<Item> {
-    private String title;
-    private String link;
-    private LocalDateTime pubDate;
-    private Duration duration;
-    private String imgSrc;
-    private Source source;
+    private final String title;
+    private final String link;
+    private final LocalDateTime pubDate;
+    private final Duration duration;
+    private final String imgSrc;
+    private final Source source;
 
     public Item(String title, String link, LocalDateTime pubDate, String imgSrc, Source source) {
         this.title = title;
@@ -29,10 +29,6 @@ public class Item implements Comparable<Item> {
 
     public String getLink() {
         return link;
-    }
-
-    public Duration getDuration() {
-        return duration;
     }
 
     public String getPubDate() {
@@ -65,8 +61,7 @@ public class Item implements Comparable<Item> {
             sec += current.toSecondsPart() + " seconds ";
         }
 
-        String result = day + hour + min + sec + "ago.";
-        return result;
+        return day + hour + min + sec + "ago.";
     }
 
     public String toString(){

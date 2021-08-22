@@ -4,7 +4,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import java.io.IOException;
@@ -40,7 +39,7 @@ public class SceneSwitch {
     }
 
     static class ArticleHandler implements EventHandler<KeyEvent> {
-        private ArticleController articleController;
+        private final ArticleController articleController;
 
         public ArticleHandler(ArticleController articleController){
             this.articleController = articleController;

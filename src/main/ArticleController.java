@@ -16,7 +16,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -36,6 +35,7 @@ public class ArticleController implements Initializable{
     @FXML private Label sourceLabel;
     @FXML private Button previousButton;
     @FXML private Button nextButton;
+    @FXML private ScrollPane scrollPane;
 
     private final int WORDSIZE = 18;
     private final ArrayList<Item> items;
@@ -62,6 +62,7 @@ public class ArticleController implements Initializable{
 
     public void readArticle(){
         content.getChildren().clear();
+        scrollPane.setVvalue(0);
         title.setText(item.getTitle());
         timeLabel.setText(item.getPubDate());
         sourceLabel.setText(item.getLink());
@@ -71,17 +72,17 @@ public class ArticleController implements Initializable{
         else
             thumbnail.setImage(null);
 
-        if (item.getSource() == Source.TT)
-            readArticleTT(item.getLink());
-        else if (item.getSource() == Source.ZING)
-            readArticleZing(item.getLink());
-        else if (item.getSource() == Source.ND)
-            readArticleND(item.getLink());
+        switch (item.getSource()){
+            case TT -> readArticleTT(item.getLink());
+            case TN -> readArticleTN(item.getLink());
+            case ZING -> readArticleZing(item.getLink());
+            case ND -> readArticleND(item.getLink());
+        }
 
         content.getChildren().addAll(createLabel("", WORDSIZE));
     }
 
-    public void readArticleTT(String urlAddress){
+    private void readArticleTT(String urlAddress){
         try{
             Document doc = Jsoup.connect(urlAddress).get();
             final int statusCode = doc.connection().response().statusCode();
@@ -100,7 +101,7 @@ public class ArticleController implements Initializable{
 
             content.getChildren().add(description);
 
-            Boolean inDiv = false, inWrapNote = false, inArticle = false;
+            boolean inDiv = false, inWrapNote = false, inArticle = false;
             int divCounter = 0;
 
             for (int i = 0, j = 0, y = 0, z = 0, k = 0; k < components.length; k++){
@@ -188,7 +189,90 @@ public class ArticleController implements Initializable{
         }
     }
 
-    public void readArticleZing(String urlAddress){
+    private void readArticleTN(String urlAddress) {
+        try {
+            System.out.println(urlAddress);
+            Document doc = Jsoup.connect(urlAddress).get();
+
+            // Normal article
+            if (urlAddress.contains("https://thanhnien.vn/video")){
+                Label label = createLabel(doc.select("div.sapo").text(), WORDSIZE);
+
+                String videoSrc = doc.select("div.media-player script").toString();
+                videoSrc = extract(videoSrc, "src=\"", "\"");
+                Label videoButton = createVideoButton(videoSrc, "");
+                content.getChildren().addAll(label, videoButton);
+            }
+            else{
+                Elements body = doc.select("div.pswp-content");
+                Elements article = body.select("div[id=abody] > div");
+                Elements images = body.select("div[id=abody] table.imagefull");
+                Elements videos = body.select("div[id=abody] table.video");
+                Elements headers = body.select("div[id=abody] h2");
+
+                String bodyHTML = body.toString();
+                String[] components = bodyHTML.trim().split("\n");
+
+                // Description
+                Label description = createDescription(body.select("div.sapo").text());
+
+                // Thumbnail image
+                Image thumbnail = new Image(body.select("div[id=contentAvatar] img").attr("src"));
+                Label tnImage = createImageLabel(thumbnail, body.select("div[id=contentAvatar] div.imgcaption").text());
+                content.getChildren().addAll(description, tnImage);
+
+                int divCounter = 0;
+                boolean inArticle = false;
+                String text = "";
+
+                for (int i = 0, j = 0, y = 0, z = 0, k = 0; k < components.length; k++) {
+                    if (components[k].contains("id=\"abody\"")){
+                        inArticle = true;
+                        continue;
+                    }
+
+                    if (inArticle) {
+                        if (components[k].contains("<div")) {
+                            divCounter++;
+                            text = article.get(i).text();
+                        }
+                        if (components[k].contains("</div>")) {
+                            divCounter--;
+
+                            if (divCounter == 0) {
+                                if (text.compareTo("") != 0)
+                                    content.getChildren().add(createLabel(text, WORDSIZE));
+                                i++;
+                            }
+                            else if (divCounter == -1) break;
+                        }
+
+                        if (components[k].contains("class=\"imagefull\"")) {
+                            Image image = new Image(images.get(j).select("img").attr("data-src"));
+                            content.getChildren().add(createImageLabel(image, images.get(j).select("div.imgcaption").text()));
+                            j++;
+                        }
+                        else if (components[k].contains("<h2")) {
+                            Label label = createLabel(headers.get(z).text(), WORDSIZE);
+                            label.setFont(Font.font("Times New Roman", FontWeight.BOLD, WORDSIZE));
+                            content.getChildren().add(label);
+                            z++;
+                        }
+                        else if (components[k].contains("class=\"video\"")) {
+                            Label videoButton = createVideoButton(videos.get(y).select("div[class=\"clearfix cms-video\"]").attr("data-video-src"),
+                                    videos.get(y).select("p").text());
+                            content.getChildren().add(videoButton);
+                            y++;
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void readArticleZing(String urlAddress){
         try{
             Document doc = Jsoup.connect(urlAddress).get();
             final int statusCode = doc.connection().response().statusCode();
@@ -200,10 +284,11 @@ public class ArticleController implements Initializable{
                 Elements videos = body.select("video");
                 Elements articles = body.select("div.video-info");
 
-                Label btnPlayPause = createVideoButton(videos.first().attr("src"), articles.select("p.video-summary").text());
+                Label videoButton = createVideoButton(videos.first().attr("src"), "");
+                Label label = createLabel(articles.select("p.video-summary").text(), WORDSIZE);
                 Label author = createDescription(articles.select("span.video-author").text());
                 author.setAlignment(Pos.CENTER_RIGHT);
-                content.getChildren().addAll(btnPlayPause, author);
+                content.getChildren().addAll(videoButton, label, author);
             }
             // Normal article
             else{
@@ -220,7 +305,7 @@ public class ArticleController implements Initializable{
                 Label description = createDescription(summary);
                 content.getChildren().add(description);
 
-                Boolean inArticle = false;
+                boolean inArticle = false;
                 for (int i = 0, j = 0, y = 0, z = 0, k = 0; k < components.length; k++) {
                     if (components[k].contains("the-article-body")){
                         inArticle = true;
@@ -270,7 +355,7 @@ public class ArticleController implements Initializable{
         }
     }
 
-    public void readArticleND(String urlAddress) {
+    private void readArticleND(String urlAddress) {
         try {
             Document doc = Jsoup.connect(urlAddress).get();
             final int statusCode = doc.connection().response().statusCode();
@@ -295,7 +380,7 @@ public class ArticleController implements Initializable{
             content.getChildren().addAll(thumbnail, description);
 
             // Article and Images
-            Boolean inArticle = false, inBlockquote = false, inDiv = false;
+            boolean inArticle = false, inBlockquote = false, inDiv = false;
             for (int i = 0, j = 0, y = 0, z = 0, k = 0; k < components.length; k++){
                 if (components[k].contains("detail-content-body")){
                     inArticle = true;
@@ -360,31 +445,31 @@ public class ArticleController implements Initializable{
         }
     }
 
-    public Label createLabel(String text, int size){
+    private Label createLabel(String text, int size){
         Label label = new Label(text);
         label.setFont(Font.font("Times New Roman", size));
         label.setTextFill(Color.valueOf("#ffffff"));
-        label.setTextAlignment(TextAlignment.LEFT);
         label.setTextOverrun(OverrunStyle.CLIP);
         label.setWrapText(true);
-        label.setPrefWidth(800);
-        label.setAlignment(Pos.CENTER);
+        label.setAlignment(Pos.CENTER_LEFT);
+        label.prefWidthProperty().bind(content.widthProperty().subtract(300));
 
         return label;
     }
 
-    public Label createDescription(String text){
+    private Label createDescription(String text){
         Label description = new Label(text);
         description.setTextFill(Color.valueOf("#ffffff"));
         description.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        description.setPrefWidth(800);
+        description.prefWidthProperty().bind(content.widthProperty().subtract(300));
         description.setWrapText(true);
         description.setTextOverrun(OverrunStyle.CLIP);
+        description.setAlignment(Pos.CENTER_LEFT);
 
         return description;
     }
 
-    public Label createImageLabel(Image image, String caption){
+    private Label createImageLabel(Image image, String caption){
         // Create ImageView and Label, and set label graphic to image view
         final int MAX_WIDTH = 1000;
         ImageView imageView = new ImageView(image);
@@ -399,7 +484,7 @@ public class ArticleController implements Initializable{
         return label;
     }
 
-    public Label createVideoButton(String videoSrc, String caption){
+    private Label createVideoButton(String videoSrc, String caption){
         // Create media player
         Media media = new Media(videoSrc);
         MediaPlayer mediaPlayer = new MediaPlayer(media);
@@ -429,7 +514,7 @@ public class ArticleController implements Initializable{
         return label;
     }
 
-    public void dealException(Exception e, Item item){
+    private void dealException(Exception e, Item item){
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Poor Internet Connection");
         alert.setHeaderText("Can't connect to\n" + item.getLink());
@@ -475,5 +560,14 @@ public class ArticleController implements Initializable{
         nextButton.setDisable(false);
 
         if (index == 0) previousButton.setDisable(true);
+    }
+
+    private static String extract(String line, String start, String end) {
+        int firstPos = line.indexOf(start);
+        String temp = line.substring(firstPos);
+        temp = temp.replace(start, "");
+        int lastPos = temp.indexOf(end);
+        temp = temp.substring(0, lastPos);
+        return temp;
     }
 }

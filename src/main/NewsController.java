@@ -1,7 +1,6 @@
 package main;
 
 import javafx.concurrent.Task;
-import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -52,6 +51,7 @@ public class NewsController extends Task {
     @Override
     protected Object call() throws Exception {
         long start = System.currentTimeMillis();
+        updateProgress(0, 1);
 
         Thread t1 = new Thread(() -> {
             readRSSVe(VNEXPRESS[categoryIndex]);
@@ -135,7 +135,6 @@ public class NewsController extends Task {
             }
         }
 
-        updateProgress(0.5, 1);
         Collections.sort(items);
         updateProgress(1, 1);
         System.out.println("Achieve item list: " + (System.currentTimeMillis() - start) + " ms");
@@ -146,7 +145,7 @@ public class NewsController extends Task {
         this.categoryIndex = categoryIndex;
     }
 
-    public void readRSSVe(String urlAddress) {
+    private void readRSSVe(String urlAddress) {
         try {
             URL rssURL = new URL(urlAddress);
             BufferedReader in = new BufferedReader(new InputStreamReader(rssURL.openStream()));
@@ -187,7 +186,7 @@ public class NewsController extends Task {
         }
     }
 
-    public void readRSSTuoiTre(String urlAddress) {
+    private void readRSSTuoiTre(String urlAddress) {
         try {
             URL rssURL = new URL(urlAddress);
             BufferedReader in = new BufferedReader(new InputStreamReader(rssURL.openStream()));
@@ -221,7 +220,7 @@ public class NewsController extends Task {
                 } else if (line.contains("</item>") && inItem) {
                     inItem = false;
                     Item item = new Item(title, link, date, imgSrc, Source.TT);
-                    items.add(item);;
+                    items.add(item);
                 }
             }
 
@@ -233,7 +232,7 @@ public class NewsController extends Task {
         }
     }
 
-    public void readRSSThanhNien(String urlAddress) {
+    private void readRSSThanhNien(String urlAddress) {
         try {
             URL rssURL = new URL(urlAddress);
             BufferedReader in = new BufferedReader(new InputStreamReader(rssURL.openStream()));
@@ -259,16 +258,15 @@ public class NewsController extends Task {
                         pubDate = extract(line, "<pubDate>", " GMT");
                         DateTimeFormatter df = DateTimeFormatter.ofPattern("E, dd MMM yyyy HH:mm:ss");
                         date = LocalDateTime.parse(pubDate, df);
+                        date = date.plusHours(7);
 
                         // Extract image
                         imgSrc = extract(line, "<image>", "</image>");
 
                         Item item = new Item(title, link, date, imgSrc, Source.TN);
-                        items.add(item);;
+                        items.add(item);
                         inItem = false;
-                    } catch (StringIndexOutOfBoundsException e) {
-
-                    }
+                    } catch (StringIndexOutOfBoundsException e) {}
                 }
             }
 
@@ -280,7 +278,7 @@ public class NewsController extends Task {
         }
     }
 
-    public void readZing(String urlAddress) {
+    private void readZing(String urlAddress) {
         try {
             Document doc = Jsoup.connect(urlAddress).get();
             final int statusCode = doc.connection().response().statusCode();
@@ -313,14 +311,14 @@ public class NewsController extends Task {
 
                 // Create and add news item to list
                 Item item = new Item(title, link, date, imgSrc, Source.ZING);
-                items.add(item);;
+                items.add(item);
             }
         } catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
         }
     }
 
-    public void readNhanDan(String urlAddress) {
+    private void readNhanDan(String urlAddress) {
         try {
             Document doc = Jsoup.connect(urlAddress).get();
             final int statusCode = doc.connection().response().statusCode();
@@ -353,7 +351,7 @@ public class NewsController extends Task {
 
                 // Create and add news item to list
                 Item item = new Item(title, link, date, imgSrc, Source.ND);
-                items.add(item);;
+                items.add(item);
             }
         }
         catch (IOException e) {
@@ -361,21 +359,12 @@ public class NewsController extends Task {
         }
     }
 
-    public String extract(String line, String start, String end) {
+    private static String extract(String line, String start, String end) {
         int firstPos = line.indexOf(start);
         String temp = line.substring(firstPos);
         temp = temp.replace(start, "");
         int lastPos = temp.indexOf(end);
         temp = temp.substring(0, lastPos);
         return temp;
-    }
-
-    private int getNextIndex(Item item) {
-        for (int i = 0; i < items.size(); i++){
-            if (item.compareTo(items.get(i)) <= 0)
-                return i;
-        }
-        
-        return items.size();
     }
 }

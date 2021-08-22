@@ -1,6 +1,7 @@
 package main;
 
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -74,6 +75,7 @@ public class Controller implements Initializable {
     @FXML private Button page4;
     @FXML private Button page5;
     @FXML private AnchorPane anchorPane;
+    @FXML private ScrollPane scrollPane;
     @FXML private ProgressBar pb;
 
     private final ArrayList<ImageView> images = new ArrayList<>();
@@ -103,7 +105,7 @@ public class Controller implements Initializable {
 
             items = newsController.getItems();
             addNodeToList();
-            loadAfterBar(newsController);
+            loadAfterBar();
 
             if (items.size() == 0) {
                 throwAlert();
@@ -125,7 +127,7 @@ public class Controller implements Initializable {
         });
     }
 
-    private void loadAfterBar(NewsController newsController){
+    private void loadAfterBar(){
         categoryLabel.setText(categories[categoryIndex]);
         changePage(0);
 
@@ -145,8 +147,10 @@ public class Controller implements Initializable {
     }
 
     public void changePage(int page) {
-        Platform.runLater(() -> {
-            if (currentPage != page){
+        scrollPane.setVvalue(0);
+
+        if (currentPage != page){
+            Platform.runLater(() -> {
                 System.out.println("\nInitializing new items:");
                 currentPage = page;
 
@@ -155,41 +159,40 @@ public class Controller implements Initializable {
 
                 for (int i = 0; i < ITEMCOUNT; i++){
                     int idx = i + (page * ITEMCOUNT);
-                    int current = i;
 
                     try{
-                        labels.get(current).setText(items.get(idx).getTitle());
-                        timeLabels.get(current).setText(items.get(idx).durationToString());
-                        buttons.get(current).setOnAction(e -> article(idx));
+                        labels.get(i).setText(items.get(idx).getTitle());
+                        timeLabels.get(i).setText(items.get(idx).durationToString());
+                        buttons.get(i).setOnAction(e -> article(idx));
 
                         switch (items.get(idx).getSource()) {
-                            case VE -> icons.get(current).setImage(new Image("/image/iconVE.png"));
-                            case TT -> icons.get(current).setImage(new Image("/image/iconTT.png"));
-                            case TN -> icons.get(current).setImage(new Image("/image/iconTN.jpeg"));
-                            case ZING -> icons.get(current).setImage(new Image("/image/iconZING.png"));
-                            case ND -> icons.get(current).setImage(new Image("/image/iconND.png"));
+                            case VE -> icons.get(i).setImage(new Image("/image/iconVE.png"));
+                            case TT -> icons.get(i).setImage(new Image("/image/iconTT.png"));
+                            case TN -> icons.get(i).setImage(new Image("/image/iconTN.jpeg"));
+                            case ZING -> icons.get(i).setImage(new Image("/image/iconZING.png"));
+                            case ND -> icons.get(i).setImage(new Image("/image/iconND.png"));
                         }
 
                         if (!items.get(idx).getImgSrc().equals("")){
-                            images.get(current).setImage(new Image(items.get(idx).getImgSrc()));
+                            images.get(i).setImage(new Image(items.get(idx).getImgSrc()));
                         }else
-                            images.get(current).setImage(null);
+                            images.get(i).setImage(null);
 
-                        buttons.get(current).setDisable(false);
+                        buttons.get(i).setDisable(false);
                     }
                     catch (IndexOutOfBoundsException e){
-                        buttons.get(current).setDisable(true);
-                        labels.get(current).setText("Empty");
-                        images.get(current).setImage(null);
-                        timeLabels.get(current).setText("Not available");
-                        icons.get(current).setImage(null);
+                        buttons.get(i).setDisable(true);
+                        labels.get(i).setText("Empty");
+                        images.get(i).setImage(null);
+                        timeLabels.get(i).setText("Not available");
+                        icons.get(i).setImage(null);
                     }
                     finally {
-                        System.out.println("Item " + current + " " + (System.currentTimeMillis() - start) + " ms");
+                        System.out.println("Item " + i + " " + (System.currentTimeMillis() - start) + " ms");
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     public void menuCategories() {
