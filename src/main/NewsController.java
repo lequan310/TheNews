@@ -321,8 +321,11 @@ public class NewsController extends Task {
     private void readNhanDan(String urlAddress) {
         try {
             Document doc = Jsoup.connect(urlAddress).get();
-            final int statusCode = doc.connection().response().statusCode();
-            System.out.println(statusCode);
+
+            new Thread (() -> {
+                final int statusCode = doc.connection().response().statusCode();
+                System.out.println(statusCode);
+            }).start();
 
             Elements body = doc.getElementsByClass("swrapper");
 

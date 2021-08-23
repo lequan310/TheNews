@@ -200,12 +200,12 @@ public class Controller implements Initializable {
         }
     }
 
-    public void menuCategories() {
-        new SceneSwitch(anchorPane).menuCategories();
-    }
-
     public void article(int index, int categoryIndex) {
         new SceneSwitch(anchorPane).article(items, index, categoryIndex);
+    }
+
+    @FXML private void menuCategories() {
+        new SceneSwitch(anchorPane).menuCategories();
     }
 
     @FXML private void dragged(MouseEvent event) {

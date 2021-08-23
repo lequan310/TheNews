@@ -4,10 +4,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -16,6 +18,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Stage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -41,6 +44,7 @@ public class ArticleController implements Initializable{
     private final ArrayList<Item> items;
     private Item item;
     private int index = 0, categoryIndex;
+    private double x, y;
 
     public ArticleController(ArrayList<Item> items, int index, int categoryIndex){
         this.items = items;
@@ -566,12 +570,39 @@ public class ArticleController implements Initializable{
         alert.show();
     }
 
-    public void menuCategories() {
+    @FXML private void menuCategories() {
         new SceneSwitch(anchorPane).menuCategories();
     }
 
-    public void menuHome(){
+    @FXML private void menuHome(){
         new SceneSwitch(anchorPane).menuHome(categoryIndex);
+    }
+
+    @FXML private void dragged(MouseEvent event) {
+        Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
+        stage.setX(event.getScreenX() - x);
+        stage.setY(event.getScreenY() - y);
+    }
+
+    @FXML private void pressed(MouseEvent event) {
+        x = event.getSceneX();
+        y = event.getSceneY();
+    }
+
+    @FXML private void min(MouseEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setIconified(true);
+    }
+
+    @FXML private void max(MouseEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setFullScreenExitHint("");
+        stage.setFullScreen(!stage.isFullScreen());
+    }
+
+    @FXML private void close(MouseEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.close();
     }
 
     public void nextArticle(){

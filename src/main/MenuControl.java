@@ -2,8 +2,12 @@ package main;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +28,7 @@ public class MenuControl implements Initializable {
     @FXML private Button button10;
 
     private final ArrayList<Button> buttons = new ArrayList<>();
+    private double x, y;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -43,5 +48,32 @@ public class MenuControl implements Initializable {
 
     private void addNodeToList(){
         buttons.addAll(Arrays.asList(button1, button2, button3, button4, button5, button6, button7, button8, button9, button10));
+    }
+
+    @FXML private void dragged(MouseEvent event) {
+        Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
+        stage.setX(event.getScreenX() - x);
+        stage.setY(event.getScreenY() - y);
+    }
+
+    @FXML private void pressed(MouseEvent event) {
+        x = event.getSceneX();
+        y = event.getSceneY();
+    }
+
+    @FXML private void min(MouseEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setIconified(true);
+    }
+
+    @FXML private void max(MouseEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setFullScreenExitHint("");
+        stage.setFullScreen(!stage.isFullScreen());
+    }
+
+    @FXML private void close(MouseEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.close();
     }
 }

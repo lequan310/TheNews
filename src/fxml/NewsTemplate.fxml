@@ -9,171 +9,226 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" styleClass="dark-background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#dragged" onMousePressed="#pressed" prefHeight="1080.0" prefWidth="1920.0" styleClass="dark-background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <HBox alignment="CENTER" prefHeight="105.0" prefWidth="1007.0" styleClass="dark-background" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-         <stylesheets>
-            <URL value="@../css/style.css" />
-            <URL value="@../css/style.css" />
-         </stylesheets>
-         <children>
-            <Button fx:id="category" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#menuCategories" prefHeight="105.0" prefWidth="161.0" styleClass="dark-background" stylesheets="@../css/style.css" textFill="TRANSPARENT" HBox.hgrow="ALWAYS">
-               <graphic>
-                  <ImageView blendMode="SCREEN" fitHeight="46.0" fitWidth="53.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../image/baseline_menu_white_48dp.png" />
-                     </image>
-                     <cursor>
-                        <Cursor fx:constant="CLOSED_HAND" />
-                     </cursor>
-                  </ImageView>
-               </graphic>
-               <cursor>
-                  <Cursor fx:constant="CLOSED_HAND" />
-               </cursor>
-            </Button>
-            <AnchorPane prefHeight="95.0" prefWidth="198.0">
+      <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <center>
+            <VBox prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                  <HBox alignment="CENTER" prefHeight="105.0" prefWidth="1007.0" styleClass="dark-background">
+                     <stylesheets>
+                        <URL value="@../css/style.css" />
+                        <URL value="@../css/style.css" />
+                     </stylesheets>
                      <children>
-                        <Button fx:id="home" mnemonicParsing="false" onAction="#menuHome" prefHeight="97.0" prefWidth="202.0" styleClass="dark-background" text="Return" textFill="WHITE" HBox.hgrow="ALWAYS">
+                        <Button fx:id="category" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#menuCategories" prefHeight="105.0" prefWidth="161.0" styleClass="dark-background" stylesheets="@../css/style.css" textFill="TRANSPARENT" HBox.hgrow="ALWAYS">
                            <graphic>
-                              <ImageView fitHeight="81.0" fitWidth="55.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView blendMode="SCREEN" fitHeight="46.0" fitWidth="53.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../image/baseline_menu_white_48dp.png" />
+                                 </image>
+                                 <cursor>
+                                    <Cursor fx:constant="CLOSED_HAND" />
+                                 </cursor>
+                              </ImageView>
+                           </graphic>
+                           <cursor>
+                              <Cursor fx:constant="CLOSED_HAND" />
+                           </cursor>
+                        </Button>
+                        <AnchorPane prefHeight="95.0" prefWidth="198.0">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Button fx:id="home" mnemonicParsing="false" onAction="#menuHome" prefHeight="97.0" prefWidth="202.0" styleClass="dark-background" text="Return" textFill="WHITE" HBox.hgrow="ALWAYS">
+                                       <graphic>
+                                          <ImageView fitHeight="81.0" fitWidth="55.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../image/baseline_chevron_left_white_48dp.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                       <font>
+                                          <Font name="Baskerville Old Face" size="31.0" />
+                                       </font>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                        <Label alignment="CENTER" prefHeight="95.0" prefWidth="975.0" styleClass="dark-background" stylesheets="@../css/style.css" text="the NEWS" textFill="WHITE" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font name="Baskerville Old Face" size="55.0" />
+                           </font>
+                        </Label>
+                        <AnchorPane>
+                           <children>
+                              <Label alignment="CENTER" prefHeight="105.0" prefWidth="193.0" text="by Dark Mode team" textFill="WHITE">
+                                 <font>
+                                    <Font name="Baskerville Old Face" size="18.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </AnchorPane>
+                        <Pane prefHeight="95.0" prefWidth="214.0" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="345.0" prefWidth="1920.0" spacing="7.0">
+                     <children>
+                        <Pane prefHeight="200.0" prefWidth="200.0" />
+                        <Button fx:id="previousButton" ellipsisString=" " mnemonicParsing="false" prefHeight="68.0" prefWidth="175.0" style="-fx-background-color: #505050; -fx-background-radius: 30;" text="Previous" textFill="#e0e0e0" wrapText="true">
+                           <font>
+                              <Font name="System Bold" size="20.0" />
+                           </font>
+                           <graphic>
+                              <ImageView fitHeight="46.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../image/baseline_chevron_left_white_48dp.png" />
                                  </image>
                               </ImageView>
                            </graphic>
-                           <font>
-                              <Font name="Baskerville Old Face" size="31.0" />
-                           </font>
                            <cursor>
-                              <Cursor fx:constant="HAND" />
+                              <Cursor fx:constant="CLOSED_HAND" />
                            </cursor>
                         </Button>
-                     </children>
-                  </HBox>
-               </children>
-            </AnchorPane>
-            <Label alignment="CENTER" prefHeight="95.0" prefWidth="975.0" styleClass="dark-background" stylesheets="@../css/style.css" text="the NEWS" textFill="WHITE" HBox.hgrow="ALWAYS">
-               <font>
-                  <Font name="Baskerville Old Face" size="55.0" />
-               </font>
-            </Label>
-            <AnchorPane>
-               <children>
-                  <Label alignment="CENTER" prefHeight="105.0" prefWidth="193.0" text="by Dark Mode team" textFill="WHITE">
-                     <font>
-                        <Font name="Baskerville Old Face" size="18.0" />
-                     </font>
-                  </Label>
-               </children>
-            </AnchorPane>
-            <Pane prefHeight="95.0" prefWidth="214.0" />
-         </children>
-      </HBox>
-      <HBox alignment="CENTER" layoutX="865.0" layoutY="105.0" prefHeight="345.0" prefWidth="1920.0" spacing="7.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-         <children>
-            <Pane prefHeight="200.0" prefWidth="200.0" />
-            <Button fx:id="previousButton" ellipsisString=" " mnemonicParsing="false" prefHeight="68.0" prefWidth="175.0" style="-fx-background-color: #505050; -fx-background-radius: 30;" text="Previous" textFill="#e0e0e0" wrapText="true">
-               <font>
-                  <Font name="System Bold" size="20.0" />
-               </font>
-               <graphic>
-                  <ImageView fitHeight="46.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../image/baseline_chevron_left_white_48dp.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-               <cursor>
-                  <Cursor fx:constant="CLOSED_HAND" />
-               </cursor>
-            </Button>
-            <FlowPane alignment="CENTER" prefHeight="345.0" prefWidth="700.0" HBox.hgrow="ALWAYS">
-               <children>
-                  <Pane prefHeight="345.0" prefWidth="700.0">
-                     <children>
-                        <FlowPane alignment="CENTER" prefHeight="345.0" prefWidth="700.0">
+                        <FlowPane alignment="CENTER" prefHeight="345.0" prefWidth="700.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <ImageView fx:id="thumbnail" fitHeight="345.0" fitWidth="700.0" pickOnBounds="true" />
+                              <Pane prefHeight="345.0" prefWidth="700.0">
+                                 <children>
+                                    <FlowPane alignment="CENTER" prefHeight="345.0" prefWidth="700.0">
+                                       <children>
+                                          <ImageView fx:id="thumbnail" fitHeight="345.0" fitWidth="700.0" pickOnBounds="true" />
+                                       </children>
+                                    </FlowPane>
+                                    <Pane prefHeight="345.0" prefWidth="700.0" styleClass="blacker-gradient" stylesheets="@../css/style.css" />
+                                    <Label fx:id="title" alignment="BOTTOM_CENTER" prefHeight="320.0" prefWidth="700.0" text="Header" textAlignment="CENTER" textFill="WHITE" textOverrun="CLIP" wrapText="true">
+                                       <font>
+                                          <Font size="40.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </Pane>
                            </children>
                         </FlowPane>
-                        <Pane prefHeight="345.0" prefWidth="700.0" styleClass="blacker-gradient" stylesheets="@../css/style.css" />
-                        <Label fx:id="title" alignment="BOTTOM_CENTER" prefHeight="320.0" prefWidth="700.0" text="Header" textAlignment="CENTER" textFill="WHITE" textOverrun="CLIP" wrapText="true">
-                           <font>
-                              <Font size="40.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </Pane>
-               </children>
-            </FlowPane>
-            <Button fx:id="nextButton" mnemonicParsing="false" prefHeight="68.0" prefWidth="180.0" style="-fx-background-color: #505050; -fx-background-radius: 30;" textFill="#e0e0e0">
-               <font>
-                  <Font name="System Bold" size="20.0" />
-               </font>
-               <graphic>
-                  <HBox alignment="CENTER" prefHeight="55.0" prefWidth="119.0" spacing="7.0">
-                     <children>
-                        <Label ellipsisString=" " prefHeight="30.0" prefWidth="46.0" text="Next" textFill="WHITE" wrapText="true">
+                        <Button fx:id="nextButton" mnemonicParsing="false" prefHeight="68.0" prefWidth="180.0" style="-fx-background-color: #505050; -fx-background-radius: 30;" textFill="#e0e0e0">
                            <font>
                               <Font name="System Bold" size="20.0" />
                            </font>
-                        </Label>
-                        <ImageView fitHeight="20.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../image/outline_arrow_forward_ios_white_48dp.png" />
-                           </image>
-                        </ImageView>
+                           <graphic>
+                              <HBox alignment="CENTER" prefHeight="55.0" prefWidth="119.0" spacing="7.0">
+                                 <children>
+                                    <Label ellipsisString=" " prefHeight="30.0" prefWidth="46.0" text="Next" textFill="WHITE" wrapText="true">
+                                       <font>
+                                          <Font name="System Bold" size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <ImageView fitHeight="20.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../image/outline_arrow_forward_ios_white_48dp.png" />
+                                       </image>
+                                    </ImageView>
+                                 </children>
+                              </HBox>
+                           </graphic>
+                           <cursor>
+                              <Cursor fx:constant="CLOSED_HAND" />
+                           </cursor>
+                        </Button>
+                        <Pane prefHeight="200.0" prefWidth="200.0" />
                      </children>
                   </HBox>
-               </graphic>
-               <cursor>
-                  <Cursor fx:constant="CLOSED_HAND" />
-               </cursor>
-            </Button>
-            <Pane prefHeight="200.0" prefWidth="200.0" />
-         </children>
-      </HBox>
-      <HBox alignment="CENTER_RIGHT" layoutY="453.0" prefHeight="627.0" prefWidth="1920.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="440.0">
-         <children>
-            <ScrollPane fx:id="scrollPane" fitToWidth="true" prefHeight="605.0" prefWidth="1330.0" styleClass="dark-background" stylesheets="@../css/style.css">
-               <content>
-                  <FlowPane fx:id="content" alignment="TOP_CENTER" columnHalignment="CENTER" hgap="20.0" styleClass="dark-background" stylesheets="@../css/style.css" vgap="20.0">
-                     <padding>
-                        <Insets bottom="20.0" left="5.0" right="5.0" top="20.0" />
-                     </padding>
-                  </FlowPane>
-               </content>
-            </ScrollPane>
-            <VBox prefHeight="640.0" prefWidth="281.0">
-               <children>
-                  <Label fx:id="timeLabel" ellipsisString="" prefHeight="119.0" prefWidth="281.0" text="Time" textFill="WHITE" textOverrun="CLIP" wrapText="true">
-                     <font>
-                        <Font name="Baskerville Old Face" size="26.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets left="10.0" />
-                     </VBox.margin>
-                  </Label>
-                  <Label fx:id="sourceLabel" ellipsisString="" prefHeight="273.0" prefWidth="287.0" text="Source" textFill="WHITE" textOverrun="CLIP" wrapText="true">
-                     <font>
-                        <Font name="Baskerville Old Face" size="18.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets left="10.0" />
-                     </VBox.margin>
-                  </Label>
+                  <HBox alignment="CENTER_RIGHT" prefHeight="627.0" prefWidth="1920.0">
+                     <children>
+                        <ScrollPane fx:id="scrollPane" fitToWidth="true" prefHeight="605.0" prefWidth="1330.0" styleClass="dark-background" stylesheets="@../css/style.css">
+                           <content>
+                              <FlowPane fx:id="content" alignment="TOP_CENTER" columnHalignment="CENTER" hgap="20.0" styleClass="dark-background" stylesheets="@../css/style.css" vgap="20.0">
+                                 <padding>
+                                    <Insets bottom="20.0" left="5.0" right="5.0" top="20.0" />
+                                 </padding>
+                              </FlowPane>
+                           </content>
+                        </ScrollPane>
+                        <VBox prefHeight="640.0" prefWidth="281.0">
+                           <children>
+                              <Label fx:id="timeLabel" ellipsisString="" prefHeight="119.0" prefWidth="281.0" text="Time" textFill="WHITE" textOverrun="CLIP" wrapText="true">
+                                 <font>
+                                    <Font size="26.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="10.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label fx:id="sourceLabel" ellipsisString="" prefHeight="273.0" prefWidth="287.0" text="Source" textFill="WHITE" textOverrun="CLIP" wrapText="true">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="10.0" />
+                                 </VBox.margin>
+                              </Label>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
                </children>
             </VBox>
-         </children>
-      </HBox>
+         </center>
+         <top>
+            <HBox alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="1920.0" styleClass="shadow" BorderPane.alignment="CENTER">
+               <children>
+                  <FlowPane prefHeight="30.0" prefWidth="127.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label prefHeight="2.0" prefWidth="227.0" text="    The News" textFill="WHITE">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </FlowPane>
+                  <Pane prefHeight="30.0" prefWidth="1223.0" HBox.hgrow="ALWAYS" />
+                  <Button minWidth="52.0" mnemonicParsing="false" onMouseClicked="#min" prefHeight="30.0" prefWidth="60.0" HBox.hgrow="ALWAYS">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="53.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/baseline_remove_white_48dp.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                     <cursor>
+                        <Cursor fx:constant="DEFAULT" />
+                     </cursor>
+                  </Button>
+                  <Button mnemonicParsing="false" onMouseClicked="#max" prefHeight="30.0" prefWidth="60.0" HBox.hgrow="ALWAYS">
+                     <graphic>
+                        <ImageView fitHeight="16.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/baseline_check_box_outline_blank_white_48dp.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" onMouseClicked="#close" prefHeight="30.0" prefWidth="60.0" HBox.hgrow="ALWAYS">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/baseline_close_white_48dp.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </HBox>
+         </top>
+      </BorderPane>
    </children>
 </AnchorPane>
