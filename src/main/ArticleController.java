@@ -84,6 +84,7 @@ public class ArticleController implements Initializable{
             case TN -> readArticleTN(item.getLink());
             case ZING -> readArticleZing(item.getLink());
             case ND -> readArticleND(item.getLink());
+            //case VE -> readArticleVE(item.getLink());
         }
 
         content.getChildren().addAll(createLabel("", WORDSIZE));
@@ -107,8 +108,11 @@ public class ArticleController implements Initializable{
                 }
                 else if (e.is("div")) {
                     if (e.attr("type").compareTo("Photo") == 0) {
-                        Image image = new Image(e.select("img").attr("src"));
-                        content.getChildren().add(createImageLabel(image, e.select("p").text()));
+                        try{
+                            Image image = new Image(e.select("img").attr("src"));
+                            content.getChildren().add(createImageLabel(image, e.select("p").text()));
+                        }
+                        catch (IllegalArgumentException ex) {}
                     }
                     else if (e.attr("type").compareTo("VideoStream") == 0) {
                         String videoSrc = e.attr("data-src");
@@ -124,11 +128,18 @@ public class ArticleController implements Initializable{
 
                         for (Element i : e.select("> *")){
                             if (i.is("p")) {
-                                pane.getChildren().add(createLabel(i.text(), WORDSIZE));
+                                Label label = createLabel(i.text(), WORDSIZE);
+                                if (i.select("b").size() > 0)
+                                    label.setFont(Font.font("Times New Roman", FontWeight.BOLD, WORDSIZE));
+
+                                pane.getChildren().add(label);
                             }
                             else if (i.is("div") && i.attr("type").compareTo("Photo") == 0) {
-                                Image image = new Image(i.select("img").attr("src"));
-                                pane.getChildren().add(createImageLabel(image, i.select("p").text()));
+                                try{
+                                    Image image = new Image(i.select("img").attr("src"));
+                                    pane.getChildren().add(createImageLabel(image, i.select("p").text()));
+                                }
+                                catch (IllegalArgumentException ex) { }
                             }
                         }
 
@@ -261,8 +272,11 @@ public class ArticleController implements Initializable{
                         if (imageURL.compareTo("") == 0)
                             imageURL = e.select("img").attr("src");
 
-                        Image image = new Image(imageURL);
-                        content.getChildren().add(createImageLabel(image, e.select("td[class=\"pCaption caption\"]").text()));
+                        try{
+                            Image image = new Image(imageURL);
+                            content.getChildren().add(createImageLabel(image, e.select("td[class=\"pCaption caption\"]").text()));
+                        }
+                        catch (IllegalArgumentException ex) {}
                     }
                 }
 
@@ -290,12 +304,16 @@ public class ArticleController implements Initializable{
             Elements article = doc.select("div.detail-content-body > *");
 
             // Thumbnail image
-            Image thumb = new Image(body.select("div.box-detail-thumb img").attr("src"));
-            Label thumbnail = createImageLabel(thumb, body.select("div.box-detail-thumb span").text());
+            try {
+                Image thumb = new Image(body.select("div.box-detail-thumb img").attr("src"));
+                Label thumbnail = createImageLabel(thumb, body.select("div.box-detail-thumb span").text());
+                content.getChildren().add(thumbnail);
+            }
+            catch (IllegalArgumentException ex) { }
 
             // Description
             Label description = createDescription(body.select("div.box-des-detail p").text());
-            content.getChildren().addAll(thumbnail, description);
+            content.getChildren().add(description);
 
             for (Element e : article) {
                 if (e.is("p")) {
@@ -306,8 +324,11 @@ public class ArticleController implements Initializable{
                     content.getChildren().add(label);
                 }
                 else if (e.is("div") && e.attr("class").compareTo("light-img") == 0) {
-                    Image image = new Image(e.select("figure").attr("data-src"));
-                    content.getChildren().add(createImageLabel(image, e.select("figcaption").text()));
+                    try {
+                        Image image = new Image(e.select("figure").attr("data-src"));
+                        content.getChildren().add(createImageLabel(image, e.select("figcaption").text()));
+                    }
+                    catch (IllegalArgumentException ex) {}
                 }
                 else if (e.is("ol")) {
                     for (Element li : e.select("> *")) {
@@ -348,8 +369,11 @@ public class ArticleController implements Initializable{
                 checkDivTN(i);
             }
             else if (i.is("table") && i.attr("class").compareTo("imagefull") == 0) {
-                Image image = new Image(i.select("img").attr("data-src"));
-                content.getChildren().add(createImageLabel(image, i.select("p").text()));
+                try {
+                    Image image = new Image(i.select("img").attr("data-src"));
+                    content.getChildren().add(createImageLabel(image, i.select("p").text()));
+                }
+                catch (IllegalArgumentException ex) {}
             }
             else if (i.is("table") && i.attr("class").compareTo("video") == 0) {
                 Label videoButton = createVideoButton(i.select("div[class=\"clearfix cms-video\"]").attr("data-video-src"),
@@ -370,7 +394,7 @@ public class ArticleController implements Initializable{
         label.setTextOverrun(OverrunStyle.CLIP);
         label.setWrapText(true);
         label.setAlignment(Pos.CENTER_LEFT);
-        label.prefWidthProperty().bind(content.widthProperty().subtract(300));
+        label.prefWidthProperty().bind(content.widthProperty().subtract(400));
 
         return label;
     }
@@ -383,13 +407,8 @@ public class ArticleController implements Initializable{
     }
 
     private Label createDescription(String text){
-        Label description = new Label(text);
-        description.setTextFill(Color.valueOf("#ffffff"));
-        description.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        description.prefWidthProperty().bind(content.widthProperty().subtract(300));
-        description.setWrapText(true);
-        description.setTextOverrun(OverrunStyle.CLIP);
-        description.setAlignment(Pos.CENTER_LEFT);
+        Label description = createLabel(text, WORDSIZE);
+        description.setFont(Font.font("Arial", FontWeight.BOLD, WORDSIZE + 4));
 
         return description;
     }
@@ -443,8 +462,9 @@ public class ArticleController implements Initializable{
     private FlowPane createWrapNote() {
         FlowPane pane = new FlowPane();
         pane.setAlignment(Pos.CENTER);
-        pane.prefWidthProperty().bind(content.widthProperty().subtract(300));
+        pane.prefWidthProperty().bind(content.widthProperty().subtract(400));
         pane.setBackground(new Background(new BackgroundFill(Color.rgb(100, 100, 100), new CornerRadii(0), new Insets(0))));
+        pane.setVgap(20);
 
         return pane;
     }

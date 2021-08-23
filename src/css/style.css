@@ -12,13 +12,22 @@
     -fx-background-color: linear-gradient(to top, #0D0D0D,transparent);
 }
 .shadow{
-    -fx-effect: dropShadow(three-pass-box, rgba(0,0,0,0.2),10, 0, 0, 10);
+    -fx-effect: dropShadow(three-pass-box, rgba(0,0,0,0.7),40, 0, 10, 5);
+}
+.light-shadow{
+    -fx-effect: dropShadow(three-pass-box, rgba(21, 21, 21, 0.67),10, 0, 5, 5);
 }
 .dark-background{
-    -fx-background-color: #0D0D0D;
+    -fx-background-color: #131313;
+}
+.black-background{
+    -fx-background-color: #000000;
 }
 .light-black-background{
-    -fx-background-color: #414141;
+    -fx-background-color: #282828;
+}
+.grey-background{
+    -fx-background-color: #1f1f1f;
 }
 .red-theme{
     -fx-background-color: #FA2742;
@@ -32,9 +41,9 @@
 .scroll-pane > .viewport {
     -fx-background-color: transparent;
 }
-.button{
-    -fx-background-color: #111111;
-}
+/*.button{*/
+/*    -fx-background-color: #131313;*/
+/*}*/
 .button:hover{
     -fx-background-color: #474747;
 }
@@ -48,7 +57,7 @@
 }
 
 .progress-bar .bar {
-    -fx-background-color: linear-gradient(to left, aqua, lightskyblue);
+    -fx-background-color: linear-gradient(to left, skyblue, #00fff7, skyblue);
 }
 
 .scroll-pane .scroll-bar:vertical {
