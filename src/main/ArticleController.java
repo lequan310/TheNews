@@ -37,7 +37,7 @@ public class ArticleController implements Initializable{
     @FXML private Button nextButton;
     @FXML private ScrollPane scrollPane;
 
-    private final int WORDSIZE = 18;
+    private final int WORDSIZE = 18, ITEMSIZE = 49;
     private final ArrayList<Item> items;
     private Item item;
     private int index = 0, categoryIndex;
@@ -57,7 +57,7 @@ public class ArticleController implements Initializable{
 
         if (index == 0)
             previousButton.setDisable(true);
-        else if (index == items.size() - 1)
+        else if (index == ITEMSIZE)
             nextButton.setDisable(true);
     }
 
@@ -210,7 +210,7 @@ public class ArticleController implements Initializable{
             }
             // Normal article
             else{
-                Elements body = doc.select("div.pswp-content");
+                Elements body = doc.select("div[class~=.*content]");
                 Elements article = body.select("div[id=abody] > div");
                 Elements images = body.select("div[id=abody] table.imagefull");
                 Elements videos = body.select("div[id=abody] table.video");
@@ -566,7 +566,7 @@ public class ArticleController implements Initializable{
         alert.show();
     }
 
-    public void menuCategories()  {
+    public void menuCategories() {
         new SceneSwitch(anchorPane).menuCategories();
     }
 
@@ -575,14 +575,14 @@ public class ArticleController implements Initializable{
     }
 
     public void nextArticle(){
-        if (index == items.size() - 1) return;
+        if (index == ITEMSIZE) return;
 
         index++;
         item = items.get(index);
         readArticle();
         previousButton.setDisable(false);
 
-        if (index == items.size())
+        if (index == ITEMSIZE)
             nextButton.setDisable(true);
     }
 

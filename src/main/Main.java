@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class Main extends Application {
 
@@ -15,11 +16,10 @@ public class Main extends Application {
         stage.setTitle("News Application");
         stage.getIcons().add(new Image("image/book.jpg"));
         stage.setScene(scene);
-        stage.setMaximized(true);
+        //stage.setMaximized(true);
         stage.setMinHeight(800);
         stage.setMinWidth(600);
-        //remove the app bar
-        //stage.initStyle(StageStyle.UNDECORATED);
+        stage.initStyle(StageStyle.UNDECORATED);
 
         stage.show();
     }
