@@ -56,7 +56,7 @@ public class SceneSwitch {
     }
 
     public Scene loadMenuScene(int index) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/Home.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/Test.fxml"));
         Controller controller = new Controller();
         controller.setCategoryIndex(index);
         loader.setController(controller);
@@ -79,7 +79,7 @@ public class SceneSwitch {
 
     public void menuHome(int idx) {
         try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/Home.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/Test.fxml"));
             Controller controller = new Controller();
             controller.setCategoryIndex(idx);
             loader.setController(controller);
