@@ -61,6 +61,7 @@ public class ArticleController implements Initializable{
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Read current article and assigning buttons functions
         readArticle();
+        readArticleTN("https://thanhnien.vn/van-hoa/vi-sao-nghe-si-indie-vu-duoc-ong-lon-warner-music-chon-1439001.html");
         previousButton.setOnAction(e -> previousArticle());
         nextButton.setOnAction(e -> nextArticle());
 
@@ -457,6 +458,10 @@ public class ArticleController implements Initializable{
                     content.getChildren().add(createImageLabel(image, i.select("figcaption").text()));
                 }
                 catch (IllegalArgumentException ex) {}
+            }
+            // Add header if child is header
+            else if (i.is("h2")) {
+                content.getChildren().add(createHeader(i.text(), WORDSIZE));
             }
             // Add text label if child is neither image nor video and has text
             else if (i.hasText()) {
