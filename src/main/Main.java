@@ -17,6 +17,7 @@ public class Main extends Application {
         stage.setTitle("News Application");
         stage.getIcons().add(new Image("image/book.jpg"));
         stage.setScene(scene);
+        stage.setResizable(true);
         stage.setMinHeight(800);
         stage.setMinWidth(600);
         stage.initStyle(StageStyle.UNDECORATED);

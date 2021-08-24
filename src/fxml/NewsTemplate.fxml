@@ -20,7 +20,7 @@
    <children>
       <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <center>
-            <VBox alignment="CENTER" BorderPane.alignment="CENTER">
+            <VBox alignment="TOP_CENTER" BorderPane.alignment="TOP_CENTER">
                <children>
                   <HBox alignment="CENTER" prefHeight="399.0" prefWidth="1920.0" spacing="50.0" styleClass="dark-background" VBox.vgrow="ALWAYS">
                      <stylesheets>
@@ -28,7 +28,7 @@
                         <URL value="@../css/style.css" />
                      </stylesheets>
                      <children>
-                        <VBox alignment="BOTTOM_LEFT" prefHeight="391.0" prefWidth="495.0" HBox.hgrow="ALWAYS">
+                        <VBox prefHeight="391.0" prefWidth="495.0" HBox.hgrow="ALWAYS">
                            <children>
                               <Button fx:id="home" ellipsisString="" mnemonicParsing="false" onAction="#menuHome" prefHeight="75.0" prefWidth="253.0" styleClass="dark-background" text="Return" textFill="WHITE" VBox.vgrow="ALWAYS">
                                  <graphic>
@@ -45,8 +45,7 @@
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
                               </Button>
-                              <Pane prefHeight="191.0" prefWidth="486.0" VBox.vgrow="ALWAYS" />
-                              <Label fx:id="timeLabel" alignment="BOTTOM_CENTER" ellipsisString="" prefHeight="119.0" prefWidth="281.0" text="Time" textFill="WHITE" textOverrun="CLIP" wrapText="true" VBox.vgrow="ALWAYS">
+                              <Label fx:id="timeLabel" alignment="BOTTOM_CENTER" ellipsisString="" prefHeight="270.0" prefWidth="281.0" text="Time" textFill="WHITE" textOverrun="CLIP" wrapText="true" VBox.vgrow="ALWAYS">
                                  <font>
                                     <Font size="22.0" />
                                  </font>
@@ -74,9 +73,9 @@
                         <Pane prefHeight="391.0" prefWidth="527.0" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER" prefHeight="639.0" prefWidth="1880.0" spacing="20.0" VBox.vgrow="ALWAYS">
+                  <HBox alignment="CENTER" prefHeight="1042.0" spacing="20.0" VBox.vgrow="ALWAYS">
                      <children>
-                        <Button fx:id="previousButton" ellipsisString=" " mnemonicParsing="false" prefHeight="67.0" prefWidth="163.0" style="-fx-background-radius: 20;" styleClass="light-black-background" text="Previous" textFill="#e0e0e0" HBox.hgrow="ALWAYS">
+                        <Button fx:id="previousButton" ellipsisString=" " mnemonicParsing="false" prefHeight="67.0" prefWidth="189.0" style="-fx-background-radius: 20;" styleClass="light-black-background" text="Previous" textFill="#e0e0e0" HBox.hgrow="ALWAYS">
                            <font>
                               <Font name="System Bold" size="18.0" />
                            </font>
@@ -91,9 +90,9 @@
                               <Cursor fx:constant="CLOSED_HAND" />
                            </cursor>
                         </Button>
-                        <ScrollPane fx:id="scrollPane" fitToWidth="true" prefHeight="424.0" prefWidth="1503.0" styleClass="dark-background" stylesheets="@../css/style.css" HBox.hgrow="ALWAYS">
+                        <ScrollPane fx:id="scrollPane" fitToWidth="true" prefWidth="1500.0" styleClass="dark-background" stylesheets="@../css/style.css" HBox.hgrow="ALWAYS">
                            <content>
-                              <FlowPane fx:id="content" alignment="TOP_CENTER" columnHalignment="CENTER" hgap="20.0" prefWidth="1579.0" styleClass="dark-background" stylesheets="@../css/style.css" vgap="20.0">
+                              <FlowPane fx:id="content" alignment="TOP_CENTER" columnHalignment="CENTER" hgap="20.0" styleClass="dark-background" stylesheets="@../css/style.css" vgap="20.0">
                                  <padding>
                                     <Insets bottom="20.0" left="5.0" right="5.0" top="20.0" />
                                  </padding>
@@ -133,9 +132,9 @@
             </VBox>
          </center>
          <top>
-            <HBox alignment="CENTER_RIGHT" onMouseDragged="#dragged" prefHeight="30.0" prefWidth="1920.0" styleClass="black-background" BorderPane.alignment="CENTER">
+            <HBox alignment="CENTER_RIGHT" onMouseDragged="#dragged" prefHeight="30.0" prefWidth="1920.0" styleClass="black-background" BorderPane.alignment="CENTER_RIGHT">
                <children>
-                  <FlowPane prefHeight="30.0" prefWidth="127.0" HBox.hgrow="ALWAYS">
+                  <FlowPane prefHeight="30.0" prefWidth="106.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label prefHeight="2.0" prefWidth="227.0" text="    The News" textFill="WHITE">
                            <font>
@@ -144,7 +143,7 @@
                         </Label>
                      </children>
                   </FlowPane>
-                  <Pane prefHeight="30.0" prefWidth="1223.0" HBox.hgrow="ALWAYS" />
+                  <Pane prefHeight="30.0" prefWidth="1123.0" HBox.hgrow="ALWAYS" />
                   <Button minWidth="52.0" mnemonicParsing="false" onMouseClicked="#min" prefHeight="30.0" prefWidth="60.0" styleClass="black-background" HBox.hgrow="ALWAYS">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="53.0" pickOnBounds="true" preserveRatio="true">
@@ -179,10 +178,13 @@
             </HBox>
          </top>
          <bottom>
-            <Label fx:id="sourceLabel" ellipsisString="" prefHeight="27.0" prefWidth="1884.0" text="Source" textFill="WHITE" textOverrun="CLIP" wrapText="true" BorderPane.alignment="CENTER">
+            <Label fx:id="sourceLabel" ellipsisString="" prefHeight="20.0" prefWidth="1884.0" text="Source" textFill="WHITE" textOverrun="CLIP" wrapText="true" BorderPane.alignment="CENTER">
                <font>
-                  <Font size="18.0" />
+                  <Font size="15.0" />
                </font>
+               <BorderPane.margin>
+                  <Insets left="20.0" />
+               </BorderPane.margin>
             </Label>
          </bottom>
       </BorderPane>
