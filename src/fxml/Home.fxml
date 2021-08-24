@@ -661,7 +661,7 @@
                      </children>
                   </FlowPane>
                   <Pane prefHeight="30.0" prefWidth="1223.0" HBox.hgrow="ALWAYS" />
-                  <Button minWidth="52.0" mnemonicParsing="false" onMouseClicked="#min" prefHeight="30.0" prefWidth="60.0" styleClass="black-background" HBox.hgrow="ALWAYS">
+                  <Button mnemonicParsing="false" onMouseClicked="#min" prefHeight="30.0" prefWidth="60.0" styleClass="black-background" HBox.hgrow="ALWAYS">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="53.0" pickOnBounds="true" preserveRatio="true">
                            <image>
