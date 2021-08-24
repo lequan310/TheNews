@@ -10,8 +10,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -179,11 +181,15 @@ public class NewsController extends Task {
             }
 
             in.close();
-        } catch (MalformedURLException e) {
+        }
+        catch (MalformedURLException e) {
             e.printStackTrace();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
         }
+
+        updateProgress(0.1, 1);
     }
 
     private void readRSSTuoiTre(String urlAddress) {
@@ -225,11 +231,15 @@ public class NewsController extends Task {
             }
 
             in.close();
-        } catch (MalformedURLException e) {
+        }
+        catch (MalformedURLException e) {
             e.printStackTrace();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
         }
+
+        updateProgress(0.2, 1);
     }
 
     private void readRSSThanhNien(String urlAddress) {
@@ -271,19 +281,20 @@ public class NewsController extends Task {
             }
 
             in.close();
-        } catch (MalformedURLException e) {
+        }
+        catch (MalformedURLException e) {
             e.printStackTrace();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
         }
+
+        updateProgress(0.3, 1);
     }
 
     private void readZing(String urlAddress) {
         try {
             Document doc = Jsoup.connect(urlAddress).get();
-            final int statusCode = doc.connection().response().statusCode();
-            System.out.println(statusCode);
-
             Elements body = doc.select("section[id~=.*-latest]");
             Elements featured = doc.select("section[id~=.*-featured]");
             body.addAll(featured);
@@ -305,6 +316,7 @@ public class NewsController extends Task {
                 pubDate = e.select("span.time").text();
                 pubDate += " " + e.select("span.date").text();
                 pubDate = pubDate.trim();
+
                 if (pubDate.compareTo("") == 0) pubDate = e.select("span.friendly-time").text();
                 DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm d/M/yyyy");
                 date = LocalDateTime.parse(pubDate, df);
@@ -313,17 +325,17 @@ public class NewsController extends Task {
                 Item item = new Item(title, link, date, imgSrc, Source.ZING);
                 items.add(item);
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
         }
+
+        updateProgress(0.4, 1);
     }
 
     private void readNhanDan(String urlAddress) {
         try {
             Document doc = Jsoup.connect(urlAddress).get();
-            final int statusCode = doc.connection().response().statusCode();
-            System.out.println(statusCode);
-
             Elements body = doc.getElementsByClass("swrapper");
 
             String title = "", pubDate = "", link = "", imgSrc = "";
@@ -357,6 +369,8 @@ public class NewsController extends Task {
         catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
         }
+
+        updateProgress(0.5, 1);
     }
 
     private static String extract(String line, String start, String end) {

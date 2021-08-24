@@ -18,6 +18,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -104,7 +105,11 @@ public class ArticleController implements Initializable{
 
             for (Element e : article) {
                 if (e.is("p")) {
-                    content.getChildren().add(createLabel(e.text(), WORDSIZE));
+                    Label label = createLabel(e.text(), WORDSIZE);
+                    if (e.select("b").size() > 0)
+                        label.setFont(Font.font("Roboto", FontWeight.BOLD, WORDSIZE));
+
+                    content.getChildren().add(label);
                 }
                 else if (e.is("div")) {
                     if (e.attr("type").compareTo("Photo") == 0) {
@@ -380,6 +385,13 @@ public class ArticleController implements Initializable{
                         i.select("p").text());
                 content.getChildren().add(videoButton);
             }
+            else if (i.is("figure") && i.attr("class").compareTo("picture") == 0) {
+                try {
+                    Image image = new Image(i.select("img").attr("data-src"));
+                    content.getChildren().add(createImageLabel(image, i.select("figcaption").text()));
+                }
+                catch (IllegalArgumentException ex) {}
+            }
             else if (i.hasText()) {
                 content.getChildren().add(createLabel(div.text(), WORDSIZE));
                 break;
@@ -449,9 +461,10 @@ public class ArticleController implements Initializable{
     private Label createGraphicLabel(String caption) {
         Label label = new Label(caption);
         if (caption.compareTo("") != 0)
-            label.setBackground(new Background(new BackgroundFill(Color.valueOf("#dddddd"), new CornerRadii(0), new Insets(0))));
+            label.setBackground(new Background(new BackgroundFill(Color.valueOf("#b4b4b4"), new CornerRadii(0), new Insets(0))));
         label.setContentDisplay(ContentDisplay.TOP);
         label.setAlignment(Pos.TOP_CENTER);
+        label.setTextAlignment(TextAlignment.CENTER);
         label.setFont(Font.font("Arial", FontPosture.ITALIC, 16));
         label.setTextOverrun(OverrunStyle.CLIP);
         label.setWrapText(true);
