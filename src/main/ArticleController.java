@@ -133,13 +133,16 @@ public class ArticleController implements Initializable{
                     }
                     // Add video if element is video
                     else if (e.attr("type").compareTo("VideoStream") == 0) {
-                        String videoSrc = e.attr("data-src");
-                        videoSrc = videoSrc.substring(videoSrc.indexOf("hls"));
-                        videoSrc = videoSrc.substring(0, videoSrc.indexOf(".mp4") + 4);
-                        videoSrc = videoSrc.replace("&vid=", "/");
-                        videoSrc = "https://" + videoSrc;
+                        try {
+                            String videoSrc = e.attr("data-src");
+                            videoSrc = videoSrc.substring(videoSrc.indexOf("hls"));
+                            videoSrc = videoSrc.substring(0, videoSrc.indexOf(".mp4") + 4);
+                            videoSrc = videoSrc.replace("&vid=", "/");
+                            videoSrc = "https://" + videoSrc;
 
-                        content.getChildren().add(createVideoButton(videoSrc, e.select("p").text()));
+                            content.getChildren().add(createVideoButton(videoSrc, e.select("p").text()));
+                        }
+                        catch (IllegalArgumentException ex) {}
                     }
                     // Add wrapnote if element is wrapnote
                     else if (e.attr("type").compareTo("wrapnote") == 0) {
@@ -307,7 +310,10 @@ public class ArticleController implements Initializable{
                     }
                     // Create and add video if element is video
                     else if (e.is("figure") && e.attr("class").contains("video")) {
-                        content.getChildren().add(createVideoButton(e.attr("data-video-src"), e.select("figcaption").text()));
+                        try{
+                            content.getChildren().add(createVideoButton(e.attr("data-video-src"), e.select("figcaption").text()));
+                        }
+                        catch (IllegalArgumentException ex) {}
                     }
                     // Create and add images if element is image/gallery
                     else if (e.is("table") && e.attr("class").contains("picture")) {
@@ -437,9 +443,12 @@ public class ArticleController implements Initializable{
             }
             // Add video if child is video
             else if (i.is("table") && i.attr("class").compareTo("video") == 0) {
-                Label videoButton = createVideoButton(i.select("div[class=\"clearfix cms-video\"]").attr("data-video-src"),
-                        i.select("p").text());
-                content.getChildren().add(videoButton);
+                try {
+                    Label videoButton = createVideoButton(i.select("div[class=\"clearfix cms-video\"]").attr("data-video-src"),
+                            i.select("p").text());
+                    content.getChildren().add(videoButton);
+                }
+                catch (IllegalArgumentException ex) {}
             }
             // Add image if child is image
             else if (i.is("figure") && i.attr("class").compareTo("picture") == 0) {

@@ -65,7 +65,7 @@ public class SceneSwitch {
         loader.setController(controller);
 
         Parent root = loader.load();
-        Scene scene = new Scene(root, 1600, 900);
+        Scene scene = new Scene(root, 1366, 720);
 
         scene.setOnKeyPressed(new MenuHandler(controller));
         return scene;
