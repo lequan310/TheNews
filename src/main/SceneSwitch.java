@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -20,9 +21,9 @@ public class SceneSwitch {
     public SceneSwitch(){}
 
     static class MenuHandler implements EventHandler<KeyEvent> {
-        private final Controller controller;
+        private final MenuController controller;
 
-        public MenuHandler(Controller controller){
+        public MenuHandler(MenuController controller){
             this.controller = controller;
         }
 
@@ -57,7 +58,7 @@ public class SceneSwitch {
 
     public Scene loadMenuScene(int index) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/Home.fxml"));
-        Controller controller = new Controller();
+        MenuController controller = new MenuController();
         controller.setCategoryIndex(index);
         loader.setController(controller);
 
@@ -68,9 +69,13 @@ public class SceneSwitch {
         return scene;
     }
 
-    public void menuCategories() {
+    public void menuCategories(int categoryIndex) {
         try{
-            root = FXMLLoader.load(getClass().getResource("../fxml/Categories.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/Categories.fxml"));
+            CategoryController controller = new CategoryController(categoryIndex);
+            loader.setController(controller);
+
+            root = loader.load();
             anchorPane.getScene().setRoot(root);
         }catch (IOException e){
             System.out.println(e.getMessage());
@@ -80,7 +85,7 @@ public class SceneSwitch {
     public void menuHome(int idx) {
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/Home.fxml"));
-            Controller controller = new Controller();
+            MenuController controller = new MenuController();
             controller.setCategoryIndex(idx);
             loader.setController(controller);
 
@@ -96,11 +101,11 @@ public class SceneSwitch {
     public void article(ArrayList<Item> items, int index, int categoryIndex){
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/NewsTemplate.fxml"));
-            ArticleController articleController = new ArticleController(items, index, categoryIndex);
-            loader.setController(articleController);
+            ArticleController controller = new ArticleController(items, index, categoryIndex);
+            loader.setController(controller);
 
             root = loader.load();
-            root.setOnKeyPressed(new ArticleHandler(articleController));
+            root.setOnKeyPressed(new ArticleHandler(controller));
             anchorPane.getScene().setRoot(root);
         }
         catch (Exception e){

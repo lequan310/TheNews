@@ -15,7 +15,7 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.*;
 
-public class Controller implements Initializable {
+public class MenuController implements Initializable {
     @FXML private Label categoryLabel;
     @FXML private Label header;
     @FXML private Label header1;
@@ -204,7 +204,7 @@ public class Controller implements Initializable {
     }
 
     @FXML private void menuCategories() {
-        new SceneSwitch(anchorPane).menuCategories();
+        new SceneSwitch(anchorPane).menuCategories(categoryIndex);
     }
 
     @FXML private void dragged(MouseEvent event) {

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
-public class MenuControl implements Initializable {
+public class CategoryController implements Initializable {
     @FXML private AnchorPane anchorPane;
     @FXML private Button mainMenu;
     @FXML private Button button1;
@@ -28,10 +28,15 @@ public class MenuControl implements Initializable {
 
     private final ArrayList<Button> buttons = new ArrayList<>();
     private double x, y;
+    private final int previousCategoryIndex;
+
+    public CategoryController(int categoryIndex) {
+        this.previousCategoryIndex = categoryIndex;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        mainMenu.setOnAction(e -> menuHome(0));
+        mainMenu.setOnAction(e -> menuHome(previousCategoryIndex));
         addNodeToList();
 
         for (int i = 0; i < buttons.size(); i++){

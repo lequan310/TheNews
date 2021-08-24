@@ -486,10 +486,6 @@ public class ArticleController implements Initializable{
         alert.show();
     }
 
-    @FXML private void menuCategories() {
-        new SceneSwitch(anchorPane).menuCategories();
-    }
-
     @FXML private void menuHome(){
         new SceneSwitch(anchorPane).menuHome(categoryIndex);
     }
