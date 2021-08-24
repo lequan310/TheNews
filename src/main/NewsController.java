@@ -200,7 +200,7 @@ public class NewsController extends Task {
                     inItem = false;
                     Item item = new Item(title, link, date, imgSrc, Source.VE);
                     items.add(item);
-                    updateProgress(progress++, 250);
+                    updateProgress(progress++, 500);
                 }
             }
 
@@ -261,7 +261,7 @@ public class NewsController extends Task {
                     inItem = false;
                     Item item = new Item(title, link, date, imgSrc, Source.TT);
                     items.add(item);
-                    updateProgress(progress++, 250);
+                    updateProgress(progress++, 500);
                 }
             }
 
@@ -311,7 +311,7 @@ public class NewsController extends Task {
                         // Add item into list of items
                         Item item = new Item(title, link, date, imgSrc, Source.TN);
                         items.add(item);
-                        updateProgress(progress++, 250);
+                        updateProgress(progress++, 500);
                         inItem = false;
                     }
                     // Catch error lines which sometimes existed in ThanhNien RSS
@@ -364,7 +364,7 @@ public class NewsController extends Task {
                 // Create and add news item to list
                 Item item = new Item(title, link, date, imgSrc, Source.ZING);
                 items.add(item);
-                updateProgress(progress++, 250);
+                updateProgress(progress++, 500);
             }
         }
         catch (IOException e) {
@@ -432,7 +432,7 @@ public class NewsController extends Task {
                 Item item = new Item(title, link, date, imgSrc, Source.ND);
                 items.add(item);
                 //System.out.println(item.toString());
-                updateProgress(progress++, 250);
+                updateProgress(progress++, 500);
             }
         }
         catch (IOException e) {

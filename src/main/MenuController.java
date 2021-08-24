@@ -102,6 +102,9 @@ public class MenuController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        NewsController newsController = new NewsController(categoryIndex);
+        pb.progressProperty().bind(newsController.progressProperty());
+
         addNodeToList();
         categoryButton.setDisable(true);
 
@@ -117,9 +120,6 @@ public class MenuController implements Initializable {
                     return new Task() {
                         @Override
                         protected Object call() throws Exception {
-                            NewsController newsController = new NewsController(categoryIndex);
-                            pb.progressProperty().bind(newsController.progressProperty());
-
                             Thread thread = new Thread(newsController);
                             thread.start();
                             thread.join();

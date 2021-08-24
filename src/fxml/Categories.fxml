@@ -46,7 +46,7 @@
                         <Pane prefHeight="75.0" prefWidth="337.0" />
                      </children>
                   </HBox>
-                  <ScrollPane fitToWidth="true" prefHeight="997.0" prefWidth="1913.0" styleClass="dark-background" stylesheets="@../css/style.css">
+                  <ScrollPane fitToWidth="true" prefHeight="997.0" prefWidth="1913.0" styleClass="dark-background" stylesheets="@../css/style.css" VBox.vgrow="ALWAYS">
                      <content>
                         <FlowPane alignment="TOP_CENTER" hgap="30.0" prefHeight="993.0" prefWidth="1911.0" styleClass="dark-background" stylesheets="@../css/style.css" vgap="20.0">
                            <children>
