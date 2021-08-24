@@ -80,7 +80,7 @@
                      <children>
                         <VBox alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="835.0" prefWidth="75.0" spacing="20.0" styleClass="grey-background" stylesheets="@../css/style.css">
                            <children>
-                              <Button fx:id="page1" mnemonicParsing="false" prefHeight="55.0" prefWidth="60.0" stylesheets="@../css/style.css" text="01" textFill="WHITE" VBox.vgrow="ALWAYS">
+                              <Button fx:id="page1" mnemonicParsing="false" prefHeight="55.0" prefWidth="60.0" stylesheets="@../css/style.css" text="1" textFill="WHITE" VBox.vgrow="ALWAYS">
                                  <font>
                                     <Font name="Book Antiqua" size="25.0" />
                                  </font>
@@ -92,7 +92,7 @@
                                     <String fx:value="light-shadow" />
                                  </styleClass>
                               </Button>
-                              <Button fx:id="page2" layoutX="10.0" layoutY="335.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="60.0" style="-fx-border-radius: 100;" stylesheets="@../css/style.css" text="02" textFill="WHITE">
+                              <Button fx:id="page2" layoutX="10.0" layoutY="335.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="60.0" style="-fx-border-radius: 100;" stylesheets="@../css/style.css" text="2" textFill="WHITE">
                                  <font>
                                     <Font name="Book Antiqua" size="24.0" />
                                  </font>
@@ -104,7 +104,7 @@
                                     <String fx:value="light-shadow" />
                                  </styleClass>
                               </Button>
-                              <Button fx:id="page3" layoutX="10.0" layoutY="373.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="60.0" style="-fx-border-radius: 100;" stylesheets="@../css/style.css" text="03" textFill="WHITE" VBox.vgrow="ALWAYS">
+                              <Button fx:id="page3" layoutX="10.0" layoutY="373.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="60.0" style="-fx-border-radius: 100;" stylesheets="@../css/style.css" text="3" textFill="WHITE" VBox.vgrow="ALWAYS">
                                  <font>
                                     <Font name="Book Antiqua" size="24.0" />
                                  </font>
@@ -116,7 +116,7 @@
                                     <String fx:value="light-shadow" />
                                  </styleClass>
                               </Button>
-                              <Button fx:id="page4" layoutX="10.0" layoutY="411.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="60.0" style="-fx-border-radius: 100;" stylesheets="@../css/style.css" text="04" textFill="WHITE" VBox.vgrow="ALWAYS">
+                              <Button fx:id="page4" layoutX="10.0" layoutY="411.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="60.0" style="-fx-border-radius: 100;" stylesheets="@../css/style.css" text="4" textFill="WHITE" VBox.vgrow="ALWAYS">
                                  <font>
                                     <Font name="Book Antiqua" size="24.0" />
                                  </font>
@@ -128,7 +128,7 @@
                                     <String fx:value="light-shadow" />
                                  </styleClass>
                               </Button>
-                              <Button fx:id="page5" layoutX="10.0" layoutY="449.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="60.0" style="-fx-border-radius: 100;" stylesheets="@../css/style.css" text="05" textFill="WHITE" VBox.vgrow="ALWAYS">
+                              <Button fx:id="page5" layoutX="10.0" layoutY="449.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="60.0" style="-fx-border-radius: 100;" stylesheets="@../css/style.css" text="5" textFill="WHITE" VBox.vgrow="ALWAYS">
                                  <font>
                                     <Font name="Book Antiqua" size="24.0" />
                                  </font>

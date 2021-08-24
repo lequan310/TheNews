@@ -595,7 +595,8 @@ public class ArticleController implements Initializable{
 
     @FXML private void max(MouseEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setMaximized(!stage.isMaximized());
+        stage.setFullScreenExitHint("");
+        stage.setFullScreen(!stage.isFullScreen());
     }
 
     @FXML private void close(MouseEvent event) {
