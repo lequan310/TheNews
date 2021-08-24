@@ -6,7 +6,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -20,6 +19,7 @@ public class SceneSwitch {
 
     public SceneSwitch(){}
 
+    // Keyboard Handler for Main Menu scene
     static class MenuHandler implements EventHandler<KeyEvent> {
         private final MenuController controller;
 
@@ -39,6 +39,7 @@ public class SceneSwitch {
         }
     }
 
+    // Keyboard Handler for Article scene
     static class ArticleHandler implements EventHandler<KeyEvent> {
         private final ArticleController articleController;
 
@@ -56,6 +57,7 @@ public class SceneSwitch {
         }
     }
 
+    // Creating Main Menu scene and assigning controller
     public Scene loadMenuScene(int index) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/Home.fxml"));
         MenuController controller = new MenuController();
@@ -69,6 +71,7 @@ public class SceneSwitch {
         return scene;
     }
 
+    // Loading Categories scene and assigning controller
     public void menuCategories(int categoryIndex) {
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/Categories.fxml"));
@@ -82,11 +85,13 @@ public class SceneSwitch {
         }
     }
 
-    public void menuHome(int idx) {
+    // Loading Main Menu scene and assigning controller
+    public void menuHome(int categoryIndex) {
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/Home.fxml"));
             MenuController controller = new MenuController();
-            controller.setCategoryIndex(idx);
+
+            controller.setCategoryIndex(categoryIndex);
             loader.setController(controller);
 
             root = loader.load();
@@ -98,6 +103,7 @@ public class SceneSwitch {
         }
     }
 
+    // Loading article scene and assigning controller
     public void article(ArrayList<Item> items, int index, int categoryIndex){
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/NewsTemplate.fxml"));

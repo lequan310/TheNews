@@ -4,9 +4,11 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+// News Source (VNExpress, TuoiTre, ThanhNien, ZingNews, NhanDan)
 enum Source { VE, TT, TN, ZING, ND}
 
 public class Item implements Comparable<Item> {
+    // Item title, source link, published date, duration since posted, thumbnail link, source
     private final String title;
     private final String link;
     private final LocalDateTime pubDate;
@@ -14,6 +16,7 @@ public class Item implements Comparable<Item> {
     private final String imgSrc;
     private final Source source;
 
+    // Constructor and Getters
     public Item(String title, String link, LocalDateTime pubDate, String imgSrc, Source source) {
         this.title = title;
         this.link = link;
@@ -44,6 +47,7 @@ public class Item implements Comparable<Item> {
         return source;
     }
 
+    // String functions
     public String durationToString(){
         String day = "", hour = "", min = "", sec = "";
         Duration current = Duration.between(pubDate, LocalDateTime.now());
@@ -72,6 +76,7 @@ public class Item implements Comparable<Item> {
 
     @Override
     public int compareTo(Item item) {
+        // Function to compare item published date
         return duration.compareTo(item.duration);
     }
 }

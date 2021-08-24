@@ -19,9 +19,12 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class NewsController extends Task {
-    private final ArrayList<Item> items = new ArrayList<>();
-    private int categoryIndex = 0;
+    private final ArrayList<Item> items = new ArrayList<>(); // List of items that is scraped and sorted to be displayed
+    private int categoryIndex = 0; // Index to read from the arrays below
+    private String error = ""; // Error message
 
+    // List of URL to scrape from
+    // New, Covid, Politics, Business, Technology, Health, Sports, Entertainment, World, Others
     private final String[] VNEXPRESS = {"https://vnexpress.net/rss/tin-moi-nhat.rss", "https://vnexpress.net/rss/suc-khoe.rss", "https://vnexpress.net/rss/phap-luat.rss",
             "https://vnexpress.net/rss/kinh-doanh.rss", "https://vnexpress.net/rss/so-hoa.rss", "https://vnexpress.net/rss/suc-khoe.rss",
             "https://vnexpress.net/rss/the-thao.rss", "https://vnexpress.net/rss/giai-tri.rss", "https://vnexpress.net/rss/the-gioi.rss",
@@ -30,12 +33,12 @@ public class NewsController extends Task {
     private final String[] TUOITRE = {"https://tuoitre.vn/rss/tin-moi-nhat.rss", "https://tuoitre.vn/rss/suc-khoe.rss", "https://tuoitre.vn/rss/phap-luat.rss",
             "https://tuoitre.vn/rss/kinh-doanh.rss", "https://tuoitre.vn/rss/cong-nghe.rss", "https://tuoitre.vn/rss/suc-khoe.rss",
             "https://tuoitre.vn/rss/the-thao.rss", "https://tuoitre.vn/rss/giai-tri.rss", "https://tuoitre.vn/rss/the-gioi.rss",
-            "https://tuoitre.vn/rss/xe.rss", "https://tuoitre.vn/rss/giao-duc.rss", "https://tuoitre.vn/rss/khoa-hoc.rss"};
+            "https://tuoitre.vn/rss/xe.rss", "https://tuoitre.vn/rss/giao-duc.rss", "https://tuoitre.vn/rss/nhip-song-tre.rss"};
 
     private final String[] THANHNIEN = {"https://thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/suc-khoe.rss", "https://thanhnien.vn/rss/thoi-su/chinh-tri.rss",
             "https://thanhnien.vn/rss/tai-chinh-kinh-doanh.rss", "https://thanhnien.vn/rss/cong-nghe.rss", "https://thanhnien.vn/rss/suc-khoe.rss",
             "https://thethao.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giai-tri.rss", "https://thanhnien.vn/rss/the-gioi.rss",
-            "https://game.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giao-duc.rss", "https://thanhnien.vn/rss/gioi-tre.rss"};
+            "https://game.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giao-duc.rss", "https://thanhnien.vn/rss/ban-can-biet.rss"};
 
     private final String[] ZING = {"https://zingnews.vn/", "https://zingnews.vn/suc-khoe.html", "https://zingnews.vn/chinh-tri.html",
             "https://zingnews.vn/kinh-doanh-tai-chinh.html", "https://zingnews.vn/cong-nghe.html", "https://zingnews.vn/suc-khoe.html",
@@ -46,8 +49,13 @@ public class NewsController extends Task {
             "https://nhandan.vn/kinhte", "https://nhandan.vn/khoahoc-congnghe", "https://nhandan.vn/y-te", "https://nhandan.vn/thethao",
             "https://nhandan.vn/vanhoa", "https://nhandan.vn/thegioi", "https://nhandan.vn/xahoi", "https://nhandan.vn/giaoduc", "https://nhandan.vn/bandoc"};
 
+    // Getters
     public ArrayList<Item> getItems() {
         return this.items;
+    }
+
+    public String getError() {
+        return this.error;
     }
 
     @Override
@@ -76,6 +84,7 @@ public class NewsController extends Task {
             System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
         });
 
+        // If category is Others
         if (categoryIndex == 9){
             System.out.println("Others");
             Thread t6 = new Thread(() -> {
@@ -137,6 +146,7 @@ public class NewsController extends Task {
             }
         }
 
+        // Sort items and update progress bar
         Collections.sort(items);
         updateProgress(1, 1);
         System.out.println("Achieve item list: " + (System.currentTimeMillis() - start) + " ms");
@@ -149,31 +159,44 @@ public class NewsController extends Task {
 
     private void readRSSVe(String urlAddress) {
         try {
+            // Creating buffered reader to read RSS file and extract items information
             URL rssURL = new URL(urlAddress);
             BufferedReader in = new BufferedReader(new InputStreamReader(rssURL.openStream()));
             String title = "", pubDate = "", link = "", imgSrc = "", line;
             LocalDateTime date = LocalDateTime.MIN;
             boolean inItem = false;
 
+            // Loop through lines in RSS
             while ((line = in.readLine()) != null) {
+                // If line contains <item> then it's start of an item
                 if (line.contains("<item>")) {
                     inItem = true;
-                } else if (line.contains("<title>") && inItem) {
+                }
+                // Get item title
+                else if (line.contains("<title>") && inItem) {
                     title = extract(line, "<title>", "</title>");
-                } else if (line.contains("<pubDate>") && inItem) {
+                }
+                // Get item published date
+                else if (line.contains("<pubDate>") && inItem) {
                     pubDate = extract(line, "<pubDate>", "</pubDate>");
                     DateTimeFormatter df = DateTimeFormatter.ofPattern("E, dd MMM yyyy HH:mm:ss +0700");
                     date = LocalDateTime.parse(pubDate, df);
-                } else if (line.contains("<link>") && inItem) {
+                }
+                // Get item source link
+                else if (line.contains("<link>") && inItem) {
                     link = extract(line, "<link>", "</link>");
-                } else if (line.contains("<description>") && inItem) {
+                }
+                // Get item thumbnail link in description
+                else if (line.contains("<description>") && inItem) {
                     try {
                         imgSrc = extract(line, "<description>", "</description>");
                         imgSrc = extract(imgSrc, "<img src=\"", "\"");
                     } catch (StringIndexOutOfBoundsException e) {
                         imgSrc = "";
                     }
-                } else if (line.contains("</item>") && inItem) {
+                }
+                // Add item to list at the end of item (when all information of an item object is gathered)
+                else if (line.contains("</item>") && inItem) {
                     inItem = false;
                     Item item = new Item(title, link, date, imgSrc, Source.VE);
                     items.add(item);
@@ -187,6 +210,7 @@ public class NewsController extends Task {
         }
         catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
+            error += e.getMessage() + "\n";
         }
 
         updateProgress(0.1, 1);
@@ -194,28 +218,37 @@ public class NewsController extends Task {
 
     private void readRSSTuoiTre(String urlAddress) {
         try {
+            // Creating buffered reader to read RSS file and extract items information
             URL rssURL = new URL(urlAddress);
             BufferedReader in = new BufferedReader(new InputStreamReader(rssURL.openStream()));
             String title = "", pubDate = "", link = "", imgSrc = "", line;
             LocalDateTime date = LocalDateTime.MIN;
             boolean inItem = false;
 
+            // Loop through lines in RSS
             while ((line = in.readLine()) != null) {
                 if (line.contains("<item>")) {
                     inItem = true;
-                } else if (line.contains("<title>") && inItem) {
+                }
+                // Extract item title
+                else if (line.contains("<title>") && inItem) {
                     title = extract(line, "<title>", "</title>");
                     title = extract(title, "<![CDATA[", "]]>");
-                } else if (line.contains("<pubDate>") && inItem) {
+                }
+                // Extract item published date
+                else if (line.contains("<pubDate>") && inItem) {
                     pubDate = extract(line, "<pubDate>", "</pubDate>");
                     pubDate = extract(pubDate, "<![CDATA[", " GMT+7");
                     DateTimeFormatter df = DateTimeFormatter.ofPattern("E, dd MMM yyyy HH:mm:ss");
                     date = LocalDateTime.parse(pubDate, df);
                 }
-                if (line.contains("<link>") && inItem) {
+                // Extract item source link
+                else if (line.contains("<link>") && inItem) {
                     link = extract(line, "<link>", "</link>");
                     link = extract(link, "<![CDATA[", "]]>");
-                } else if (line.contains("<description>") && inItem) {
+                }
+                // Extract item thumbnail link in description
+                else if (line.contains("<description>") && inItem) {
                     try {
                         imgSrc = extract(line, "<description>", "</description>");
                         imgSrc = extract(imgSrc, "<img src=\"", "\"");
@@ -223,7 +256,9 @@ public class NewsController extends Task {
                     } catch (StringIndexOutOfBoundsException e) {
                         imgSrc = "";
                     }
-                } else if (line.contains("</item>") && inItem) {
+                }
+                // Add item to list of items
+                else if (line.contains("</item>") && inItem) {
                     inItem = false;
                     Item item = new Item(title, link, date, imgSrc, Source.TT);
                     items.add(item);
@@ -237,6 +272,7 @@ public class NewsController extends Task {
         }
         catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
+            error += e.getMessage() + "\n";
         }
 
         updateProgress(0.2, 1);
@@ -244,6 +280,7 @@ public class NewsController extends Task {
 
     private void readRSSThanhNien(String urlAddress) {
         try {
+            // Creating buffered reader to read RSS file and extract items information
             URL rssURL = new URL(urlAddress);
             BufferedReader in = new BufferedReader(new InputStreamReader(rssURL.openStream()));
             String title = "", pubDate = "", link = "", imgSrc = "", line;
@@ -264,19 +301,22 @@ public class NewsController extends Task {
                         // Extract link
                         link = extract(line, "<link>", "</link>");
 
-                        // Extract pubDate
+                        // Extract published date
                         pubDate = extract(line, "<pubDate>", " GMT");
                         DateTimeFormatter df = DateTimeFormatter.ofPattern("E, dd MMM yyyy HH:mm:ss");
                         date = LocalDateTime.parse(pubDate, df);
                         date = date.plusHours(7);
 
-                        // Extract image
+                        // Extract thumbnail link
                         imgSrc = extract(line, "<image>", "</image>");
 
+                        // Add item into list of items
                         Item item = new Item(title, link, date, imgSrc, Source.TN);
                         items.add(item);
                         inItem = false;
-                    } catch (StringIndexOutOfBoundsException e) {}
+                    }
+                    // Catch error lines which sometimes existed in ThanhNien RSS
+                    catch (StringIndexOutOfBoundsException e) {}
                 }
             }
 
@@ -287,6 +327,7 @@ public class NewsController extends Task {
         }
         catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
+            error += e.getMessage() + "\n";
         }
 
         updateProgress(0.3, 1);
@@ -294,6 +335,7 @@ public class NewsController extends Task {
 
     private void readZing(String urlAddress) {
         try {
+            // Connect to URL and add all article element into list
             Document doc = Jsoup.connect(urlAddress).get();
             Elements body = doc.select("section[id~=.*-latest]");
             Elements featured = doc.select("section[id~=.*-featured]");
@@ -302,6 +344,7 @@ public class NewsController extends Task {
             String title = "", pubDate = "", link = "", imgSrc = "";
             LocalDateTime date = LocalDateTime.MIN;
 
+            // Loop through each article-item
             for (Element e : body.select("article.article-item")) {
                 // Get image source
                 imgSrc = e.select("img").attr("src");
@@ -328,6 +371,7 @@ public class NewsController extends Task {
         }
         catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
+            error += e.getMessage() + "\n";
         }
 
         updateProgress(0.4, 1);
@@ -340,6 +384,7 @@ public class NewsController extends Task {
 
             String title = "", pubDate = "", link = "", imgSrc = "";
 
+            // Loop through article items in list
             for (Element e : body.select("article")) {
                 LocalDateTime date = LocalDateTime.MIN;
 
@@ -368,15 +413,20 @@ public class NewsController extends Task {
         }
         catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
+            error += e.getMessage() + "\n";
         }
 
         updateProgress(0.5, 1);
     }
 
+    // Utilities function to trim the string from start to end
     private static String extract(String line, String start, String end) {
+        // Trim from left side
         int firstPos = line.indexOf(start);
         String temp = line.substring(firstPos);
         temp = temp.replace(start, "");
+
+        // Trim from right side
         int lastPos = temp.indexOf(end);
         temp = temp.substring(0, lastPos);
         return temp;

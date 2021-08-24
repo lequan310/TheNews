@@ -20,7 +20,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#dragged" onMousePressed="#pressed" prefHeight="1080.0" prefWidth="1920.0" styleClass="grey-background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMousePressed="#pressed" prefHeight="1080.0" prefWidth="1920.0" styleClass="grey-background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <center>
@@ -649,7 +649,7 @@
             </VBox>
          </center>
          <top>
-            <HBox alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="1920.0" styleClass="black-background">
+            <HBox alignment="CENTER_RIGHT" onMouseDragged="#dragged" prefHeight="30.0" prefWidth="1920.0" styleClass="black-background">
                <children>
                   <FlowPane prefHeight="30.0" prefWidth="127.0" HBox.hgrow="ALWAYS">
                      <children>

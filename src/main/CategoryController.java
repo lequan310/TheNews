@@ -36,9 +36,11 @@ public class CategoryController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        // Set return button to return to main menu
         mainMenu.setOnAction(e -> menuHome(previousCategoryIndex));
         addNodeToList();
 
+        // Assigning category buttons to read articles from specific category
         for (int i = 0; i < buttons.size(); i++){
             int categoryIndex = i;
 
@@ -46,14 +48,17 @@ public class CategoryController implements Initializable {
         }
     }
 
+    // Function to switch to main menu scene
     public void menuHome(int idx){
         new SceneSwitch(anchorPane).menuHome(idx);
     }
 
+    // Add buttons to list for easier access
     private void addNodeToList(){
         buttons.addAll(Arrays.asList(button1, button2, button3, button4, button5, button6, button7, button8, button9, button10));
     }
 
+    // Title bar functions
     @FXML private void dragged(MouseEvent event) {
         Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
         stage.setX(event.getScreenX() - x);

@@ -12,6 +12,7 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception{
         Scene scene = new SceneSwitch().loadMenuScene(0);
 
+        // Adding css styles, setting app icons and titles
         scene.getStylesheets().add("css/style.css");
         stage.setTitle("News Application");
         stage.getIcons().add(new Image("image/book.jpg"));

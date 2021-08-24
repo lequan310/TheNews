@@ -11,11 +11,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-
 import java.net.URL;
 import java.util.*;
 
 public class MenuController implements Initializable {
+    // UI components in Main Menu scene
     @FXML private Label categoryLabel;
     @FXML private Label header;
     @FXML private Label header1;
@@ -99,42 +99,48 @@ public class MenuController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Multi-threading
         try {
+            // Create a news controller for menu scene to use
             NewsController newsController = new NewsController(categoryIndex);
             Thread load = new Thread(newsController);
             pb.progressProperty().bind(newsController.progressProperty());
             load.start();
             load.join();
 
-            items = newsController.getItems();
-            addNodeToList();
-            loadAfterBar();
+            items = newsController.getItems(); // Get list of article items after being sorted
+            addNodeToList(); // Add components to list for easier access
+            loadAfterBar(); // Load UI text, buttons
 
-            if (items.size() == 0) {
-                throwAlert();
+            // Display error if there is error message
+            if (newsController.getError().compareTo("") != 0) {
+                throwAlert(newsController.getError());
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void throwAlert(){
+    // Function to display alert
+    public void throwAlert(String error){
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Poor Internet Connection");
+            alert.setTitle("Read Error");
             alert.setContentText("Please check your internet connection.");
 
+            TextArea area = new TextArea(error);
+            alert.getDialogPane().setExpandableContent(area);
             anchorPane.setEffect(new BoxBlur(anchorPane.getWidth(), anchorPane.getHeight(), 1));
             alert.setOnCloseRequest(dialogEvent -> anchorPane.setEffect(null));
             alert.show();
         });
     }
 
-    private void loadAfterBar(){
+    private void loadAfterBar() {
+        // Setting category label and set current page to first page
         categoryLabel.setText(categories[categoryIndex]);
         changePage(0);
 
+        // Assigning function to page buttons
         for (int i = 0; i < pages.size(); i++){
             int idx = i;
             pages.get(i).setOnAction(e -> changePage(idx));
@@ -151,8 +157,9 @@ public class MenuController implements Initializable {
     }
 
     public void changePage(int page) {
-        scrollPane.setVvalue(0);
+        scrollPane.setVvalue(0); // Reset scroll bar
 
+        // Change page if selected page is not the current active page
         if (currentPage != page){
             Platform.runLater(() -> {
                 System.out.println("\nInitializing new items:");
@@ -161,9 +168,11 @@ public class MenuController implements Initializable {
                 final int ITEMCOUNT = 10;
                 long start = System.currentTimeMillis();
 
+                // Initializing article buttons
                 for (int i = 0; i < ITEMCOUNT; i++){
                     int idx = i + (page * ITEMCOUNT);
 
+                    // If item exists
                     try{
                         labels.get(i).setText(items.get(idx).getTitle());
                         timeLabels.get(i).setText(items.get(idx).durationToString());
@@ -184,6 +193,7 @@ public class MenuController implements Initializable {
 
                         buttons.get(i).setDisable(false);
                     }
+                    // If no more item left
                     catch (IndexOutOfBoundsException e){
                         buttons.get(i).setDisable(true);
                         labels.get(i).setText("Empty");
@@ -199,14 +209,17 @@ public class MenuController implements Initializable {
         }
     }
 
+    // Function to switch to article scene
     public void article(int index, int categoryIndex) {
         new SceneSwitch(anchorPane).article(items, index, categoryIndex);
     }
 
+    // Function to switch to category scene
     @FXML private void menuCategories() {
         new SceneSwitch(anchorPane).menuCategories(categoryIndex);
     }
 
+    // Title bar functions
     @FXML private void dragged(MouseEvent event) {
         Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
         stage.setX(event.getScreenX() - x);
