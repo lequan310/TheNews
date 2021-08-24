@@ -12,9 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
+import javafx.scene.media.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -61,7 +59,6 @@ public class ArticleController implements Initializable{
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Read current article and assigning buttons functions
         readArticle();
-        readArticleTN("https://thanhnien.vn/van-hoa/vi-sao-nghe-si-indie-vu-duoc-ong-lon-warner-music-chon-1439001.html");
         previousButton.setOnAction(e -> previousArticle());
         nextButton.setOnAction(e -> nextArticle());
 
@@ -100,7 +97,7 @@ public class ArticleController implements Initializable{
     private void readArticleTT(String urlAddress){
         try {
             // Connect to article URL
-            Document doc = Jsoup.connect(urlAddress).get();
+            Document doc = Jsoup.connect(urlAddress).timeout(10000).get();
             final int statusCode = doc.connection().response().statusCode();
             System.out.println("Status code: " + statusCode + " " + urlAddress);
 
@@ -191,7 +188,7 @@ public class ArticleController implements Initializable{
     private void readArticleTN(String urlAddress) {
         try {
             // Connect to article URL
-            Document doc = Jsoup.connect(urlAddress).get();
+            Document doc = Jsoup.connect(urlAddress).timeout(10000).get();
             final int statusCode = doc.connection().response().statusCode();
             System.out.println("Status code: " + statusCode + " " + urlAddress);
 
@@ -259,7 +256,7 @@ public class ArticleController implements Initializable{
     private void readArticleZing(String urlAddress){
         try{
             // Connect to article URL
-            Document doc = Jsoup.connect(urlAddress).get();
+            Document doc = Jsoup.connect(urlAddress).timeout(10000).get();
             final int statusCode = doc.connection().response().statusCode();
             System.out.println("Status code: " + statusCode + " " + urlAddress);
 
@@ -350,7 +347,7 @@ public class ArticleController implements Initializable{
     private void readArticleND(String urlAddress) {
         try {
             // Connect to article URL
-            Document doc = Jsoup.connect(urlAddress).get();
+            Document doc = Jsoup.connect(urlAddress).timeout(10000).get();
             final int statusCode = doc.connection().response().statusCode();
             System.out.println("Status code: " + statusCode + " " + urlAddress);
 

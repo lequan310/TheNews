@@ -336,7 +336,7 @@ public class NewsController extends Task {
     private void readZing(String urlAddress) {
         try {
             // Connect to URL and add all article element into list
-            Document doc = Jsoup.connect(urlAddress).get();
+            Document doc = Jsoup.connect(urlAddress).timeout(10000).get();
             Elements body = doc.select("section[id~=.*-latest]");
             Elements featured = doc.select("section[id~=.*-featured]");
             body.addAll(featured);
@@ -379,7 +379,7 @@ public class NewsController extends Task {
 
     private void readNhanDan(String urlAddress) {
         try {
-            Document doc = Jsoup.connect(urlAddress).get();
+            Document doc = Jsoup.connect(urlAddress).timeout(10000).get();
             Elements body = doc.getElementsByClass("swrapper");
 
             String title = "", pubDate = "", link = "", imgSrc = "";

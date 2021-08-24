@@ -138,7 +138,7 @@ public class MenuController implements Initializable {
     private void loadAfterBar() {
         // Setting category label and set current page to first page
         categoryLabel.setText(categories[categoryIndex]);
-        changePage(0);
+        new Thread(() -> changePage(0)).start();
 
         // Assigning function to page buttons
         for (int i = 0; i < pages.size(); i++){
@@ -161,51 +161,53 @@ public class MenuController implements Initializable {
 
         // Change page if selected page is not the current active page
         if (currentPage != page){
-            Platform.runLater(() -> {
-                System.out.println("\nInitializing new items:");
-                currentPage = page;
+            final int ITEMCOUNT = 10;
+            long start = System.currentTimeMillis();
+            currentPage = page;
 
-                final int ITEMCOUNT = 10;
-                long start = System.currentTimeMillis();
+            System.out.println("\nInitializing new items:");
 
-                // Initializing article buttons
-                for (int i = 0; i < ITEMCOUNT; i++){
-                    int idx = i + (page * ITEMCOUNT);
+            // Initializing article buttons
+            for (int i = 0; i < ITEMCOUNT; i++){
+                int idx = i + (page * ITEMCOUNT);
+                int currentButton = i;
 
+                Platform.runLater(() -> {
                     // If item exists
                     try{
-                        labels.get(i).setText(items.get(idx).getTitle());
-                        timeLabels.get(i).setText(items.get(idx).durationToString());
-                        buttons.get(i).setOnAction(e -> article(idx, categoryIndex));
+                        labels.get(currentButton).setText(items.get(idx).getTitle());
+                        timeLabels.get(currentButton).setText(items.get(idx).durationToString());
+                        buttons.get(currentButton).setOnAction(e -> article(idx, categoryIndex));
 
                         switch (items.get(idx).getSource()) {
-                            case VE -> icons.get(i).setImage(new Image("/image/iconVE.png"));
-                            case TT -> icons.get(i).setImage(new Image("/image/iconTT.png"));
-                            case TN -> icons.get(i).setImage(new Image("/image/iconTN.jpeg"));
-                            case ZING -> icons.get(i).setImage(new Image("/image/iconZING.png"));
-                            case ND -> icons.get(i).setImage(new Image("/image/iconND.png"));
+                            case VE -> icons.get(currentButton).setImage(new Image("/image/iconVE.png"));
+                            case TT -> icons.get(currentButton).setImage(new Image("/image/iconTT.png"));
+                            case TN -> icons.get(currentButton).setImage(new Image("/image/iconTN.jpeg"));
+                            case ZING -> icons.get(currentButton).setImage(new Image("/image/iconZING.png"));
+                            case ND -> icons.get(currentButton).setImage(new Image("/image/iconND.png"));
                         }
 
                         if (!items.get(idx).getImgSrc().equals("")){
-                            images.get(i).setImage(new Image(items.get(idx).getImgSrc()));
+                            images.get(currentButton).setImage(new Image(items.get(idx).getImgSrc()));
                         }else
-                            images.get(i).setImage(null);
+                            images.get(currentButton).setImage(null);
 
-                        buttons.get(i).setDisable(false);
+                        buttons.get(currentButton).setDisable(false);
                     }
                     // If no more item left
                     catch (IndexOutOfBoundsException e){
-                        buttons.get(i).setDisable(true);
-                        labels.get(i).setText("Empty");
-                        images.get(i).setImage(null);
-                        timeLabels.get(i).setText("Not available");
-                        icons.get(i).setImage(null);
+                        buttons.get(currentButton).setDisable(true);
+                        labels.get(currentButton).setText("Empty");
+                        images.get(currentButton).setImage(null);
+                        timeLabels.get(currentButton).setText("Not available");
+                        icons.get(currentButton).setImage(null);
                     }
                     finally {
-                        System.out.println("Item " + i + " " + (System.currentTimeMillis() - start) + " ms");
+                        System.out.println("Item " + currentButton + " " + (System.currentTimeMillis() - start) + " ms");
                     }
-                }
-            });
+                });
+
+            }
         }
     }
 
