@@ -1,6 +1,8 @@
 package main;
 
 import javafx.application.Platform;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -71,6 +73,7 @@ public class MenuController implements Initializable {
     @FXML private Button button7;
     @FXML private Button button8;
     @FXML private Button button9;
+    @FXML private Button categoryButton;
 
     @FXML private Button page1;
     @FXML private Button page2;
@@ -99,23 +102,42 @@ public class MenuController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        addNodeToList();
+        categoryButton.setDisable(true);
+
+        for (Button b : pages){
+            b.setDisable(true);
+        }
+
         try {
             // Create a news controller for menu scene to use
-            NewsController newsController = new NewsController(categoryIndex);
-            Thread load = new Thread(newsController);
-            pb.progressProperty().bind(newsController.progressProperty());
-            load.start();
-            load.join();
+            new Service() {
+                @Override
+                protected Task createTask() {
+                    return new Task() {
+                        @Override
+                        protected Object call() throws Exception {
+                            NewsController newsController = new NewsController(categoryIndex);
+                            pb.progressProperty().bind(newsController.progressProperty());
 
-            items = newsController.getItems(); // Get list of article items after being sorted
-            addNodeToList(); // Add components to list for easier access
-            loadAfterBar(); // Load UI text, buttons
+                            Thread thread = new Thread(newsController);
+                            thread.start();
+                            thread.join();
 
-            // Display error if there is error message
-            if (newsController.getError().compareTo("") != 0) {
-                throwAlert(newsController.getError());
-            }
-        } catch (Exception e) {
+                            items = newsController.getItems(); // Get list of article items after being sorted
+                            Platform.runLater(() -> loadAfterBar());
+
+                            // Display error if there is error message
+                            if (newsController.getError().compareTo("") != 0) {
+                                throwAlert(newsController.getError());
+                            }
+                            return null;
+                        }
+                    };
+                }
+            }.start();
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -138,7 +160,11 @@ public class MenuController implements Initializable {
     private void loadAfterBar() {
         // Setting category label and set current page to first page
         categoryLabel.setText(categories[categoryIndex]);
+        categoryButton.setDisable(false);
         new Thread(() -> changePage(0)).start();
+        for (Button b : pages){
+            b.setDisable(false);
+        }
 
         // Assigning function to page buttons
         for (int i = 0; i < pages.size(); i++){

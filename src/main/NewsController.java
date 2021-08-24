@@ -20,7 +20,7 @@ import java.util.Collections;
 
 public class NewsController extends Task {
     private final ArrayList<Item> items = new ArrayList<>(); // List of items that is scraped and sorted to be displayed
-    private int categoryIndex = 0; // Index to read from the arrays below
+    private int categoryIndex = 0, progress = 0; // Index to read from the arrays below
     private String error = ""; // Error message
 
     // List of URL to scrape from
@@ -200,6 +200,7 @@ public class NewsController extends Task {
                     inItem = false;
                     Item item = new Item(title, link, date, imgSrc, Source.VE);
                     items.add(item);
+                    updateProgress(progress++, 250);
                 }
             }
 
@@ -212,8 +213,6 @@ public class NewsController extends Task {
             System.out.println("Can't connect to " + urlAddress);
             error += e.getMessage() + "\n";
         }
-
-        updateProgress(0.1, 1);
     }
 
     private void readRSSTuoiTre(String urlAddress) {
@@ -262,6 +261,7 @@ public class NewsController extends Task {
                     inItem = false;
                     Item item = new Item(title, link, date, imgSrc, Source.TT);
                     items.add(item);
+                    updateProgress(progress++, 250);
                 }
             }
 
@@ -274,8 +274,6 @@ public class NewsController extends Task {
             System.out.println("Can't connect to " + urlAddress);
             error += e.getMessage() + "\n";
         }
-
-        updateProgress(0.2, 1);
     }
 
     private void readRSSThanhNien(String urlAddress) {
@@ -313,6 +311,7 @@ public class NewsController extends Task {
                         // Add item into list of items
                         Item item = new Item(title, link, date, imgSrc, Source.TN);
                         items.add(item);
+                        updateProgress(progress++, 250);
                         inItem = false;
                     }
                     // Catch error lines which sometimes existed in ThanhNien RSS
@@ -329,8 +328,6 @@ public class NewsController extends Task {
             System.out.println("Can't connect to " + urlAddress);
             error += e.getMessage() + "\n";
         }
-
-        updateProgress(0.3, 1);
     }
 
     private void readZing(String urlAddress) {
@@ -367,20 +364,20 @@ public class NewsController extends Task {
                 // Create and add news item to list
                 Item item = new Item(title, link, date, imgSrc, Source.ZING);
                 items.add(item);
+                updateProgress(progress++, 250);
             }
         }
         catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
             error += e.getMessage() + "\n";
         }
-
-        updateProgress(0.4, 1);
     }
 
     private void readNhanDan(String urlAddress) {
         try {
+            // Connect to URL and add all article element into list
             Document doc = Jsoup.connect(urlAddress).timeout(10000).get();
-            Elements body = doc.getElementsByClass("swrapper");
+            Elements body = doc.select("div[class*=uk-width-3-4@m]");
 
             String title = "", pubDate = "", link = "", imgSrc = "";
 
@@ -400,23 +397,48 @@ public class NewsController extends Task {
                 if (!link.contains("https://")) link = "https://nhandan.vn" + link;
 
                 // Get pubDate
-                pubDate = e.getElementsByClass("box-meta-small").text();
+                pubDate = e.select("div[class*=box-meta]").text();
                 if (pubDate.compareTo("") != 0) {
                     DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm dd/M/yyyy");
                     date = LocalDateTime.parse(pubDate, df);
+                }
+                else {
+                    try {
+                        Document temp = Jsoup.connect(link).timeout(5000).get();
+                        pubDate = temp.select("div.box-date").text();
+
+                        if (pubDate.compareTo("") != 0) {
+                            pubDate = pubDate.substring(pubDate.indexOf(", ") + 2);
+                        }
+
+                        try {
+                            DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy, HH:mm");
+                            date = LocalDateTime.parse(pubDate, df);
+                        }
+                        catch (DateTimeParseException exception) {
+                            try {
+                                DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+                                date = LocalDateTime.parse(pubDate, df);
+                            }
+                            catch (DateTimeParseException ex) { continue; }
+                        }
+                    }
+                    catch (IOException exception) { 
+                        continue; 
+                    }
                 }
 
                 // Create and add news item to list
                 Item item = new Item(title, link, date, imgSrc, Source.ND);
                 items.add(item);
+                //System.out.println(item.toString());
+                updateProgress(progress++, 250);
             }
         }
         catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
             error += e.getMessage() + "\n";
         }
-
-        updateProgress(0.5, 1);
     }
 
     // Utilities function to trim the string from start to end

@@ -55,14 +55,14 @@
                               <Insets left="20.0" />
                            </HBox.margin>
                         </VBox>
-                        <AnchorPane HBox.hgrow="ALWAYS">
+                        <AnchorPane prefWidth="341.0" HBox.hgrow="ALWAYS">
                            <children>
                               <ImageView fx:id="thumbnail" fitHeight="383.0" fitWidth="594.0" layoutX="102.33333587646484" layoutY="4.3333330154418945" pickOnBounds="true">
                                  <image>
                                     <Image url="@../image/book.jpg" />
                                  </image>
                               </ImageView>
-                              <Pane layoutX="100.0" prefHeight="389.0" prefWidth="597.0" styleClass="blacker-gradient" stylesheets="@../css/style.css" />
+                              <Pane fx:id="blackPane" layoutX="100.0" prefHeight="389.0" prefWidth="597.0" styleClass="blacker-gradient" stylesheets="@../css/style.css" />
                               <Label fx:id="title" alignment="BOTTOM_CENTER" layoutY="1.0" prefHeight="374.0" prefWidth="795.0" text="Header" textAlignment="CENTER" textFill="WHITE" textOverrun="CLIP" wrapText="true">
                                  <font>
                                     <Font size="35.0" />

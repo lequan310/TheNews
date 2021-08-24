@@ -28,6 +28,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.ResourceBundle;
 
 public class ArticleController implements Initializable{
@@ -40,6 +41,7 @@ public class ArticleController implements Initializable{
     @FXML private Button previousButton;
     @FXML private Button nextButton;
     @FXML private ScrollPane scrollPane;
+    @FXML private Pane blackPane;
 
     private final int WORDSIZE = 18, ITEMSIZE = 49;
     private final ArrayList<Item> items;
@@ -66,6 +68,10 @@ public class ArticleController implements Initializable{
             previousButton.setDisable(true);
         else if (index == ITEMSIZE)
             nextButton.setDisable(true);
+
+        blackPane.prefHeightProperty().bind(anchorPane.heightProperty().divide(3));
+        thumbnail.fitHeightProperty().bind(blackPane.heightProperty().subtract(10));
+        title.prefHeightProperty().bind(blackPane.heightProperty());
     }
 
     public void readArticle(){
@@ -233,7 +239,7 @@ public class ArticleController implements Initializable{
                         content.getChildren().add(createHeader(e.text(), WORDSIZE));
                     }
                     // Call TN utilities function for div elements
-                    else if (e.is("div")) {
+                    else if (e.is("div") && e.className().compareTo("details__morenews") != 0) {
                         checkDivTN(e);
                     }
                 }
