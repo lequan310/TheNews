@@ -130,7 +130,7 @@ public class ArticleController implements Initializable{
                             if (i.is("p")) {
                                 Label label = createLabel(i.text(), WORDSIZE);
                                 if (i.select("b").size() > 0)
-                                    label.setFont(Font.font("Times New Roman", FontWeight.BOLD, WORDSIZE));
+                                    label.setFont(Font.font("Roboto", FontWeight.BOLD, WORDSIZE));
 
                                 pane.getChildren().add(label);
                             }
@@ -319,7 +319,7 @@ public class ArticleController implements Initializable{
                 if (e.is("p")) {
                     Label label = createLabel(e.text(), WORDSIZE);
                     if (e.select("strong").size() > 0)
-                        label.setFont(Font.font("Times New Roman", FontWeight.BOLD, WORDSIZE));
+                        label.setFont(Font.font("Roboto", FontWeight.BOLD, WORDSIZE));
 
                     content.getChildren().add(label);
                 }
@@ -359,7 +359,7 @@ public class ArticleController implements Initializable{
     }
 
     private void checkDivTN(Element div) {
-        if (div.select("> *").size() == 0){
+        if (div.select("> *").size() == 0 && !div.className().contains("ads")){
             content.getChildren().add(createLabel(div.text(), WORDSIZE));
             return;
         }
@@ -389,7 +389,7 @@ public class ArticleController implements Initializable{
 
     private Label createLabel(String text, int size){
         Label label = new Label(text);
-        label.setFont(Font.font("Times New Roman", size));
+        label.setFont(Font.font("Roboto", size));
         label.setTextFill(Color.valueOf("#ffffff"));
         label.setTextOverrun(OverrunStyle.CLIP);
         label.setWrapText(true);
@@ -401,7 +401,7 @@ public class ArticleController implements Initializable{
 
     private Label createHeader(String text, int size) {
         Label label = createLabel(text, size);
-        label.setFont(Font.font("Times New Roman", FontWeight.BOLD, size + 2));
+        label.setFont(Font.font("Roboto", FontWeight.BOLD, size + 2));
 
         return label;
     }
@@ -418,7 +418,7 @@ public class ArticleController implements Initializable{
         final int MAX_WIDTH = 1000;
         ImageView imageView = new ImageView(image);
         imageView.setPreserveRatio(true);
-        imageView.setFitWidth(Math.min(image.getWidth(), MAX_WIDTH));
+        imageView.setFitWidth(Math.min((Math.max(image.getWidth(), 500)), MAX_WIDTH));
 
         // Adjust label position and size
         Label label = createGraphicLabel(caption);
@@ -512,8 +512,7 @@ public class ArticleController implements Initializable{
 
     @FXML private void max(MouseEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setFullScreenExitHint("");
-        stage.setFullScreen(!stage.isFullScreen());
+        stage.setMaximized(!stage.isMaximized());
     }
 
     @FXML private void close(MouseEvent event) {

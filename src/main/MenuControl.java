@@ -67,8 +67,7 @@ public class MenuControl implements Initializable {
 
     @FXML private void max(MouseEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setFullScreenExitHint("");
-        stage.setFullScreen(!stage.isFullScreen());
+        stage.setMaximized(!stage.isMaximized());
     }
 
     @FXML private void close(MouseEvent event) {

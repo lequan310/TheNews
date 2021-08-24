@@ -32,7 +32,7 @@
                         <URL value="@../css/style.css" />
                      </stylesheets>
                      <children>
-                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#menuCategories" prefHeight="79.0" prefWidth="131.0" styleClass="dark-background" stylesheets="@../css/style.css" textFill="TRANSPARENT" HBox.hgrow="ALWAYS">
+                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#menuCategories" prefHeight="79.0" prefWidth="173.0" styleClass="dark-background" stylesheets="@../css/style.css" textFill="TRANSPARENT" HBox.hgrow="ALWAYS">
                            <graphic>
                               <ImageView blendMode="SCREEN" fitHeight="46.0" fitWidth="53.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -47,29 +47,25 @@
                               <Cursor fx:constant="CLOSED_HAND" />
                            </cursor>
                         </Button>
-                        <AnchorPane prefHeight="95.0" prefWidth="67.0" HBox.hgrow="ALWAYS">
+                        <AnchorPane prefHeight="95.0" prefWidth="265.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label fx:id="categoryLabel" prefHeight="95.0" prefWidth="109.0" text=" NEW" textFill="#f6e74d" textOverrun="CLIP" wrapText="true">
+                              <Label fx:id="categoryLabel" prefHeight="95.0" prefWidth="213.0" text=" NEW" textFill="#f6e74d" textOverrun="CLIP" wrapText="true">
                                  <font>
-                                    <Font name="System Bold" size="39.0" />
+                                    <Font size="33.0" />
                                  </font>
                               </Label>
                            </children>
                         </AnchorPane>
-                        <Label alignment="CENTER" minWidth="0.0" prefHeight="95.0" prefWidth="1500.0" styleClass="dark-background" stylesheets="@../css/style.css" text="The News" textFill="WHITE" HBox.hgrow="ALWAYS">
+                        <Label alignment="CENTER" minWidth="0.0" prefHeight="95.0" prefWidth="1093.0" styleClass="dark-background" stylesheets="@../css/style.css" text="The News" textFill="WHITE" HBox.hgrow="ALWAYS">
                            <font>
                               <Font name="Old English Text MT" size="55.0" />
                            </font>
                         </Label>
-                        <AnchorPane HBox.hgrow="ALWAYS">
-                           <children>
-                              <Label alignment="CENTER" prefHeight="95.0" prefWidth="193.0" text="by Dark Mode team" textFill="WHITE">
-                                 <font>
-                                    <Font size="16.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </AnchorPane>
+                        <Label alignment="CENTER" ellipsisString="" prefHeight="95.0" prefWidth="339.0" text="by Dark Mode team" textFill="WHITE" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
                      </children>
                   </HBox>
                   <ProgressBar fx:id="pb" prefHeight="8.0" prefWidth="1920.0" progress="1.0" stylesheets="@../css/style.css" VBox.vgrow="ALWAYS">
@@ -686,7 +682,7 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button mnemonicParsing="false" onMouseClicked="#close" prefHeight="30.0" prefWidth="60.0" HBox.hgrow="ALWAYS">
+                  <Button mnemonicParsing="false" onMouseClicked="#close" prefHeight="30.0" prefWidth="60.0" styleClass="black-background" HBox.hgrow="ALWAYS">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -694,10 +690,6 @@
                            </image>
                         </ImageView>
                      </graphic>
-                     <styleClass>
-                        <String fx:value="black-background" />
-                        <String fx:value="button" />
-                     </styleClass>
                   </Button>
                </children>
             </HBox>
