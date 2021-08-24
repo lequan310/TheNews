@@ -309,17 +309,19 @@ public class ArticleController implements Initializable{
                     else if (e.is("figure") && e.attr("class").contains("video")) {
                         content.getChildren().add(createVideoButton(e.attr("data-video-src"), e.select("figcaption").text()));
                     }
-                    // Create and add image if element if picture
-                    else if (e.is("table") && e.attr("class").compareTo("picture") == 0) {
-                        String imageURL = e.select("img").attr("data-src");
-                        if (imageURL.compareTo("") == 0)
-                            imageURL = e.select("img").attr("src");
+                    // Create and add images if element is image/gallery
+                    else if (e.is("table") && e.attr("class").contains("picture")) {
+                        for (Element i : e.select("td.pic > *")) {
+                            String imageURL = i.select("img").attr("data-src");
+                            if (imageURL.compareTo("") == 0)
+                                imageURL = i.select("img").attr("src");
 
-                        try{
-                            Image image = new Image(imageURL);
-                            content.getChildren().add(createImageLabel(image, e.select("td[class=\"pCaption caption\"]").text()));
+                            try{
+                                Image image = new Image(imageURL);
+                                content.getChildren().add(createImageLabel(image, e.select("td[class=\"pCaption caption\"]").text()));
+                            }
+                            catch (IllegalArgumentException ex) {}
                         }
-                        catch (IllegalArgumentException ex) {}
                     }
                 }
 
