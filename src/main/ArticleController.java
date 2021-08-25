@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class ArticleController implements Initializable{
-    private final int WORDSIZE = 18, ITEMSIZE = 49;
+    private final int WORDSIZE = 18;
     private final ArrayList<Item> items;
     private final int categoryIndex;
 
@@ -76,8 +76,6 @@ public class ArticleController implements Initializable{
 
         if (index == 0)
             previousButton.setDisable(true);
-        else if (index == ITEMSIZE)
-            nextButton.setDisable(true);
 
         blackPane.prefHeightProperty().bind(anchorPane.heightProperty().divide(3));
         thumbnail.fitHeightProperty().bind(blackPane.heightProperty().subtract(10));
@@ -637,25 +635,30 @@ public class ArticleController implements Initializable{
 
     // Function to navigate next and previous articles
     public void nextArticle(){
-        if (index == ITEMSIZE) return;
+        if (index == items.size() - 1) return; // If last item of the list reached, return
 
+        // If not last item, increase current item index and load that article
         index++;
         item = items.get(index);
         readArticle();
         previousButton.setDisable(false);
 
-        if (index == ITEMSIZE)
+        // Disable next article button if last item of the list reached
+        if (index == items.size() - 1)
             nextButton.setDisable(true);
     }
 
     public void previousArticle(){
-        if (index == 0) return;
+        if (index == 0) return; // If first item of the list reached, return
 
+        // If not first item, decrease current item index and load that article
         index--;
         item = items.get(index);
         readArticle();
         nextButton.setDisable(false);
 
-        if (index == 0) previousButton.setDisable(true);
+        // Disable previous article button if first item of the list reached
+        if (index == 0)
+            previousButton.setDisable(true);
     }
 }

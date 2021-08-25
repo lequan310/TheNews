@@ -6,7 +6,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,9 +62,12 @@ public class SceneSwitch {
         MenuController controller = new MenuController();
         controller.setCategoryIndex(index);
         loader.setController(controller);
-        
-        Scene scene = new Scene(loader.load(), 1366, 720);
 
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        double height = ge.getMaximumWindowBounds().height, width = ge.getMaximumWindowBounds().width, ratio = width / height;
+        height -= 200; width = height * ratio;
+
+        Scene scene = new Scene(loader.load(), width, height);
         scene.setOnKeyPressed(new MenuHandler(controller));
         return scene;
     }
