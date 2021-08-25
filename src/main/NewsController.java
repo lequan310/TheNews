@@ -5,6 +5,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,11 +18,11 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class NewsController extends Task {
     private final ArrayList<Item> items = new ArrayList<>(); // List of items that is scraped and sorted to be displayed
-    private int categoryIndex = 0, progress = 0; // Index to read from the arrays below
-    private String error = ""; // Error message
 
     // List of URL to scrape from
     // New, Covid, Politics, Business, Technology, Health, Sports, Entertainment, World, Others
@@ -29,25 +30,40 @@ public class NewsController extends Task {
             "https://vnexpress.net/rss/kinh-doanh.rss", "https://vnexpress.net/rss/so-hoa.rss", "https://vnexpress.net/rss/suc-khoe.rss",
             "https://vnexpress.net/rss/the-thao.rss", "https://vnexpress.net/rss/giai-tri.rss", "https://vnexpress.net/rss/the-gioi.rss",
             "https://vnexpress.net/rss/du-lich.rss", "https://vnexpress.net/rss/giao-duc.rss", "https://vnexpress.net/rss/khoa-hoc.rss"};
-
     private final String[] TUOITRE = {"https://tuoitre.vn/rss/tin-moi-nhat.rss", "https://tuoitre.vn/rss/suc-khoe.rss", "https://tuoitre.vn/rss/phap-luat.rss",
             "https://tuoitre.vn/rss/kinh-doanh.rss", "https://tuoitre.vn/rss/cong-nghe.rss", "https://tuoitre.vn/rss/suc-khoe.rss",
             "https://tuoitre.vn/rss/the-thao.rss", "https://tuoitre.vn/rss/giai-tri.rss", "https://tuoitre.vn/rss/the-gioi.rss",
             "https://tuoitre.vn/rss/xe.rss", "https://tuoitre.vn/rss/giao-duc.rss", "https://tuoitre.vn/rss/nhip-song-tre.rss"};
-
     private final String[] THANHNIEN = {"https://thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/suc-khoe.rss", "https://thanhnien.vn/rss/thoi-su/chinh-tri.rss",
             "https://thanhnien.vn/rss/tai-chinh-kinh-doanh.rss", "https://thanhnien.vn/rss/cong-nghe.rss", "https://thanhnien.vn/rss/suc-khoe.rss",
             "https://thethao.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giai-tri.rss", "https://thanhnien.vn/rss/the-gioi.rss",
             "https://game.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giao-duc.rss", "https://thanhnien.vn/rss/ban-can-biet.rss"};
-
     private final String[] ZING = {"https://zingnews.vn/", "https://zingnews.vn/suc-khoe.html", "https://zingnews.vn/chinh-tri.html",
             "https://zingnews.vn/kinh-doanh-tai-chinh.html", "https://zingnews.vn/cong-nghe.html", "https://zingnews.vn/suc-khoe.html",
             "https://zingnews.vn/the-thao.html", "https://zingnews.vn/giai-tri.html", "https://zingnews.vn/the-gioi.html",
             "https://zingnews.vn/doi-song.html", "https://zingnews.vn/giao-duc.html", "https://zingnews.vn/du-lich.html"};
-
     private final String[] NHANDAN = {"https://nhandan.vn/", "https://nhandan.vn/y-te", "https://nhandan.vn/chinhtri",
             "https://nhandan.vn/kinhte", "https://nhandan.vn/khoahoc-congnghe", "https://nhandan.vn/y-te", "https://nhandan.vn/thethao",
             "https://nhandan.vn/vanhoa", "https://nhandan.vn/thegioi", "https://nhandan.vn/xahoi", "https://nhandan.vn/giaoduc", "https://nhandan.vn/bandoc"};
+    private int categoryIndex = 0, progress = 0, maxProgress = 0; // Index to read from the arrays below
+    private String error = ""; // Error message
+
+    public NewsController(int categoryIndex) {
+        this.categoryIndex = categoryIndex;
+    }
+
+    // Utilities function to trim the string from start to end
+    private static String extract(String line, String start, String end) {
+        // Trim from left side
+        int firstPos = line.indexOf(start);
+        String temp = line.substring(firstPos);
+        temp = temp.replace(start, "");
+
+        // Trim from right side
+        int lastPos = temp.indexOf(end);
+        temp = temp.substring(0, lastPos);
+        return temp;
+    }
 
     // Getters
     public ArrayList<Item> getItems() {
@@ -63,84 +79,38 @@ public class NewsController extends Task {
         long start = System.currentTimeMillis();
         updateProgress(0, 1);
 
-        Thread t1 = new Thread(() -> {
-            readRSSVe(VNEXPRESS[categoryIndex]);
-            System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
-        });
-        Thread t2 = new Thread(() -> {
-            readRSSTuoiTre(TUOITRE[categoryIndex]);
-            System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
-        });
-        Thread t3 = new Thread(() -> {
-            readRSSThanhNien(THANHNIEN[categoryIndex]);
-            System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
-        });
-        Thread t4 = new Thread(() -> {
-            readZing(ZING[categoryIndex]);
-            System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
-        });
-        Thread t5 = new Thread(() -> {
-            readNhanDan(NHANDAN[categoryIndex]);
-            System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
-        });
+        Thread t1 = new Thread(() -> readRSSVe(VNEXPRESS[categoryIndex]));
+        Thread t2 = new Thread(() -> readRSSTuoiTre(TUOITRE[categoryIndex]));
+        Thread t3 = new Thread(() -> readRSSThanhNien(THANHNIEN[categoryIndex]));
+        Thread t4 = new Thread(() -> readZing(ZING[categoryIndex]));
+        Thread t5 = new Thread(() -> readNhanDan(NHANDAN[categoryIndex]));
 
         // If category is Others
-        if (categoryIndex == 9){
-            System.out.println("Others");
-            Thread t6 = new Thread(() -> {
-                readRSSVe(VNEXPRESS[categoryIndex + 1]);
-                System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
-            });
-            Thread t7 = new Thread(() -> {
-                readRSSTuoiTre(TUOITRE[categoryIndex + 1]);
-                System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
-            });
-            Thread t8 = new Thread(() -> {
-                readRSSThanhNien(THANHNIEN[categoryIndex + 1]);
-                System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
-            });
-            Thread t9 = new Thread(() -> {
-                readZing(ZING[categoryIndex + 1]);
-                System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
-            });
-            Thread t10 = new Thread(() -> {
-                readNhanDan(NHANDAN[categoryIndex + 1]);
-                System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
-            });
-            Thread t11 = new Thread(() -> {
-                readRSSVe(VNEXPRESS[categoryIndex + 2]);
-                System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
-            });
-            Thread t12 = new Thread(() -> {
-                readRSSTuoiTre(TUOITRE[categoryIndex + 2]);
-                System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
-            });
-            Thread t13 = new Thread(() -> {
-                readRSSThanhNien(THANHNIEN[categoryIndex + 2]);
-                System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
-            });
-            Thread t14 = new Thread(() -> {
-                readZing(ZING[categoryIndex + 2]);
-                System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
-            });
-            Thread t15 = new Thread(() -> {
-                readNhanDan(NHANDAN[categoryIndex + 2]);
-                System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
-            });
+        if (categoryIndex == 9) {
+            maxProgress = 500;
+
+            Thread t6 = new Thread(() -> readRSSVe(VNEXPRESS[categoryIndex + 1]));
+            Thread t7 = new Thread(() -> readRSSTuoiTre(TUOITRE[categoryIndex + 1]));
+            Thread t8 = new Thread(() -> readRSSThanhNien(THANHNIEN[categoryIndex + 1]));
+            Thread t9 = new Thread(() -> readZing(ZING[categoryIndex + 1]));
+            Thread t10 = new Thread(() -> readNhanDan(NHANDAN[categoryIndex + 1]));
+            Thread t11 = new Thread(() -> readRSSVe(VNEXPRESS[categoryIndex + 2]));
+            Thread t12 = new Thread(() -> readRSSTuoiTre(TUOITRE[categoryIndex + 2]));
+            Thread t13 = new Thread(() -> readRSSThanhNien(THANHNIEN[categoryIndex + 2]));
+            Thread t14 = new Thread(() -> readZing(ZING[categoryIndex + 2]));
+            Thread t15 = new Thread(() -> readNhanDan(NHANDAN[categoryIndex + 2]));
 
             for (Thread t : Arrays.asList(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15)) {
                 t.start();
             }
-
             for (Thread t : Arrays.asList(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15)) {
                 t.join();
             }
-        }
-        else{
+        } else {
+            maxProgress = 250;
             for (Thread t : Arrays.asList(t1, t2, t3, t4, t5)) {
                 t.start();
             }
-
             for (Thread t : Arrays.asList(t1, t2, t3, t4, t5)) {
                 t.join();
             }
@@ -151,10 +121,6 @@ public class NewsController extends Task {
         updateProgress(1, 1);
         System.out.println("Achieve item list: " + (System.currentTimeMillis() - start) + " ms");
         return null;
-    }
-
-    public NewsController(int categoryIndex) {
-        this.categoryIndex = categoryIndex;
     }
 
     private void readRSSVe(String urlAddress) {
@@ -175,6 +141,8 @@ public class NewsController extends Task {
                 // Get item title
                 else if (line.contains("<title>") && inItem) {
                     title = extract(line, "<title>", "</title>");
+
+                    if (categoryIndex == 1 && !checkCovidKeyword(title)) inItem = false;
                 }
                 // Get item published date
                 else if (line.contains("<pubDate>") && inItem) {
@@ -200,18 +168,16 @@ public class NewsController extends Task {
                     inItem = false;
                     Item item = new Item(title, link, date, imgSrc, Source.VE);
                     items.add(item);
-                    updateProgress(progress++, 500);
+                    updateProgress(progress++, maxProgress);
                 }
             }
 
             in.close();
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             e.printStackTrace();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
-            error += e.getMessage() + "\n";
+            error += urlAddress + ": " + e.getMessage() + "\n";
         }
     }
 
@@ -233,6 +199,8 @@ public class NewsController extends Task {
                 else if (line.contains("<title>") && inItem) {
                     title = extract(line, "<title>", "</title>");
                     title = extract(title, "<![CDATA[", "]]>");
+
+                    if (categoryIndex == 1 && !checkCovidKeyword(title)) inItem = false;
                 }
                 // Extract item published date
                 else if (line.contains("<pubDate>") && inItem) {
@@ -261,18 +229,16 @@ public class NewsController extends Task {
                     inItem = false;
                     Item item = new Item(title, link, date, imgSrc, Source.TT);
                     items.add(item);
-                    updateProgress(progress++, 500);
+                    updateProgress(progress++, maxProgress);
                 }
             }
 
             in.close();
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             e.printStackTrace();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
-            error += e.getMessage() + "\n";
+            error += urlAddress + ": " + e.getMessage() + "\n";
         }
     }
 
@@ -285,6 +251,7 @@ public class NewsController extends Task {
             LocalDateTime date = LocalDateTime.MIN;
             boolean inItem = false;
 
+            // Loop through each line in RSS file
             while ((line = in.readLine()) != null) {
                 if (line.contains("<item>"))
                     inItem = true;
@@ -295,6 +262,7 @@ public class NewsController extends Task {
                         title = extract(line, "<title>", "</title>");
                         if (title.contains("<![CDATA[ "))
                             title = extract(title, "<![CDATA[ ", "]]>");
+                        if (categoryIndex == 1 && !checkCovidKeyword(title)) continue;
 
                         // Extract link
                         link = extract(line, "<link>", "</link>");
@@ -311,22 +279,21 @@ public class NewsController extends Task {
                         // Add item into list of items
                         Item item = new Item(title, link, date, imgSrc, Source.TN);
                         items.add(item);
-                        updateProgress(progress++, 500);
                         inItem = false;
+                        updateProgress(progress++, maxProgress);
                     }
                     // Catch error lines which sometimes existed in ThanhNien RSS
-                    catch (StringIndexOutOfBoundsException e) {}
+                    catch (StringIndexOutOfBoundsException e) {
+                    }
                 }
             }
 
             in.close();
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             e.printStackTrace();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
-            error += e.getMessage() + "\n";
+            error += urlAddress + ": " + e.getMessage() + "\n";
         }
     }
 
@@ -347,8 +314,11 @@ public class NewsController extends Task {
                 imgSrc = e.select("img").attr("src");
                 if (!imgSrc.contains("https")) imgSrc = e.select("img").attr("data-src");
 
-                // Get title and link
+                // Get title
                 title = e.getElementsByClass("article-title").text();
+                if (categoryIndex == 1 && !checkCovidKeyword(title)) continue;
+
+                // Get link
                 link = e.select("a").attr("href");
                 link = "https://zingnews.vn" + link;
 
@@ -364,12 +334,11 @@ public class NewsController extends Task {
                 // Create and add news item to list
                 Item item = new Item(title, link, date, imgSrc, Source.ZING);
                 items.add(item);
-                updateProgress(progress++, 500);
+                updateProgress(progress++, maxProgress);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
-            error += e.getMessage() + "\n";
+            error += urlAddress + ": " + e.getMessage() + "\n";
         }
     }
 
@@ -388,6 +357,7 @@ public class NewsController extends Task {
                 // Get title
                 title = e.getElementsByClass("box-title").text();
                 if (title.compareTo("") == 0) continue;
+                if (categoryIndex == 1 && !checkCovidKeyword(title)) continue;
 
                 // Get image source
                 imgSrc = e.select("img").attr("data-src");
@@ -401,8 +371,7 @@ public class NewsController extends Task {
                 if (pubDate.compareTo("") != 0) {
                     DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm dd/M/yyyy");
                     date = LocalDateTime.parse(pubDate, df);
-                }
-                else {
+                } else {
                     try {
                         Document temp = Jsoup.connect(link).timeout(5000).get();
                         pubDate = temp.select("div.box-date").text();
@@ -414,43 +383,40 @@ public class NewsController extends Task {
                         try {
                             DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy, HH:mm");
                             date = LocalDateTime.parse(pubDate, df);
-                        }
-                        catch (DateTimeParseException exception) {
+                        } catch (DateTimeParseException exception) {
                             try {
                                 DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
                                 date = LocalDateTime.parse(pubDate, df);
+                            } catch (DateTimeParseException ex) {
+                                continue;
                             }
-                            catch (DateTimeParseException ex) { continue; }
                         }
-                    }
-                    catch (IOException exception) { 
-                        continue; 
+                    } catch (IOException exception) {
+                        continue;
                     }
                 }
 
                 // Create and add news item to list
                 Item item = new Item(title, link, date, imgSrc, Source.ND);
                 items.add(item);
-                //System.out.println(item.toString());
-                updateProgress(progress++, 500);
+                updateProgress(progress++, maxProgress);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
-            error += e.getMessage() + "\n";
+            error += urlAddress + ": " + e.getMessage() + "\n";
         }
     }
 
-    // Utilities function to trim the string from start to end
-    private static String extract(String line, String start, String end) {
-        // Trim from left side
-        int firstPos = line.indexOf(start);
-        String temp = line.substring(firstPos);
-        temp = temp.replace(start, "");
+    // Check if title of article is in covid category using keywords
+    private boolean checkCovidKeyword(String title) {
+        final String check = title.toLowerCase();
+        final String[] keywords = {"cov", "ca", "f0", "f1", "vaccine", "vắc xin", "xét nghiệm", "phong tỏa",
+                "nhiễm", "dịch", "test", "pcr", "âm tính", "dương tính", "giãn cách", "chỉ thị", "mắc"};
 
-        // Trim from right side
-        int lastPos = temp.indexOf(end);
-        temp = temp.substring(0, lastPos);
-        return temp;
+        for (String s : keywords) {
+            if (check.contains(s)) return true;
+        }
+
+        return false;
     }
 }

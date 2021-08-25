@@ -14,10 +14,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
+import javafx.scene.text.*;
 import javafx.stage.Stage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -31,6 +28,10 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class ArticleController implements Initializable{
+    private final int WORDSIZE = 18, ITEMSIZE = 49;
+    private final ArrayList<Item> items;
+    private final int categoryIndex;
+
     @FXML private AnchorPane anchorPane;
     @FXML private FlowPane content;
     @FXML private ImageView thumbnail;
@@ -42,11 +43,8 @@ public class ArticleController implements Initializable{
     @FXML private ScrollPane scrollPane;
     @FXML private Pane blackPane;
 
-    private final int WORDSIZE = 18, ITEMSIZE = 49;
-    private final ArrayList<Item> items;
     private Item item;
     private int index;
-    private final int categoryIndex;
     private double x, y;
 
     public ArticleController(ArrayList<Item> items, int index, int categoryIndex){
@@ -54,6 +52,19 @@ public class ArticleController implements Initializable{
         this.index = index;
         this.categoryIndex = categoryIndex;
         item = items.get(index);
+    }
+
+    // Utilities function to trim the string from start to end
+    private static String extract(String line, String start, String end) {
+        // Trim from left side
+        int firstPos = line.indexOf(start);
+        String temp = line.substring(firstPos);
+        temp = temp.replace(start, "");
+
+        // Trim from right side
+        int lastPos = temp.indexOf(end);
+        temp = temp.substring(0, lastPos);
+        return temp;
     }
 
     @Override
@@ -88,14 +99,28 @@ public class ArticleController implements Initializable{
 
         // Call read article function depends on which source
         switch (item.getSource()){
+            case VE -> readArticleVE(item.getLink());
             case TT -> readArticleTT(item.getLink());
             case TN -> readArticleTN(item.getLink());
             case ZING -> readArticleZing(item.getLink());
             case ND -> readArticleND(item.getLink());
-            //case VE -> readArticleVE(item.getLink());
         }
 
         content.getChildren().addAll(createLabel("", WORDSIZE));
+    }
+
+    private void readArticleVE(String urlAddress) {
+        try {
+            Document doc = Jsoup.connect(urlAddress).timeout(10000).get();
+            final int statusCode = doc.connection().response().statusCode();
+            System.out.println("Status code: " + statusCode + " " + urlAddress);
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+
+            if (e instanceof IOException)
+                dealException(e, item);
+        }
     }
 
     // Function to read article from TuoiTre
@@ -177,12 +202,12 @@ public class ArticleController implements Initializable{
                         content.getChildren().add(createLabel(e.text(), WORDSIZE));
                     }
                     // Add header label if element is header text
-                    else if (e.is("h2")) {
-                        content.getChildren().add(createHeader(e.text(), WORDSIZE));
+                    else if (e.is("h2") || e.is("h3")) {
+                        content.getChildren().add(createHeader(e.text()));
                     }
                     // Call TN utilities function for div elements
                     else if (e.is("div") && e.className().compareTo("details__morenews") != 0) {
-                        checkDivTN(e);
+                        checkDivTN(e, content);
                     }
                 }
 
@@ -322,7 +347,7 @@ public class ArticleController implements Initializable{
     }
 
     // Utilities function to read ThanhNien article
-    private void checkDivTN(Element div) {
+    private void checkDivTN(Element div, FlowPane content) {
         // If element has 0 children and is not an ad div
         if (div.select("> *").size() == 0 && !div.className().contains("ads")){
             content.getChildren().add(createLabel(div.text(), WORDSIZE));
@@ -332,11 +357,15 @@ public class ArticleController implements Initializable{
         // Loop through div elements
         for (Element i : div.select("> *")) {
             // Recursion call if child is div
-            if (i.is("div")) {
-                checkDivTN(i);
+            if (i.is("div") && !i.attr("class").contains("image")) {
+                checkDivTN(i, content);
+            }
+            // Add text label if child is text
+            else if (i.is("p")) {
+                content.getChildren().add(createLabel(i.text(), WORDSIZE));
             }
             // Add image if child is image
-            else if (i.is("table") && i.attr("class").compareTo("imagefull") == 0) {
+            else if (i.attr("class").contains("image")) {
                 try {
                     Image image = new Image(i.select("img").attr("data-src"));
                     content.getChildren().add(createImageLabel(image, i.select("p").text()));
@@ -361,9 +390,18 @@ public class ArticleController implements Initializable{
                 }
                 catch (IllegalArgumentException ex) {}
             }
+            // Add quote table
+            else if (i.is("table") && i.attr("class").compareTo("quotetable") == 0) {
+                FlowPane pane = createWrapNote();
+
+                Element inQuote = i.select("div.quote").first();
+                checkDivTN(inQuote, pane);
+
+                content.getChildren().add(pane);
+            }
             // Add header if child is header
-            else if (i.is("h2")) {
-                content.getChildren().add(createHeader(i.text(), WORDSIZE));
+            else if (i.is("h2") || i.is("h3")) {
+                content.getChildren().add(createHeader(i.text()));
             }
             // Add text label if child is neither image nor video and has text
             else if (i.hasText()) {
@@ -434,8 +472,8 @@ public class ArticleController implements Initializable{
                 content.getChildren().add(pane);
             }
             // Create and add header label if element is header
-            else if (e.is("h3")) {
-                content.getChildren().add(createHeader(e.text(), WORDSIZE));
+            else if (e.is("h3") || e.is("h2")) {
+                content.getChildren().add(createHeader(e.text()));
             }
             // Create and add video if element is video
             else if (e.is("figure") && e.attr("class").contains("video")) {
@@ -474,9 +512,9 @@ public class ArticleController implements Initializable{
         return label;
     }
 
-    private Label createHeader(String text, int size) {
-        Label label = createLabel(text, size);
-        label.setFont(Font.font("Roboto", FontWeight.BOLD, size + 2));
+    private Label createHeader(String text) {
+        Label label = createLabel(text, WORDSIZE);
+        label.setFont(Font.font("Roboto", FontWeight.BOLD, WORDSIZE + 2));
 
         return label;
     }
@@ -619,18 +657,5 @@ public class ArticleController implements Initializable{
         nextButton.setDisable(false);
 
         if (index == 0) previousButton.setDisable(true);
-    }
-
-    // Utilities function to trim the string from start to end
-    private static String extract(String line, String start, String end) {
-        // Trim from left side
-        int firstPos = line.indexOf(start);
-        String temp = line.substring(firstPos);
-        temp = temp.replace(start, "");
-
-        // Trim from right side
-        int lastPos = temp.indexOf(end);
-        temp = temp.substring(0, lastPos);
-        return temp;
     }
 }

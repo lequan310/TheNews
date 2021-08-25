@@ -47,7 +47,7 @@
                               <Cursor fx:constant="CLOSED_HAND" />
                            </cursor>
                         </Button>
-                        <Label fx:id="categoryLabel" prefHeight="95.0" prefWidth="290.0" text=" NEW" textFill="#f6e74d" textOverrun="CLIP" wrapText="true">
+                        <Label fx:id="categoryLabel" minWidth="-Infinity" prefHeight="95.0" prefWidth="290.0" text="ENTERTAINMENT" textFill="#f6e74d" textOverrun="CLIP" wrapText="true">
                            <font>
                               <Font size="33.0" />
                            </font>
@@ -57,7 +57,7 @@
                               <Font name="Old English Text MT" size="55.0" />
                            </font>
                         </Label>
-                        <Label alignment="CENTER" ellipsisString="" prefHeight="95.0" prefWidth="360.0" text="by Dark Mode team" textFill="WHITE" HBox.hgrow="ALWAYS">
+                        <Label alignment="CENTER" ellipsisString="" minWidth="-Infinity" prefHeight="95.0" prefWidth="360.0" text="by Dark Mode team" textFill="WHITE" HBox.hgrow="ALWAYS">
                            <font>
                               <Font size="16.0" />
                            </font>

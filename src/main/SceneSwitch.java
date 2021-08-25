@@ -13,13 +13,11 @@ import java.util.ArrayList;
 
 public class SceneSwitch {
     private Parent root;
-    private AnchorPane anchorPane;
+    private final AnchorPane anchorPane;
 
     public SceneSwitch(AnchorPane anchorPane){
         this.anchorPane = anchorPane;
     }
-
-    public SceneSwitch(){}
 
     // Keyboard Handler for Main Menu scene
     static class MenuHandler implements EventHandler<KeyEvent> {

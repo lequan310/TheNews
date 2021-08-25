@@ -95,6 +95,7 @@ public class MenuController implements Initializable {
     private final String[] categories = {"NEW", "COVID", "POLITICS", "BUSINESS", "TECHNOLOGY", "HEALTH", "SPORTS", "ENTERTAINMENT", "WORLD", "OTHERS"};
     private int categoryIndex = 0, currentPage = 1;
     private double x, y;
+    private boolean loaded = false;
 
     public void setCategoryIndex(int index) {
         categoryIndex = index;
@@ -102,8 +103,9 @@ public class MenuController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        // Create news controller to scrape news in specific category
         NewsController newsController = new NewsController(categoryIndex);
-        pb.progressProperty().bind(newsController.progressProperty());
+        pb.progressProperty().bind(newsController.progressProperty()); // Bind loading bar to scraping progress
 
         addNodeToList();
         categoryButton.setDisable(true);
@@ -121,11 +123,13 @@ public class MenuController implements Initializable {
                     return new Task() {
                         @Override
                         protected Object call() throws Exception {
+                            // Start scraping articles from 5 sources
                             Thread thread = new Thread(newsController);
                             thread.start();
                             thread.join();
 
-                            items = newsController.getItems(); // Get list of article items after being sorted
+                            // Get articles after sorted by published date and initialize buttons
+                            items = newsController.getItems();
                             Platform.runLater(() -> loadAfterBar());
 
                             // Display error if there is error message
@@ -160,16 +164,18 @@ public class MenuController implements Initializable {
 
     private void loadAfterBar() {
         // Setting category label and set current page to first page
+        loaded = true;
         categoryButton.setDisable(false);
-        new Thread(() -> changePage(0)).start();
-        for (Button b : pages){
-            b.setDisable(false);
-        }
+        changePage(0);
 
         // Assigning function to page buttons
         for (int i = 0; i < pages.size(); i++){
             int idx = i;
             pages.get(i).setOnAction(e -> changePage(idx));
+        }
+
+        for (Button b : pages){
+            b.setDisable(false);
         }
     }
 
@@ -183,22 +189,23 @@ public class MenuController implements Initializable {
     }
 
     public void changePage(int page) {
-        scrollPane.setVvalue(0); // Reset scroll bar
+        if (loaded) {
+            scrollPane.setVvalue(0); // Reset scroll bar
 
-        // Change page if selected page is not the current active page
-        if (currentPage != page){
-            final int ITEMCOUNT = 10;
-            long start = System.currentTimeMillis();
-            currentPage = page;
+            // Change page if selected page is not the current active page
+            if (currentPage != page){
+                final int ITEMCOUNT = 10;
+                long start = System.currentTimeMillis();
+                currentPage = page;
 
-            System.out.println("\nInitializing new items:");
+                System.out.println("\nInitializing new items:");
 
-            // Initializing article buttons
-            for (int i = 0; i < ITEMCOUNT; i++){
-                int idx = i + (page * ITEMCOUNT);
-                int currentButton = i;
+                // Initializing article buttons
+                for (int i = 0; i < ITEMCOUNT; i++){
+                    int idx = i + (page * ITEMCOUNT);
+                    int currentButton = i;
 
-                Platform.runLater(() -> {
+                    //Platform.runLater(() -> {
                     // If item exists
                     try{
                         labels.get(currentButton).setText(items.get(idx).getTitle());
@@ -231,8 +238,8 @@ public class MenuController implements Initializable {
                     finally {
                         System.out.println("Item " + currentButton + " " + (System.currentTimeMillis() - start) + " ms");
                     }
-                });
-
+                    //});
+                }
             }
         }
     }
