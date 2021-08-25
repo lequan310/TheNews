@@ -81,6 +81,7 @@ public class ArticleController implements Initializable{
         title.setText(item.getTitle());
         timeLabel.setText(item.getPubDate());
         sourceLabel.setText(item.getLink());
+        readArticleND("https://nhandan.vn/tin-tuc-su-kien/vo-nguyen-giap-cay-dai-thu-rop-bong-nhan-van-661329/");
 
         if (item.getImgSrc().compareTo("") != 0)
             thumbnail.setImage(new Image(item.getImgSrc()));
@@ -116,64 +117,7 @@ public class ArticleController implements Initializable{
             content.getChildren().add(description);
 
             // Loop through main article
-            for (Element e : article) {
-                // Add label if element is text
-                if (e.is("p")) {
-                    Label label = createLabel(e.text(), WORDSIZE);
-                    if (e.select("b").size() > 0)
-                        label.setFont(Font.font("Roboto", FontWeight.BOLD, WORDSIZE));
-
-                    content.getChildren().add(label);
-                }
-                // Else if element is div
-                else if (e.is("div")) {
-                    // Add image if element is image
-                    if (e.attr("type").compareTo("Photo") == 0) {
-                        try{
-                            Image image = new Image(e.select("img").attr("src"));
-                            content.getChildren().add(createImageLabel(image, e.select("p").text()));
-                        }
-                        catch (IllegalArgumentException ex) {}
-                    }
-                    // Add video if element is video
-                    else if (e.attr("type").compareTo("VideoStream") == 0) {
-                        try {
-                            String videoSrc = e.attr("data-src");
-                            videoSrc = videoSrc.substring(videoSrc.indexOf("hls"));
-                            videoSrc = videoSrc.substring(0, videoSrc.indexOf(".mp4") + 4);
-                            videoSrc = videoSrc.replace("&vid=", "/");
-                            videoSrc = "https://" + videoSrc;
-
-                            content.getChildren().add(createVideoButton(videoSrc, e.select("p").text()));
-                        }
-                        catch (IllegalArgumentException ex) {}
-                    }
-                    // Add wrapnote if element is wrapnote
-                    else if (e.attr("type").compareTo("wrapnote") == 0) {
-                        FlowPane pane = createWrapNote();
-
-                        // Loop through elements in wrap note and add into wrapnote
-                        for (Element i : e.select("> *")){
-                            if (i.is("p")) {
-                                Label label = createLabel(i.text(), WORDSIZE);
-                                if (i.select("b").size() > 0)
-                                    label.setFont(Font.font("Roboto", FontWeight.BOLD, WORDSIZE));
-
-                                pane.getChildren().add(label);
-                            }
-                            else if (i.is("div") && i.attr("type").compareTo("Photo") == 0) {
-                                try{
-                                    Image image = new Image(i.select("img").attr("src"));
-                                    pane.getChildren().add(createImageLabel(image, i.select("p").text()));
-                                }
-                                catch (IllegalArgumentException ex) { }
-                            }
-                        }
-
-                        content.getChildren().add(pane);
-                    }
-                }
-            }
+            addTT(article, content);
 
             // Adding author label
             if (body.select("div.author").size() > 0){
@@ -291,49 +235,7 @@ public class ArticleController implements Initializable{
                 content.getChildren().add(description);
 
                 // Loop through article elements
-                for (Element e : article) {
-                    // Create and add label if element is text
-                    if (e.is("p")) {
-                        content.getChildren().add(createLabel(e.text(), WORDSIZE));
-                    }
-                    // Create and add wrapnote if element is wrapnote
-                    else if (e.is("div") && e.attr("class").compareTo("notebox ncenter") == 0){
-                        FlowPane pane = createWrapNote();
-
-                        for (Element i : e.select("> *")){
-                            if (i.is("p")) {
-                                pane.getChildren().add(createLabel(i.text(), WORDSIZE));
-                            }
-                        }
-
-                        content.getChildren().add(pane);
-                    }
-                    // Create and add header label if element is header
-                    else if (e.is("h3")) {
-                        content.getChildren().add(createHeader(e.text(), WORDSIZE));
-                    }
-                    // Create and add video if element is video
-                    else if (e.is("figure") && e.attr("class").contains("video")) {
-                        try{
-                            content.getChildren().add(createVideoButton(e.attr("data-video-src"), e.select("figcaption").text()));
-                        }
-                        catch (IllegalArgumentException ex) {}
-                    }
-                    // Create and add images if element is image/gallery
-                    else if (e.is("table") && e.attr("class").contains("picture")) {
-                        for (Element i : e.select("td.pic > *")) {
-                            String imageURL = i.select("img").attr("data-src");
-                            if (imageURL.compareTo("") == 0)
-                                imageURL = i.select("img").attr("src");
-
-                            try{
-                                Image image = new Image(imageURL);
-                                content.getChildren().add(createImageLabel(image, e.select("td[class=\"pCaption caption\"]").text()));
-                            }
-                            catch (IllegalArgumentException ex) {}
-                        }
-                    }
-                }
+                addZing(article, content);
 
                 // Create and add author label
                 Label author = createDescription(doc.getElementsByClass("author").text());
@@ -378,9 +280,6 @@ public class ArticleController implements Initializable{
                 // Create and add label if element is text
                 if (e.is("p")) {
                     Label label = createLabel(e.text(), WORDSIZE);
-                    if (e.select("strong").size() > 0)
-                        label.setFont(Font.font("Roboto", FontWeight.BOLD, WORDSIZE));
-
                     content.getChildren().add(label);
                 }
                 // Create and add image if element is image
@@ -406,6 +305,8 @@ public class ArticleController implements Initializable{
                             pane.getChildren().add(createLabel(i.text(), WORDSIZE));
                         }
                     }
+
+                    content.getChildren().add(pane);
                 }
             }
 
@@ -470,6 +371,94 @@ public class ArticleController implements Initializable{
             else if (i.hasText()) {
                 content.getChildren().add(createLabel(div.text(), WORDSIZE));
                 break;
+            }
+        }
+    }
+
+    // Utilities function to read TuoiTre main article
+    private void addTT(Elements elements, FlowPane content) {
+        for (Element e : elements) {
+            // Add label if element is text
+            if (e.is("p") && e.hasText()) {
+                Label label = createLabel(e.text(), WORDSIZE);
+                if (e.select("b").size() > 0)
+                    label.setFont(Font.font("Roboto", FontWeight.BOLD, WORDSIZE));
+
+                content.getChildren().add(label);
+            }
+            // Else if element is div
+            else if (e.is("div")) {
+                // Add image if element is image
+                if (e.attr("type").compareTo("Photo") == 0) {
+                    try{
+                        Image image = new Image(e.select("img").attr("src"));
+                        content.getChildren().add(createImageLabel(image, e.select("p").text()));
+                    }
+                    catch (IllegalArgumentException ex) {}
+                }
+                // Add video if element is video
+                else if (e.attr("type").compareTo("VideoStream") == 0) {
+                    try {
+                        String videoSrc = e.attr("data-src");
+                        videoSrc = videoSrc.substring(videoSrc.indexOf("hls"));
+                        videoSrc = videoSrc.substring(0, videoSrc.indexOf(".mp4") + 4);
+                        videoSrc = videoSrc.replace("&vid=", "/");
+                        videoSrc = "https://" + videoSrc;
+
+                        content.getChildren().add(createVideoButton(videoSrc, e.select("p").text()));
+                    }
+                    catch (IllegalArgumentException ex) {}
+                }
+                // Add wrapnote if element is wrapnote
+                else if (e.attr("type").compareTo("wrapnote") == 0) {
+                    FlowPane pane = createWrapNote();
+
+                    // Loop through elements in wrap note and add into wrapnote
+                    addTT(e.select("> *"), pane);
+
+                    content.getChildren().add(pane);
+                }
+            }
+        }
+    }
+
+    // Utilities function to read ZingNews main article
+    private void addZing(Elements elements, FlowPane content) {
+        for (Element e : elements) {
+            // Create and add label if element is text
+            if (e.is("p")) {
+                content.getChildren().add(createLabel(e.text(), WORDSIZE));
+            }
+            // Create and add wrapnote if element is wrapnote
+            else if (e.is("div") && e.attr("class").compareTo("notebox ncenter") == 0){
+                FlowPane pane = createWrapNote();
+                addZing(e.select("> *"), pane);
+                content.getChildren().add(pane);
+            }
+            // Create and add header label if element is header
+            else if (e.is("h3")) {
+                content.getChildren().add(createHeader(e.text(), WORDSIZE));
+            }
+            // Create and add video if element is video
+            else if (e.is("figure") && e.attr("class").contains("video")) {
+                try{
+                    content.getChildren().add(createVideoButton(e.attr("data-video-src"), e.select("figcaption").text()));
+                }
+                catch (IllegalArgumentException ex) {}
+            }
+            // Create and add images if element is image/gallery
+            else if (e.is("table") && e.attr("class").contains("picture")) {
+                for (Element i : e.select("td.pic > *")) {
+                    String imageURL = i.select("img").attr("data-src");
+                    if (imageURL.compareTo("") == 0)
+                        imageURL = i.select("img").attr("src");
+
+                    try{
+                        Image image = new Image(imageURL);
+                        content.getChildren().add(createImageLabel(image, e.select("td[class=\"pCaption caption\"]").text()));
+                    }
+                    catch (IllegalArgumentException ex) {}
+                }
             }
         }
     }
