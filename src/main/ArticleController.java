@@ -58,8 +58,7 @@ public class ArticleController implements Initializable{
     private static String extract(String line, String start, String end) {
         // Trim from left side
         int firstPos = line.indexOf(start);
-        String temp = line.substring(firstPos);
-        temp = temp.replace(start, "");
+        String temp = line.substring(firstPos + start.length());
 
         // Trim from right side
         int lastPos = temp.indexOf(end);

@@ -26,7 +26,7 @@ public class NewsController extends Task {
 
     // List of URL to scrape from
     // New, Covid, Politics, Business, Technology, Health, Sports, Entertainment, World, Others
-    private final String[] VNEXPRESS = {"https://vnexpress.net/rss/tin-moi-nhat.rss", "https://vnexpress.net/rss/suc-khoe.rss", "https://vnexpress.net/rss/phap-luat.rss",
+    private final String[] VNEXPRESS = {"https://vnexpress.net/rss/tin-moi-nhat.rss", "https://vnexpress.net/rss/tin-noi-bat.rss", "https://vnexpress.net/rss/phap-luat.rss",
             "https://vnexpress.net/rss/kinh-doanh.rss", "https://vnexpress.net/rss/so-hoa.rss", "https://vnexpress.net/rss/suc-khoe.rss",
             "https://vnexpress.net/rss/the-thao.rss", "https://vnexpress.net/rss/giai-tri.rss", "https://vnexpress.net/rss/the-gioi.rss",
             "https://vnexpress.net/rss/du-lich.rss", "https://vnexpress.net/rss/giao-duc.rss", "https://vnexpress.net/rss/khoa-hoc.rss"};
@@ -56,8 +56,7 @@ public class NewsController extends Task {
     private static String extract(String line, String start, String end) {
         // Trim from left side
         int firstPos = line.indexOf(start);
-        String temp = line.substring(firstPos);
-        temp = temp.replace(start, "");
+        String temp = line.substring(firstPos + start.length());
 
         // Trim from right side
         int lastPos = temp.indexOf(end);
@@ -410,8 +409,8 @@ public class NewsController extends Task {
     // Check if title of article is in covid category using keywords
     private boolean checkCovidKeyword(String title) {
         final String check = title.toLowerCase();
-        final String[] keywords = {"cov", "ca", "f0", "f1", "vaccine", "vắc xin", "xét nghiệm", "phong tỏa",
-                "nhiễm", "dịch", "test", "pcr", "âm tính", "dương tính", "giãn cách", "chỉ thị", "mắc"};
+        final String[] keywords = {"cov", "ca", "f0", "f1", "vaccine", "vắc xin", "xét nghiệm", "phong tỏa", "mũi",
+                "nhiễm", "dịch", "test", "pcr", "âm tính", "dương tính", "giãn cách", "chỉ thị", "mắc", "tiêm"};
 
         for (String s : keywords) {
             if (check.contains(s)) return true;
