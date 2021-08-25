@@ -107,6 +107,7 @@ public class MenuController implements Initializable {
 
         addNodeToList();
         categoryButton.setDisable(true);
+        categoryLabel.setText(categories[categoryIndex]);
 
         for (Button b : pages){
             b.setDisable(true);
@@ -159,7 +160,6 @@ public class MenuController implements Initializable {
 
     private void loadAfterBar() {
         // Setting category label and set current page to first page
-        categoryLabel.setText(categories[categoryIndex]);
         categoryButton.setDisable(false);
         new Thread(() -> changePage(0)).start();
         for (Button b : pages){

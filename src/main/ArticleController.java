@@ -28,7 +28,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.ResourceBundle;
 
 public class ArticleController implements Initializable{

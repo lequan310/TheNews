@@ -66,8 +66,7 @@ public class SceneSwitch {
         controller.setCategoryIndex(index);
         loader.setController(controller);
         
-        Scene scene = new Scene(loader.load(), GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().width,
-                GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().height);
+        Scene scene = new Scene(loader.load(), 1366, 720);
 
         scene.setOnKeyPressed(new MenuHandler(controller));
         return scene;

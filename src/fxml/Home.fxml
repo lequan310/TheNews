@@ -32,7 +32,7 @@
                         <URL value="@../css/style.css" />
                      </stylesheets>
                      <children>
-                        <Button fx:id="categoryButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#menuCategories" prefHeight="79.0" prefWidth="173.0" styleClass="dark-background" stylesheets="@../css/style.css" textFill="TRANSPARENT" HBox.hgrow="ALWAYS">
+                        <Button fx:id="categoryButton" alignment="CENTER" contentDisplay="CENTER" minWidth="150.0" mnemonicParsing="false" onAction="#menuCategories" prefHeight="90.0" prefWidth="170.0" styleClass="dark-background" stylesheets="@../css/style.css" textFill="TRANSPARENT" HBox.hgrow="ALWAYS">
                            <graphic>
                               <ImageView blendMode="SCREEN" fitHeight="46.0" fitWidth="53.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -47,21 +47,17 @@
                               <Cursor fx:constant="CLOSED_HAND" />
                            </cursor>
                         </Button>
-                        <AnchorPane prefHeight="95.0" prefWidth="265.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Label fx:id="categoryLabel" prefHeight="95.0" prefWidth="213.0" text=" NEW" textFill="#f6e74d" textOverrun="CLIP" wrapText="true">
-                                 <font>
-                                    <Font size="33.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </AnchorPane>
-                        <Label alignment="CENTER" minWidth="0.0" prefHeight="95.0" prefWidth="1093.0" styleClass="dark-background" stylesheets="@../css/style.css" text="The News" textFill="WHITE" HBox.hgrow="ALWAYS">
+                        <Label fx:id="categoryLabel" prefHeight="95.0" prefWidth="290.0" text=" NEW" textFill="#f6e74d" textOverrun="CLIP" wrapText="true">
+                           <font>
+                              <Font size="33.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="CENTER" prefHeight="95.0" prefWidth="1093.0" styleClass="dark-background" stylesheets="@../css/style.css" text="The News" textFill="WHITE" HBox.hgrow="ALWAYS">
                            <font>
                               <Font name="Old English Text MT" size="55.0" />
                            </font>
                         </Label>
-                        <Label alignment="CENTER" ellipsisString="" prefHeight="95.0" prefWidth="339.0" text="by Dark Mode team" textFill="WHITE" HBox.hgrow="ALWAYS">
+                        <Label alignment="CENTER" ellipsisString="" prefHeight="95.0" prefWidth="360.0" text="by Dark Mode team" textFill="WHITE" HBox.hgrow="ALWAYS">
                            <font>
                               <Font size="16.0" />
                            </font>
