@@ -65,7 +65,7 @@
                               <Pane fx:id="blackPane" layoutX="100.0" prefHeight="389.0" prefWidth="597.0" styleClass="blacker-gradient" stylesheets="@../css/style.css" />
                               <Label fx:id="title" alignment="BOTTOM_CENTER" layoutY="1.0" prefHeight="374.0" prefWidth="795.0" text="Header" textAlignment="CENTER" textFill="WHITE" textOverrun="CLIP" wrapText="true">
                                  <font>
-                                    <Font size="35.0" />
+                                    <Font name="System Bold" size="36.0" />
                                  </font>
                               </Label>
                            </children>
