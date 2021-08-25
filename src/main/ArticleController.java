@@ -81,7 +81,6 @@ public class ArticleController implements Initializable{
         title.setText(item.getTitle());
         timeLabel.setText(item.getPubDate());
         sourceLabel.setText(item.getLink());
-        readArticleND("https://nhandan.vn/tin-tuc-su-kien/vo-nguyen-giap-cay-dai-thu-rop-bong-nhan-van-661329/");
 
         if (item.getImgSrc().compareTo("") != 0)
             thumbnail.setImage(new Image(item.getImgSrc()));
