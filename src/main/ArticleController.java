@@ -630,7 +630,7 @@ public class ArticleController implements Initializable {
         imageView.setFitWidth(Math.min(MAX_WIDTH / 2, image.getWidth()));
 
         // Adjust label position and size
-        Label label = createGraphicLabel("CLICK TO ZOOM: " + caption);
+        Label label = createGraphicLabel(caption);
         label.setGraphic(imageView);
         label.setPrefWidth(imageView.getFitWidth());
         label.setAlignment(Pos.CENTER);
