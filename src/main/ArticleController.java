@@ -626,7 +626,7 @@ public class ArticleController implements Initializable {
 
     private Label createImageLabel(Image image, String caption){
         // Create ImageView and Label, and set label graphic to image view
-        final int MAX_WIDTH = 1000;
+        final double MAX_WIDTH = content.getWidth();
         ImageView imageView = new ImageView(image);
         imageView.setPreserveRatio(true);
         imageView.setFitWidth(Math.min(600, image.getWidth()));
