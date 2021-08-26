@@ -593,6 +593,17 @@ public class ArticleController implements Initializable {
                         content.getChildren().add(createImageLabel(image, e.select("td[class=\"pCaption caption\"]").text()));
                     }
                 }
+                // For covid graph
+                else if (e.is("div") && e.attr("class").contains("widget")) {
+                    Image image = new Image(e.attr("data-src"));
+                    content.getChildren().add(createImageLabel(image, ""));
+                }
+                // Create and add group of text
+                else if (e.is("ul")) {
+                    for (Element i : e.select("> *"))
+                        if (i.is("p") || i.is("li")) content.getChildren().add(createLabel(i.text(), WORDSIZE));
+
+                }
             }
             catch (IllegalArgumentException ex) { continue; }
         }
@@ -676,7 +687,7 @@ public class ArticleController implements Initializable {
             label.setBackground(new Background(new BackgroundFill(Color.valueOf("#b4b4b4"), new CornerRadii(0), new Insets(0))));
         label.setContentDisplay(ContentDisplay.TOP);
         label.setAlignment(Pos.TOP_CENTER);
-        label.setStyle("-fx-border-color: #404040");
+        label.setStyle("-fx-border-color: #404040; -fx-background-color: #bcbcbc");
         label.setTextAlignment(TextAlignment.CENTER);
         label.setFont(Font.font("Arial", FontPosture.ITALIC, 16));
         label.setTextOverrun(OverrunStyle.CLIP);
