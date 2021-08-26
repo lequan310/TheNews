@@ -598,12 +598,14 @@ public class ArticleController implements Initializable {
     // Create UI components to add to article view
     private Label createLabel(String text, int size){
         Label label = new Label(text);
+
         label.setFont(Font.font("Roboto", size));
         label.setTextFill(Color.valueOf("#ffffff"));
         label.setTextOverrun(OverrunStyle.CLIP);
         label.setWrapText(true);
         label.setAlignment(Pos.CENTER_LEFT);
         label.prefWidthProperty().bind(content.widthProperty().subtract(400));
+        label.setCursor(Cursor.TEXT);
 
         return label;
     }
@@ -627,7 +629,7 @@ public class ArticleController implements Initializable {
         final int MAX_WIDTH = 1000;
         ImageView imageView = new ImageView(image);
         imageView.setPreserveRatio(true);
-        imageView.setFitWidth(Math.min(MAX_WIDTH / 2, image.getWidth()));
+        imageView.setFitWidth(Math.min(600, image.getWidth()));
 
         // Adjust label position and size
         Label label = createGraphicLabel(caption);
@@ -637,15 +639,14 @@ public class ArticleController implements Initializable {
 
         // Make label more interactive with mouse event
         label.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            if (imageView.getFitWidth() == 500) {
-                imageView.setFitWidth(Math.max(image.getWidth(), MAX_WIDTH));
+            if (imageView.getFitWidth() == 600) {
+                imageView.setFitWidth(Math.min(image.getWidth(), MAX_WIDTH));
             }
             else {
-                imageView.setFitWidth(500);
+                imageView.setFitWidth(600);
             }
         });
-        label.setOnMouseEntered(e -> label.setCursor(Cursor.HAND));
-        label.setOnMouseExited(e -> label.setCursor(Cursor.DEFAULT));
+        label.setCursor(Cursor.HAND);
 
         return label;
     }
