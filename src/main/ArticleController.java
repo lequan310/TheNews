@@ -423,7 +423,6 @@ public class ArticleController implements Initializable {
             else if (e.attr("class").contains("clearfix")) {
                 if (e.select("video").size() > 0) {
                     content.getChildren().add(createVideoButton(videoVE(e.select("video").attr("src")), e.select("p").text()));
-                    System.out.println(videoVE(e.select("video").attr("src")));
                 }
                 else if (e.select("img").size() > 0) {
                     String imageURL = e.select("img").attr("data-src");
@@ -437,7 +436,6 @@ public class ArticleController implements Initializable {
             else if (e.is("div") && e.select("video").size() > 0 &&
                     (e.attr("class").contains("text-align:center") || e.attr("style").contains("center"))) {
                 content.getChildren().add(createVideoButton(videoVE(e.select("video").attr("src")), e.select("p").text()));
-                System.out.println(videoVE(e.select("video").attr("src")));
             }
             // If element is wrapnote
             else if (e.is("div") && e.attr("class").compareTo("box_brief_info") == 0) {
