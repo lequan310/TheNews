@@ -99,8 +99,22 @@ public class ArticleController implements Initializable {
     }
 
     public void readArticle(){
+        new Thread(() -> Platform.runLater(() -> {
+            content.getChildren().clear();
+
+            // Call read article function depends on which source
+            switch (item.getSource()){
+                case VE -> readArticleVE(item.getLink());
+                case TT -> readArticleTT(item.getLink());
+                case TN -> readArticleTN(item.getLink());
+                case ZING -> readArticleZing(item.getLink());
+                case ND -> readArticleND(item.getLink());
+            }
+
+            content.getChildren().addAll(createLabel("", WORDSIZE));
+        })).start();
+
         // Initialize UI components
-        content.getChildren().clear();
         scrollPane.setVvalue(0);
         title.setText(item.getTitle());
         timeLabel.setText(item.getPubDate());
@@ -112,17 +126,6 @@ public class ArticleController implements Initializable {
         catch (IllegalArgumentException e) {
             thumbnail.setImage(null);
         }
-
-        // Call read article function depends on which source
-        switch (item.getSource()){
-            case VE -> readArticleVE(item.getLink());
-            case TT -> readArticleTT(item.getLink());
-            case TN -> readArticleTN(item.getLink());
-            case ZING -> readArticleZing(item.getLink());
-            case ND -> readArticleND(item.getLink());
-        }
-
-        content.getChildren().addAll(createLabel("", WORDSIZE));
     }
 
     // Function to read article from VN Express
@@ -635,7 +638,6 @@ public class ArticleController implements Initializable {
         Label label = createGraphicLabel(caption);
         label.setGraphic(imageView);
         label.setPrefWidth(imageView.getFitWidth());
-        label.setAlignment(Pos.CENTER);
 
         // Make label more interactive with mouse event
         label.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
@@ -674,6 +676,7 @@ public class ArticleController implements Initializable {
             label.setBackground(new Background(new BackgroundFill(Color.valueOf("#b4b4b4"), new CornerRadii(0), new Insets(0))));
         label.setContentDisplay(ContentDisplay.TOP);
         label.setAlignment(Pos.TOP_CENTER);
+        label.setStyle("-fx-border-color: #404040");
         label.setTextAlignment(TextAlignment.CENTER);
         label.setFont(Font.font("Arial", FontPosture.ITALIC, 16));
         label.setTextOverrun(OverrunStyle.CLIP);
@@ -685,10 +688,8 @@ public class ArticleController implements Initializable {
     private FlowPane createWrapNote() {
         FlowPane pane = new FlowPane();
 
-        pane.setStyle("-fx-border-color: #ff0000");
-        pane.setAlignment(Pos.CENTER);
+        pane.setStyle("-fx-border-color: #2c91c7; -fx-background-color: #404040; -fx-alignment: center");
         pane.prefWidthProperty().bind(content.widthProperty().subtract(380));
-        pane.setBackground(new Background(new BackgroundFill(Color.rgb(100, 100, 100), new CornerRadii(0), new Insets(0))));
         pane.setVgap(20);
 
         return pane;

@@ -223,7 +223,7 @@ public class NewsController extends Task {
             error += urlAddress + ": " + e.getMessage() + "\n";
         }
 
-        System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
+        System.out.println("VN Express: " + items.size() + " " + (System.currentTimeMillis() - start) + " ms");
     }
 
     private void readRSSTuoiTre(String urlAddress) {
@@ -290,7 +290,7 @@ public class NewsController extends Task {
             error += urlAddress + ": " + e.getMessage() + "\n";
         }
 
-        System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
+        System.out.println("Tuoi Tre: " + items.size() + " " + (System.currentTimeMillis() - start) + " ms");
     }
 
     private void readRSSThanhNien(String urlAddress) {
@@ -351,7 +351,7 @@ public class NewsController extends Task {
             error += urlAddress + ": " + e.getMessage() + "\n";
         }
 
-        System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
+        System.out.println("Thanh Nien: " + items.size() + " " + (System.currentTimeMillis() - start) + " ms");
     }
 
     private void readZing(String urlAddress) {
@@ -402,7 +402,7 @@ public class NewsController extends Task {
             error += urlAddress + ": " + e.getMessage() + "\n";
         }
 
-        System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
+        System.out.println("Zing: " + items.size() + " " + (System.currentTimeMillis() - start) + " ms");
     }
 
     private void readNhanDan(String urlAddress) {
@@ -473,7 +473,7 @@ public class NewsController extends Task {
             error += urlAddress + ": " + e.getMessage() + "\n";
         }
 
-        System.out.println(items.size() + " " + (System.currentTimeMillis() - start) + " ms");
+        System.out.println("Nhan Dan: " + items.size() + " " + (System.currentTimeMillis() - start) + " ms");
     }
 
     // Check if title of article is in covid category using keywords

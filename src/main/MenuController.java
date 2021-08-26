@@ -13,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+
 import java.net.URL;
 import java.util.*;
 
@@ -95,6 +96,7 @@ public class MenuController implements Initializable {
     private final String[] categories = {"NEW", "COVID", "POLITICS", "BUSINESS", "TECHNOLOGY", "HEALTH", "SPORTS", "ENTERTAINMENT", "WORLD", "OTHERS"};
     private int categoryIndex = 0, currentPage = 1;
     private double x, y;
+    private boolean loaded = true;
 
     public void setCategoryIndex(int index) {
         categoryIndex = index;
@@ -110,7 +112,7 @@ public class MenuController implements Initializable {
         categoryButton.setDisable(true);
         categoryLabel.setText(categories[categoryIndex]);
 
-        for (Button b : pages){
+        for (Button b : pages) {
             b.setDisable(true);
         }
 
@@ -140,14 +142,13 @@ public class MenuController implements Initializable {
                     };
                 }
             }.start();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     // Function to display alert
-    public void throwAlert(String title, String content, String error){
+    public void throwAlert(String title, String content, String error) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Read Error");
@@ -167,17 +168,17 @@ public class MenuController implements Initializable {
         changePage(0);
 
         // Assigning function to page buttons
-        for (int i = 0; i < pages.size(); i++){
+        for (int i = 0; i < pages.size(); i++) {
             int idx = i;
             pages.get(i).setOnAction(e -> changePage(idx));
         }
 
-        for (Button b : pages){
+        for (Button b : pages) {
             b.setDisable(false);
         }
     }
 
-    private void addNodeToList(){
+    private void addNodeToList() {
         labels.addAll(Arrays.asList(header, header1, header2, header3, header4, header5, header6, header7, header8, header9));
         buttons.addAll(Arrays.asList(button, button1, button2, button3, button4, button5, button6, button7, button8, button9));
         pages.addAll(Arrays.asList(page1, page2, page3, page4, page5));
@@ -187,68 +188,59 @@ public class MenuController implements Initializable {
     }
 
     public void changePage(int page) {
-        try {
-            Thread thread = new Thread(() -> {
-                scrollPane.setVvalue(0); // Reset scroll bar
+        new Thread(() -> {
+            scrollPane.setVvalue(0); // Reset scroll bar
 
-                // Change page if selected page is not the current active page
-                if (currentPage != page){
-                    final int ITEMCOUNT = 10;
-                    long start = System.currentTimeMillis();
-                    currentPage = page;
+            // Change page if selected page is not the current active page
+            if (currentPage != page) {
+                final int ITEMCOUNT = 10;
+                long start = System.currentTimeMillis();
+                currentPage = page;
 
-                    System.out.println("\nInitializing new items:");
+                System.out.println("\nInitializing new items:");
 
-                    // Initializing article buttons
-                    for (int i = 0; i < ITEMCOUNT; i++){
-                        int idx = i + (page * ITEMCOUNT);
-                        int currentButton = i;
+                // Initializing article buttons
+                for (int i = 0; i < ITEMCOUNT; i++) {
+                    int idx = i + (page * ITEMCOUNT);
+                    int currentButton = i;
 
-                        new Thread(() -> Platform.runLater(() -> {
-                            // If item exists
-                            try{
-                                labels.get(currentButton).setText(items.get(idx).getTitle());
-                                timeLabels.get(currentButton).setText(items.get(idx).durationToString());
-                                buttons.get(currentButton).setOnAction(e -> article(idx, categoryIndex));
+                    new Thread(() -> Platform.runLater(() -> {
+                        // If item exists
+                        try {
+                            labels.get(currentButton).setText(items.get(idx).getTitle());
+                            timeLabels.get(currentButton).setText(items.get(idx).durationToString());
+                            buttons.get(currentButton).setOnAction(e -> article(idx, categoryIndex));
 
-                                switch (items.get(idx).getSource()) {
-                                    case VE -> icons.get(currentButton).setImage(new Image("/image/iconVE.png"));
-                                    case TT -> icons.get(currentButton).setImage(new Image("/image/iconTT.png"));
-                                    case TN -> icons.get(currentButton).setImage(new Image("/image/iconTN.jpeg"));
-                                    case ZING -> icons.get(currentButton).setImage(new Image("/image/iconZING.png"));
-                                    case ND -> icons.get(currentButton).setImage(new Image("/image/iconND.png"));
-                                }
-
-                                try {
-                                    images.get(currentButton).setImage(new Image(items.get(idx).getImgSrc()));
-                                }
-                                catch (IllegalArgumentException e) {
-                                    images.get(currentButton).setImage(null);
-                                }
-
-                                buttons.get(currentButton).setDisable(false);
+                            switch (items.get(idx).getSource()) {
+                                case VE -> icons.get(currentButton).setImage(new Image("/image/iconVE.png"));
+                                case TT -> icons.get(currentButton).setImage(new Image("/image/iconTT.png"));
+                                case TN -> icons.get(currentButton).setImage(new Image("/image/iconTN.jpeg"));
+                                case ZING -> icons.get(currentButton).setImage(new Image("/image/iconZING.png"));
+                                case ND -> icons.get(currentButton).setImage(new Image("/image/iconND.png"));
                             }
-                            // If no more item left
-                            catch (IndexOutOfBoundsException e){
-                                buttons.get(currentButton).setDisable(true);
-                                labels.get(currentButton).setText("Empty");
+
+                            try {
+                                images.get(currentButton).setImage(new Image(items.get(idx).getImgSrc()));
+                            } catch (IllegalArgumentException e) {
                                 images.get(currentButton).setImage(null);
-                                timeLabels.get(currentButton).setText("Not available");
-                                icons.get(currentButton).setImage(null);
                             }
-                            finally {
-                                System.out.println("Item " + currentButton + " " + (System.currentTimeMillis() - start) + " ms");
-                            }
-                        })).start();
-                    }
+
+                            buttons.get(currentButton).setDisable(false);
+                        }
+                        // If no more item left
+                        catch (IndexOutOfBoundsException e) {
+                            buttons.get(currentButton).setDisable(true);
+                            labels.get(currentButton).setText("Empty");
+                            images.get(currentButton).setImage(null);
+                            timeLabels.get(currentButton).setText("Not available");
+                            icons.get(currentButton).setImage(null);
+                        } finally {
+                            System.out.println("Item " + currentButton + " " + (System.currentTimeMillis() - start) + " ms");
+                        }
+                    })).start();
                 }
-            });
-            thread.start();
-            thread.join();
-        }
-        catch (InterruptedException e) {
-            throwAlert("Interrupted Exception", "", e.getMessage());
-        }
+            }
+        }).start();
     }
 
     // Function to switch to article scene
@@ -263,7 +255,7 @@ public class MenuController implements Initializable {
 
     // Title bar functions
     @FXML private void dragged(MouseEvent event) {
-        Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setX(event.getScreenX() - x);
         stage.setY(event.getScreenY() - y);
     }

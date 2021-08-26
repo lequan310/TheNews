@@ -96,13 +96,14 @@ public class SceneSwitch {
             ArticleController controller = new ArticleController(items, index, categoryIndex);
             KeyCombination left = new KeyCodeCombination(KeyCode.LEFT, KeyCombination.CONTROL_DOWN);
             KeyCombination right = new KeyCodeCombination(KeyCode.RIGHT, KeyCombination.CONTROL_DOWN);
+            KeyCombination reload = new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN);
 
             loader.setController(controller);
             root = loader.load();
             root.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
                 if (left.match(event)) controller.previousArticle(); // Control + Left Arrow = previous article
                 else if (right.match(event)) controller.nextArticle(); // Control + Right Arrow = next article
-                else if (event.getCode() == KeyCode.F5) controller.readArticle(); // F5 = refresh
+                else if (event.getCode() == KeyCode.F5 || reload.match(event)) controller.readArticle(); // F5 = refresh
             });
             anchorPane.getScene().setRoot(root);
         }
