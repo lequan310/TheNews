@@ -95,7 +95,6 @@ public class MenuController implements Initializable {
     private final String[] categories = {"NEW", "COVID", "POLITICS", "BUSINESS", "TECHNOLOGY", "HEALTH", "SPORTS", "ENTERTAINMENT", "WORLD", "OTHERS"};
     private int categoryIndex = 0, currentPage = 1;
     private double x, y;
-    private boolean loaded = false;
 
     public void setCategoryIndex(int index) {
         categoryIndex = index;
@@ -134,7 +133,7 @@ public class MenuController implements Initializable {
 
                             // Display error if there is error message
                             if (newsController.getError().compareTo("") != 0) {
-                                throwAlert(newsController.getError());
+                                throwAlert("Read Error", "Please check your Internet connection", newsController.getError());
                             }
                             return null;
                         }
@@ -148,7 +147,7 @@ public class MenuController implements Initializable {
     }
 
     // Function to display alert
-    public void throwAlert(String error){
+    public void throwAlert(String title, String content, String error){
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Read Error");
@@ -164,7 +163,6 @@ public class MenuController implements Initializable {
 
     private void loadAfterBar() {
         // Setting category label and set current page to first page
-        loaded = true;
         categoryButton.setDisable(false);
         changePage(0);
 
@@ -189,60 +187,67 @@ public class MenuController implements Initializable {
     }
 
     public void changePage(int page) {
-        if (loaded) {
-            scrollPane.setVvalue(0); // Reset scroll bar
+        try {
+            Thread thread = new Thread(() -> {
+                scrollPane.setVvalue(0); // Reset scroll bar
 
-            // Change page if selected page is not the current active page
-            if (currentPage != page){
-                final int ITEMCOUNT = 10;
-                long start = System.currentTimeMillis();
-                currentPage = page;
+                // Change page if selected page is not the current active page
+                if (currentPage != page){
+                    final int ITEMCOUNT = 10;
+                    long start = System.currentTimeMillis();
+                    currentPage = page;
 
-                System.out.println("\nInitializing new items:");
+                    System.out.println("\nInitializing new items:");
 
-                // Initializing article buttons
-                for (int i = 0; i < ITEMCOUNT; i++){
-                    int idx = i + (page * ITEMCOUNT);
-                    int currentButton = i;
+                    // Initializing article buttons
+                    for (int i = 0; i < ITEMCOUNT; i++){
+                        int idx = i + (page * ITEMCOUNT);
+                        int currentButton = i;
 
-                    //Platform.runLater(() -> {
-                    // If item exists
-                    try{
-                        labels.get(currentButton).setText(items.get(idx).getTitle());
-                        timeLabels.get(currentButton).setText(items.get(idx).durationToString());
-                        buttons.get(currentButton).setOnAction(e -> article(idx, categoryIndex));
+                        new Thread(() -> Platform.runLater(() -> {
+                            // If item exists
+                            try{
+                                labels.get(currentButton).setText(items.get(idx).getTitle());
+                                timeLabels.get(currentButton).setText(items.get(idx).durationToString());
+                                buttons.get(currentButton).setOnAction(e -> article(idx, categoryIndex));
 
-                        switch (items.get(idx).getSource()) {
-                            case VE -> icons.get(currentButton).setImage(new Image("/image/iconVE.png"));
-                            case TT -> icons.get(currentButton).setImage(new Image("/image/iconTT.png"));
-                            case TN -> icons.get(currentButton).setImage(new Image("/image/iconTN.jpeg"));
-                            case ZING -> icons.get(currentButton).setImage(new Image("/image/iconZING.png"));
-                            case ND -> icons.get(currentButton).setImage(new Image("/image/iconND.png"));
-                        }
+                                switch (items.get(idx).getSource()) {
+                                    case VE -> icons.get(currentButton).setImage(new Image("/image/iconVE.png"));
+                                    case TT -> icons.get(currentButton).setImage(new Image("/image/iconTT.png"));
+                                    case TN -> icons.get(currentButton).setImage(new Image("/image/iconTN.jpeg"));
+                                    case ZING -> icons.get(currentButton).setImage(new Image("/image/iconZING.png"));
+                                    case ND -> icons.get(currentButton).setImage(new Image("/image/iconND.png"));
+                                }
 
-                        try {
-                            images.get(currentButton).setImage(new Image(items.get(idx).getImgSrc()));
-                        }
-                        catch (IllegalArgumentException e) {
-                            images.get(currentButton).setImage(null);
-                        }
+                                try {
+                                    images.get(currentButton).setImage(new Image(items.get(idx).getImgSrc()));
+                                }
+                                catch (IllegalArgumentException e) {
+                                    images.get(currentButton).setImage(null);
+                                }
 
-                        buttons.get(currentButton).setDisable(false);
+                                buttons.get(currentButton).setDisable(false);
+                            }
+                            // If no more item left
+                            catch (IndexOutOfBoundsException e){
+                                buttons.get(currentButton).setDisable(true);
+                                labels.get(currentButton).setText("Empty");
+                                images.get(currentButton).setImage(null);
+                                timeLabels.get(currentButton).setText("Not available");
+                                icons.get(currentButton).setImage(null);
+                            }
+                            finally {
+                                System.out.println("Item " + currentButton + " " + (System.currentTimeMillis() - start) + " ms");
+                            }
+                        })).start();
                     }
-                    // If no more item left
-                    catch (IndexOutOfBoundsException e){
-                        buttons.get(currentButton).setDisable(true);
-                        labels.get(currentButton).setText("Empty");
-                        images.get(currentButton).setImage(null);
-                        timeLabels.get(currentButton).setText("Not available");
-                        icons.get(currentButton).setImage(null);
-                    }
-                    finally {
-                        System.out.println("Item " + currentButton + " " + (System.currentTimeMillis() - start) + " ms");
-                    }
-                    //});
                 }
-            }
+            });
+            thread.start();
+            thread.join();
+        }
+        catch (InterruptedException e) {
+            throwAlert("Interrupted Exception", "", e.getMessage());
         }
     }
 
