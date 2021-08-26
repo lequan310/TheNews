@@ -701,7 +701,7 @@ public class ArticleController implements Initializable {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Poor Internet Connection");
             alert.setHeaderText("Can't connect to\n" + item.getLink());
-            alert.setContentText("Please check your internet connection. Press F5 to refresh article.");
+            alert.setContentText("Please check your internet connection. Press F5 or Ctrl + R to refresh article.");
 
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
