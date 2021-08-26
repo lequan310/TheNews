@@ -4,6 +4,9 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import java.awt.*;
@@ -34,24 +37,6 @@ public class SceneSwitch {
                 case DIGIT3, NUMPAD3 -> controller.changePage(2);
                 case DIGIT4, NUMPAD4 -> controller.changePage(3);
                 case DIGIT5, NUMPAD5 -> controller.changePage(4);
-            }
-        }
-    }
-
-    // Keyboard Handler for Article scene
-    static class ArticleHandler implements EventHandler<KeyEvent> {
-        private final ArticleController articleController;
-
-        public ArticleHandler(ArticleController articleController){
-            this.articleController = articleController;
-        }
-
-        @Override
-        public void handle(KeyEvent keyEvent) {
-            switch (keyEvent.getCode()){
-                case RIGHT, CLOSE_BRACKET -> articleController.nextArticle();
-                case LEFT, OPEN_BRACKET -> articleController.previousArticle();
-                case F5 -> articleController.readArticle();
             }
         }
     }
@@ -109,10 +94,16 @@ public class SceneSwitch {
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/NewsTemplate.fxml"));
             ArticleController controller = new ArticleController(items, index, categoryIndex);
-            loader.setController(controller);
+            KeyCombination left = new KeyCodeCombination(KeyCode.LEFT, KeyCombination.CONTROL_DOWN);
+            KeyCombination right = new KeyCodeCombination(KeyCode.RIGHT, KeyCombination.CONTROL_DOWN);
 
+            loader.setController(controller);
             root = loader.load();
-            root.setOnKeyPressed(new ArticleHandler(controller));
+            root.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+                if (left.match(event)) controller.previousArticle(); // Control + Left Arrow = previous article
+                else if (right.match(event)) controller.nextArticle(); // Control + Right Arrow = next article
+                else if (event.getCode() == KeyCode.F5) controller.readArticle(); // F5 = refresh
+            });
             anchorPane.getScene().setRoot(root);
         }
         catch (Exception e){
