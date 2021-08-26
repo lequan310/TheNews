@@ -1,6 +1,8 @@
 package main;
 
 import javafx.application.Platform;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -27,7 +29,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-public class ArticleController implements Initializable{
+public class ArticleController implements Initializable {
     private final int WORDSIZE = 18;
     private final ArrayList<Item> items;
     private final int categoryIndex;
@@ -106,11 +108,66 @@ public class ArticleController implements Initializable{
         content.getChildren().addAll(createLabel("", WORDSIZE));
     }
 
+    // Function to read article from VN Express
     private void readArticleVE(String urlAddress) {
         try {
+            // Try to connect to item url
             Document doc = Jsoup.connect(urlAddress).timeout(10000).get();
             final int statusCode = doc.connection().response().statusCode();
             System.out.println("Status code: " + statusCode + " " + urlAddress);
+
+            Elements article = doc.select("article.fck_detail > *");
+
+            // Add description to article view
+            Label description = createDescription(doc.select("p.description").text());
+            content.getChildren().add(description);
+
+            // Loop through elements in main article
+            for (Element e : article) {
+                // If element is text not author
+                if (e.is("p") && !e.attr("style").contains("text-align:right;") && !e.attr("class").contains("author")) {
+                    content.getChildren().add(createLabel(e.text(), WORDSIZE));
+                }
+                // If element is image
+                else if (e.is("figure") && e.select("img").size() > 0) {
+                    Image image = new Image(e.select("img").attr("data-src"));
+                    content.getChildren().add(createImageLabel(image, e.select("figcaption").text()));
+                }
+                // If element is either video or image
+                else if (e.attr("class").contains("clearfix")) {
+                    if (e.select("video").size() > 0) {
+                        content.getChildren().add(createVideoButton(videoVE(e.select("video").attr("src")), e.select("p").text()));
+                    }
+                    else if (e.select("img").size() > 0) {
+                        Image image = new Image(e.select("img").attr("data-src"));
+                        content.getChildren().add(createImageLabel(image, e.select("p").text()));
+                    }
+                }
+                // If element is video
+                else if (e.is("div") && e.select("video").size() > 0) {
+                    content.getChildren().add(createVideoButton(videoVE(e.select("video").attr("src")), e.select("p").text()));
+                }
+                // If element is wrapnote
+                else if (e.is("div") && e.attr("class").compareTo("box_brief_info") == 0) {
+                    FlowPane pane = createWrapNote();
+
+                    for (Element i : e.select("> *")) {
+                        if (i.is("p")) {
+                            pane.getChildren().add(createLabel(i.text(), WORDSIZE));
+                        }
+                    }
+
+                    content.getChildren().add(pane);
+                }
+            }
+
+            // Add author label to article view
+            Label author = createDescription(article.select("p[style*=text-align:right]").text());
+            if (author.getText().compareTo("") == 0)
+                author.setText(article.select("p[class*=author]").text());
+
+            author.setAlignment(Pos.TOP_RIGHT);
+            content.getChildren().add(author);
         }
         catch (Exception e){
             System.out.println(e.getMessage());
@@ -343,6 +400,19 @@ public class ArticleController implements Initializable{
         }
     }
 
+    private String videoVE(String urlAddress) {
+        String vidURL = urlAddress.replaceFirst("d1.", "v.");
+        vidURL = vidURL.replaceFirst("video/video", "video");
+
+        String temp1 = vidURL.substring(0, vidURL.indexOf("/mp4/") + 5);
+        String temp2 = vidURL.substring(vidURL.indexOf("/mp4/") + 5, vidURL.length());
+        temp2 = temp2.substring(temp2.indexOf("/"), temp2.length());
+        temp2 = temp2.replace("/vne/master.m3u8", ".mp4");
+        vidURL = temp1 + temp2;
+
+        return vidURL;
+    }
+
     // Utilities function to read ThanhNien article
     private void checkDivTN(Element div, FlowPane content) {
         // If element has 0 children and is not an ad div
@@ -572,8 +642,10 @@ public class ArticleController implements Initializable{
 
     private FlowPane createWrapNote() {
         FlowPane pane = new FlowPane();
+
+        pane.setStyle("-fx-border-color: #ff0000");
         pane.setAlignment(Pos.CENTER);
-        pane.prefWidthProperty().bind(content.widthProperty().subtract(400));
+        pane.prefWidthProperty().bind(content.widthProperty().subtract(380));
         pane.setBackground(new Background(new BackgroundFill(Color.rgb(100, 100, 100), new CornerRadii(0), new Insets(0))));
         pane.setVgap(20);
 
