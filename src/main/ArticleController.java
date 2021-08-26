@@ -366,8 +366,12 @@ public class ArticleController implements Initializable {
                 try {
                     // Create and add label if element is text
                     if (e.is("p")) {
-                        Label label = createLabel(e.text(), WORDSIZE);
-                        content.getChildren().add(label);
+                        if (e.select("video").size() == 0) {
+                            content.getChildren().add(createLabel(e.text(), WORDSIZE));
+                        }
+                        else {
+                            content.getChildren().add(createVideoButton(e.select("source").attr("src"), ""));
+                        }
                     }
                     // Create and add image if element is image
                     else if (e.is("div") && e.attr("class").compareTo("light-img") == 0) {

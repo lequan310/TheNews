@@ -29,7 +29,7 @@ public class NewsController extends Task {
     private final String[] VNEXPRESS = {"https://vnexpress.net/rss/tin-moi-nhat.rss", "https://vnexpress.net/rss/tin-noi-bat.rss", "https://vnexpress.net/rss/phap-luat.rss",
             "https://vnexpress.net/kinh-doanh", "https://vnexpress.net/so-hoa", "https://vnexpress.net/suc-khoe",
             "https://vnexpress.net/the-thao", "https://vnexpress.net/giai-tri", "https://vnexpress.net/rss/the-gioi.rss",
-            "https://vnexpress.net/rss/du-lich.rss", "https://vnexpress.net/rss/giao-duc.rss", "https://vnexpress.net/rss/khoa-hoc.rss"};
+            "https://vnexpress.net/rss/cuoi.rss", "https://vnexpress.net/rss/giao-duc.rss", "https://vnexpress.net/rss/khoa-hoc.rss"};
     private final String[] TUOITRE = {"https://tuoitre.vn/rss/tin-moi-nhat.rss", "https://tuoitre.vn/rss/suc-khoe.rss", "https://tuoitre.vn/rss/phap-luat.rss",
             "https://tuoitre.vn/rss/kinh-doanh.rss", "https://tuoitre.vn/rss/cong-nghe.rss", "https://tuoitre.vn/rss/suc-khoe.rss",
             "https://tuoitre.vn/rss/the-thao.rss", "https://tuoitre.vn/rss/giai-tri.rss", "https://tuoitre.vn/rss/the-gioi.rss",
@@ -208,7 +208,7 @@ public class NewsController extends Task {
 
                     // Create and add news item to list
                     Item item = new Item(title, link, date, imgSrc, Source.VE);
-                    items.add(item);
+                    if (!inList(item)) items.add(item);
                     updateProgress(progress++, maxProgress);
 
                     if (item.getDuration().toHours() > 24) break;
@@ -394,7 +394,7 @@ public class NewsController extends Task {
 
                 // Create and add news item to list
                 Item item = new Item(title, link, date, imgSrc, Source.ZING);
-                items.add(item);
+                if (!inList(item)) items.add(item);
                 updateProgress(progress++, maxProgress);
                 if (item.getDuration().toHours() > 24) break;
             }
@@ -465,7 +465,7 @@ public class NewsController extends Task {
 
                 // Create and add news item to list
                 Item item = new Item(title, link, date, imgSrc, Source.ND);
-                items.add(item);
+                if (!inList(item)) items.add(item);
                 updateProgress(progress++, maxProgress);
                 if (item.getDuration().toHours() > 24) break;
             }
@@ -486,6 +486,14 @@ public class NewsController extends Task {
 
         for (String s : keywords) {
             if (check.contains(s)) return true;
+        }
+
+        return false;
+    }
+
+    private boolean inList(Item item) {
+        for (Item i : items) {
+            if (item.equal(i)) return true;
         }
 
         return false;
