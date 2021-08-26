@@ -74,11 +74,16 @@ public class ArticleController implements Initializable {
         String vidURL = urlAddress.replaceFirst("d1.", "v.");
         vidURL = vidURL.replaceFirst("video/video", "video");
 
-        String temp1 = vidURL.substring(0, vidURL.indexOf("/mp4") + 4);
-        String temp2 = vidURL.substring(vidURL.indexOf("/mp4/") + 5);
-        temp2 = temp2.substring(temp2.indexOf("/"));
-        temp2 = temp2.replace("/vne/master.m3u8", ".mp4");
-        vidURL = temp1 + temp2;
+        if (vidURL.contains("/vne/master.m3u8")){
+            String temp1 = vidURL.substring(0, vidURL.indexOf("/mp4") + 4);
+            String temp2 = vidURL.substring(vidURL.indexOf("/mp4/") + 5);
+            temp2 = temp2.substring(temp2.indexOf("/"));
+            temp2 = temp2.replace("/vne/master.m3u8", ".mp4");
+            vidURL = temp1 + temp2;
+        }
+        else if (vidURL.contains("index-v1-a1.m3u8")){
+            vidURL = vidURL.replace("/index-v1-a1.m3u8", ".mp4");
+        }
 
         return vidURL;
     }
@@ -462,7 +467,7 @@ public class ArticleController implements Initializable {
     // Utilities function to read ThanhNien article
     private void checkDivTN(Element div, FlowPane content) {
         // If element has 0 children and is not an ad div
-        if (div.select("> *").size() == 0 && !div.className().contains("ads")){
+        if (div.select("> *").size() == 0 && !div.className().contains("ads") && div.hasText()){
             content.getChildren().add(createLabel(div.text(), WORDSIZE));
             return;
         }

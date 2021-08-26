@@ -316,6 +316,8 @@ public class NewsController extends Task {
                         if (title.contains("<![CDATA[ "))
                             title = extract(title, "<![CDATA[ ", "]]>");
                         if (categoryIndex == 1 && !checkCovidKeyword(title)) continue;
+                        title = title.replaceAll("<label>", "");
+                        title = title.replaceAll("</label>", " -");
 
                         // Extract link
                         link = extract(line, "<link>", "</link>");
