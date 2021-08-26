@@ -413,13 +413,17 @@ public class ArticleController implements Initializable {
             }
             // If element is image
             else if (e.is("figure") && e.select("img").size() > 0) {
-                Image image = new Image(e.select("img").attr("data-src"));
+                String imageURL = e.select("img").attr("data-src");
+                if (imageURL.compareTo("") == 0) imageURL = e.select("img").attr("src");
+
+                Image image = new Image(imageURL);
                 content.getChildren().add(createImageLabel(image, e.select("figcaption").text()));
             }
             // If element is either video or image
             else if (e.attr("class").contains("clearfix")) {
                 if (e.select("video").size() > 0) {
                     content.getChildren().add(createVideoButton(videoVE(e.select("video").attr("src")), e.select("p").text()));
+                    System.out.println(videoVE(e.select("video").attr("src")));
                 }
                 else if (e.select("img").size() > 0) {
                     String imageURL = e.select("img").attr("data-src");
@@ -430,7 +434,8 @@ public class ArticleController implements Initializable {
                 }
             }
             // If element is video
-            else if (e.is("div") && e.attr("class").contains("text-align:center") && e.select("video").size() > 0) {
+            else if (e.is("div") && e.select("video").size() > 0 &&
+                    (e.attr("class").contains("text-align:center") || e.attr("style").contains("center"))) {
                 content.getChildren().add(createVideoButton(videoVE(e.select("video").attr("src")), e.select("p").text()));
                 System.out.println(videoVE(e.select("video").attr("src")));
             }
