@@ -220,10 +220,12 @@ public class MenuController implements Initializable {
                             case ND -> icons.get(currentButton).setImage(new Image("/image/iconND.png"));
                         }
 
-                        if (!items.get(idx).getImgSrc().equals("")){
+                        try {
                             images.get(currentButton).setImage(new Image(items.get(idx).getImgSrc()));
-                        }else
+                        }
+                        catch (IllegalArgumentException e) {
                             images.get(currentButton).setImage(null);
+                        }
 
                         buttons.get(currentButton).setDisable(false);
                     }

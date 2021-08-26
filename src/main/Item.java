@@ -47,6 +47,10 @@ public class Item implements Comparable<Item> {
         return source;
     }
 
+    public Duration getDuration() {
+        return duration;
+    }
+
     // String functions
     public String durationToString(){
         String day = "", hour = "", min = "", sec = "";
