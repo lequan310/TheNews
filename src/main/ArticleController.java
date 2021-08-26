@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.effect.BoxBlur;
@@ -626,13 +627,25 @@ public class ArticleController implements Initializable {
         final int MAX_WIDTH = 1000;
         ImageView imageView = new ImageView(image);
         imageView.setPreserveRatio(true);
-        imageView.setFitWidth(Math.min((Math.max(image.getWidth(), 500)), MAX_WIDTH));
+        imageView.setFitWidth(Math.min(MAX_WIDTH / 2, image.getWidth()));
 
         // Adjust label position and size
-        Label label = createGraphicLabel(caption);
+        Label label = createGraphicLabel("CLICK TO ZOOM: " + caption);
         label.setGraphic(imageView);
         label.setPrefWidth(imageView.getFitWidth());
         label.setAlignment(Pos.CENTER);
+
+        // Make label more interactive with mouse event
+        label.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+            if (imageView.getFitWidth() == 500) {
+                imageView.setFitWidth(Math.max(image.getWidth(), MAX_WIDTH));
+            }
+            else {
+                imageView.setFitWidth(500);
+            }
+        });
+        label.setOnMouseEntered(e -> label.setCursor(Cursor.HAND));
+        label.setOnMouseExited(e -> label.setCursor(Cursor.DEFAULT));
 
         return label;
     }
