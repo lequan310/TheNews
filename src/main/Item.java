@@ -4,10 +4,10 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-// News Source (VNExpress, TuoiTre, ThanhNien, ZingNews, NhanDan)
-enum Source { VE, TT, TN, ZING, ND}
-
 public class Item implements Comparable<Item> {
+    // News Source (VNExpress, TuoiTre, ThanhNien, ZingNews, NhanDan)
+    public enum Source { VE, TT, TN, ZING, ND }
+
     // Item title, source link, published date, duration since posted, thumbnail link, source
     private final String title;
     private final String link;

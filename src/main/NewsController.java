@@ -166,7 +166,7 @@ public class NewsController extends Task<Void> {
                     // Add item to list at the end of item (when all information of an item object is gathered)
                     else if (line.contains("</item>") && inItem) {
                         inItem = false;
-                        Item item = new Item(title, link, date, imgSrc, Source.VE);
+                        Item item = new Item(title, link, date, imgSrc, Item.Source.VE);
                         items.add(item);
                         updateProgress(progress++, maxProgress);
                     }
@@ -206,7 +206,7 @@ public class NewsController extends Task<Void> {
                     date = LocalDateTime.parse(pubDate, df);
 
                     // Create and add news item to list
-                    Item item = new Item(title, link, date, imgSrc, Source.VE);
+                    Item item = new Item(title, link, date, imgSrc, Item.Source.VE);
                     if (!inList(item)) items.add(item);
                     updateProgress(progress++, maxProgress);
 
@@ -271,7 +271,7 @@ public class NewsController extends Task<Void> {
                 // Add item to list of items
                 else if (line.contains("</item>") && inItem) {
                     inItem = false;
-                    Item item = new Item(title, link, date, imgSrc, Source.TT);
+                    Item item = new Item(title, link, date, imgSrc, Item.Source.TT);
                     items.add(item);
                     updateProgress(progress++, maxProgress);
                 }
@@ -327,7 +327,7 @@ public class NewsController extends Task<Void> {
                         imgSrc = extract(line, "<image>", "</image>");
 
                         // Add item into list of items
-                        Item item = new Item(title, link, date, imgSrc, Source.TN);
+                        Item item = new Item(title, link, date, imgSrc, Item.Source.TN);
                         items.add(item);
                         inItem = false;
                         updateProgress(progress++, maxProgress);
@@ -386,7 +386,7 @@ public class NewsController extends Task<Void> {
                 date = LocalDateTime.parse(pubDate, df);
 
                 // Create and add news item to list
-                Item item = new Item(title, link, date, imgSrc, Source.ZING);
+                Item item = new Item(title, link, date, imgSrc, Item.Source.ZING);
                 if (!inList(item)) items.add(item);
                 updateProgress(progress++, maxProgress);
             }
@@ -455,7 +455,7 @@ public class NewsController extends Task<Void> {
                 }
 
                 // Create and add news item to list
-                Item item = new Item(title, link, date, imgSrc, Source.ND);
+                Item item = new Item(title, link, date, imgSrc, Item.Source.ND);
                 if (!inList(item)) items.add(item);
                 updateProgress(progress++, maxProgress);
             }
