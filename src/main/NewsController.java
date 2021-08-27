@@ -5,6 +5,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -183,6 +184,7 @@ public class NewsController extends Task<Void> {
 
                     // Get title
                     title = e.select("h3").text();
+                    if (title.compareTo("") == 0) title = e.select("h2").text();
                     if (title.compareTo("") == 0) continue;
                     if (categoryIndex == 1 && !checkCovidKeyword(title)) continue;
 
@@ -211,11 +213,9 @@ public class NewsController extends Task<Void> {
                     if (item.getDuration().toHours() > 24) break;
                 }
             }
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             e.printStackTrace();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
             error += urlAddress + ": " + e.getMessage() + "\n";
         }
@@ -278,11 +278,9 @@ public class NewsController extends Task<Void> {
             }
 
             in.close();
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             e.printStackTrace();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
             error += urlAddress + ": " + e.getMessage() + "\n";
         }
@@ -335,16 +333,15 @@ public class NewsController extends Task<Void> {
                         updateProgress(progress++, maxProgress);
                     }
                     // Catch error lines which sometimes existed in ThanhNien RSS
-                    catch (StringIndexOutOfBoundsException e) {}
+                    catch (StringIndexOutOfBoundsException e) {
+                    }
                 }
             }
 
             in.close();
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             e.printStackTrace();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
             error += urlAddress + ": " + e.getMessage() + "\n";
         }
@@ -393,8 +390,7 @@ public class NewsController extends Task<Void> {
                 if (!inList(item)) items.add(item);
                 updateProgress(progress++, maxProgress);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
             error += urlAddress + ": " + e.getMessage() + "\n";
         }
@@ -463,8 +459,7 @@ public class NewsController extends Task<Void> {
                 if (!inList(item)) items.add(item);
                 updateProgress(progress++, maxProgress);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
             error += urlAddress + ": " + e.getMessage() + "\n";
         }
@@ -492,8 +487,7 @@ public class NewsController extends Task<Void> {
             }
 
             return false;
-        }
-        catch (ConcurrentModificationException e) {
+        } catch (ConcurrentModificationException e) {
             System.out.println(e.getMessage());
             return true;
         }

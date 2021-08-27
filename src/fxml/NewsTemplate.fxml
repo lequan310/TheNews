@@ -45,7 +45,7 @@
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
                               </Button>
-                              <Label fx:id="timeLabel" alignment="BOTTOM_CENTER" ellipsisString="" prefHeight="270.0" prefWidth="281.0" text="Time" textFill="WHITE" textOverrun="CLIP" wrapText="true" VBox.vgrow="ALWAYS">
+                              <Label fx:id="timeLabel" alignment="BOTTOM_CENTER" ellipsisString="" minWidth="120.0" prefHeight="270.0" prefWidth="281.0" text="Time" textFill="WHITE" textOverrun="CLIP" wrapText="true" VBox.vgrow="ALWAYS">
                                  <font>
                                     <Font size="22.0" />
                                  </font>

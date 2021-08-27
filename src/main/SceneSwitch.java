@@ -163,12 +163,12 @@ public class SceneSwitch {
                     anchorPane.setCursor(javafx.scene.Cursor.H_RESIZE);
                 }
                 // Resize up
-                else if (y <= LIMIT){
+                else if (y <= LIMIT && x < anchorPane.getWidth() - 50){
                     resizeLeft = false; resizeRight = false; resizeUp = true; resizeDown = false;
                     anchorPane.setCursor(javafx.scene.Cursor.V_RESIZE);
                 }
                 // Resize right
-                else if (x >= anchorPane.getWidth() - LIMIT) {
+                else if (x >= anchorPane.getWidth() - LIMIT && y > 30) {
                     resizeLeft = false; resizeRight = true; resizeUp = false; resizeDown = false;
                     anchorPane.setCursor(javafx.scene.Cursor.H_RESIZE);
                 }
