@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 
 public class Item implements Comparable<Item> {
     // News Source (VNExpress, TuoiTre, ThanhNien, ZingNews, NhanDan)
-    public enum Source { VE, TT, TN, ZING, ND }
+    protected enum Source { VE, TT, TN, ZING, ND }
 
     // Item title, source link, published date, duration since posted, thumbnail link, source
     private final String title;
