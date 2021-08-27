@@ -120,6 +120,7 @@ public class SceneSwitch {
     @FXML protected void dragged(MouseEvent event) {
         if (!resizing) {
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setFullScreen(false);
             stage.setX(event.getScreenX() - x);
             stage.setY(event.getScreenY() - y);
         }
