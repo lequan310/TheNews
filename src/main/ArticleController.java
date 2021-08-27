@@ -1,14 +1,11 @@
 package main;
 
 import javafx.application.Platform;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.image.Image;
@@ -18,7 +15,6 @@ import javafx.scene.layout.*;
 import javafx.scene.media.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
-import javafx.stage.Stage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -30,7 +26,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-public class ArticleController implements Initializable {
+public class ArticleController extends SceneSwitch implements Initializable {
     private final int WORDSIZE = 18;
     private final ArrayList<Item> items;
     private final int categoryIndex;
@@ -48,7 +44,6 @@ public class ArticleController implements Initializable {
 
     private Item item;
     private int index;
-    private double x, y;
 
     public ArticleController(ArrayList<Item> items, int index, int categoryIndex){
         this.items = items;
@@ -608,10 +603,12 @@ public class ArticleController implements Initializable {
                     content.getChildren().add(createImageLabel(image, ""));
                 }
                 // Create and add group of text
-                else if (e.is("ul")) {
-                    for (Element i : e.select("> *"))
-                        if (i.is("p") || i.is("li")) content.getChildren().add(createLabel(i.text(), WORDSIZE));
-
+                else if (e.is("ul") || e.is("li") || e.is("div")) {
+                    addZing(e.select("> *"), content);
+                }
+                else if (e.hasText() && e.parent().is("li")) {
+                    content.getChildren().add(createLabel(e.parent().text(), WORDSIZE));
+                    break;
                 }
             }
             catch (IllegalArgumentException ex) { continue; }
@@ -737,34 +734,7 @@ public class ArticleController implements Initializable {
 
     // Title bar functions
     @FXML private void menuHome(){
-        new SceneSwitch(anchorPane).menuHome(categoryIndex);
-    }
-
-    @FXML private void dragged(MouseEvent event) {
-        Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
-        stage.setX(event.getScreenX() - x);
-        stage.setY(event.getScreenY() - y);
-    }
-
-    @FXML private void pressed(MouseEvent event) {
-        x = event.getSceneX();
-        y = event.getSceneY();
-    }
-
-    @FXML private void min(MouseEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setIconified(true);
-    }
-
-    @FXML private void max(MouseEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setFullScreenExitHint("");
-        stage.setFullScreen(!stage.isFullScreen());
-    }
-
-    @FXML private void close(MouseEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.close();
+        super.menuHome(categoryIndex);
     }
 
     // Function to navigate next and previous articles

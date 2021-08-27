@@ -5,21 +5,18 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.ConcurrentModificationException;
 
 public class NewsController extends Task {
     private final ArrayList<Item> items = new ArrayList<>(); // List of items that is scraped and sorted to be displayed
@@ -492,10 +489,16 @@ public class NewsController extends Task {
     }
 
     private boolean inList(Item item) {
-        for (Item i : items) {
-            if (item.equal(i)) return true;
-        }
+        try {
+            for (Item i : items) {
+                if (item.equal(i)) return true;
+            }
 
-        return false;
+            return false;
+        }
+        catch (ConcurrentModificationException e) {
+            System.out.println(e.getMessage());
+            return true;
+        }
     }
 }

@@ -1,25 +1,30 @@
 package main;
 
+import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class SceneSwitch {
     private Parent root;
-    private final AnchorPane anchorPane;
+    @FXML private AnchorPane anchorPane;
 
-    public SceneSwitch(AnchorPane anchorPane){
-        this.anchorPane = anchorPane;
-    }
+    protected boolean resizeLeft, resizeRight, resizeUp, resizeDown, resizing = false;
+    protected double x, y;
+
+    public SceneSwitch() {}
 
     // Keyboard Handler for Main Menu scene
     static class MenuHandler implements EventHandler<KeyEvent> {
@@ -50,10 +55,11 @@ public class SceneSwitch {
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         double height = ge.getMaximumWindowBounds().height, width = ge.getMaximumWindowBounds().width, ratio = width / height;
-        height -= 200; width = height * ratio;
+        height *= 0.85; width = height * ratio;
 
         Scene scene = new Scene(loader.load(), width, height);
         scene.setOnKeyPressed(new MenuHandler(controller));
+        scene.setFill(Color.valueOf("#1f1f1f"));
         return scene;
     }
 
@@ -110,5 +116,109 @@ public class SceneSwitch {
         catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    // Title bar functions
+    @FXML protected void dragged(MouseEvent event) {
+        if (!resizing) {
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setX(event.getScreenX() - x);
+            stage.setY(event.getScreenY() - y);
+        }
+    }
+
+    @FXML protected void update(MouseEvent event) {
+        x = event.getSceneX();
+        y = event.getSceneY();
+    }
+
+    @FXML protected void min(MouseEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setIconified(true);
+    }
+
+    @FXML protected void max(MouseEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setFullScreenExitHint("");
+        stage.setFullScreen(!stage.isFullScreen());
+    }
+
+    @FXML protected void close(MouseEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.close();
+    }
+
+    // Function for resizing windows
+    @FXML protected void checkBound(MouseEvent event) {
+        if (!resizing) {
+            final int LIMIT = 3;
+            x = event.getSceneX();
+            y = event.getSceneY();
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            if (!stage.isFullScreen()) {
+                // Resize left
+                if (x <= LIMIT) {
+                    resizeLeft = true; resizeRight = false; resizeUp = false; resizeDown = false;
+                    anchorPane.setCursor(javafx.scene.Cursor.H_RESIZE);
+                }
+                // Resize up
+                else if (y <= LIMIT){
+                    resizeLeft = false; resizeRight = false; resizeUp = true; resizeDown = false;
+                    anchorPane.setCursor(javafx.scene.Cursor.V_RESIZE);
+                }
+                // Resize right
+                else if (x >= anchorPane.getWidth() - LIMIT) {
+                    resizeLeft = false; resizeRight = true; resizeUp = false; resizeDown = false;
+                    anchorPane.setCursor(javafx.scene.Cursor.H_RESIZE);
+                }
+                // Resize down
+                else if (y >= anchorPane.getHeight() - LIMIT) {
+                    resizeLeft = false; resizeRight = false; resizeUp = false; resizeDown = true;
+                    anchorPane.setCursor(javafx.scene.Cursor.V_RESIZE);
+                }
+                else {
+                    resizeLeft = false; resizeRight = false; resizeUp = false; resizeDown = false;
+                    anchorPane.setCursor(Cursor.DEFAULT);
+                }
+            }
+        }
+    }
+
+    @FXML protected void resize(MouseEvent event) {
+        double deltaX = 0, deltaY = 0;
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+        if (resizeLeft || resizeRight) {
+            resizing = true;
+            deltaX = resizeLeft ? event.getSceneX() - x : x - event.getSceneX();
+            x = event.getSceneX();
+
+            anchorPane.resize(anchorPane.getWidth() - deltaX, anchorPane.getHeight() - deltaY);
+            stage.setWidth(anchorPane.getWidth());
+
+            if (resizeLeft) {
+                anchorPane.relocate(x, 0);
+                stage.setX(event.getScreenX());
+            }
+        }
+        else if (resizeUp || resizeDown) {
+            resizing = true;
+            deltaY = resizeUp ? event.getSceneY() - y : y - event.getSceneY();
+            y = event.getSceneY();
+
+            anchorPane.resize(anchorPane.getWidth() - deltaX, anchorPane.getHeight() - deltaY);
+            stage.setHeight(anchorPane.getHeight());
+
+            if (resizeUp) {
+                anchorPane.relocate(0, y);
+                stage.setY(event.getScreenY());
+            }
+        }
+    }
+
+    @FXML protected void stopResize(MouseEvent event) {
+        resizing = false;
+        anchorPane.setCursor(Cursor.DEFAULT);
     }
 }

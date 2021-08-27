@@ -10,14 +10,13 @@ import javafx.scene.control.*;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.*;
 
-public class MenuController implements Initializable {
+public class MenuController extends SceneSwitch implements Initializable {
     // UI components in Main Menu scene
     @FXML private Label categoryLabel;
     @FXML private Label header;
@@ -95,8 +94,6 @@ public class MenuController implements Initializable {
 
     private final String[] categories = {"NEW", "COVID", "POLITICS", "BUSINESS", "TECHNOLOGY", "HEALTH", "SPORTS", "ENTERTAINMENT", "WORLD", "OTHERS"};
     private int categoryIndex = 0, currentPage = 1;
-    private double x, y;
-    private boolean loaded = true;
 
     public void setCategoryIndex(int index) {
         categoryIndex = index;
@@ -142,7 +139,8 @@ public class MenuController implements Initializable {
                     };
                 }
             }.start();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -245,39 +243,11 @@ public class MenuController implements Initializable {
 
     // Function to switch to article scene
     public void article(int index, int categoryIndex) {
-        new SceneSwitch(anchorPane).article(items, index, categoryIndex);
+        super.article(items, index, categoryIndex);
     }
 
     // Function to switch to category scene
     @FXML private void menuCategories() {
-        new SceneSwitch(anchorPane).menuCategories(categoryIndex);
-    }
-
-    // Title bar functions
-    @FXML private void dragged(MouseEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setX(event.getScreenX() - x);
-        stage.setY(event.getScreenY() - y);
-    }
-
-    @FXML private void pressed(MouseEvent event) {
-        x = event.getSceneX();
-        y = event.getSceneY();
-    }
-
-    @FXML private void min(MouseEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setIconified(true);
-    }
-
-    @FXML private void max(MouseEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setFullScreenExitHint("");
-        stage.setFullScreen(!stage.isFullScreen());
-    }
-
-    @FXML private void close(MouseEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.close();
+        super.menuCategories(categoryIndex);
     }
 }
