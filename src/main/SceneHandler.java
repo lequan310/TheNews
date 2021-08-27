@@ -15,14 +15,14 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class SceneSwitch {
+public class SceneHandler {
     private Parent root;
     @FXML private AnchorPane anchorPane;
 
     protected boolean moving, resizeLeft, resizeRight, resizeUp, resizeDown, resizing = false;
     protected double x, y;
 
-    public SceneSwitch() {}
+    public SceneHandler() {}
 
     // Keyboard Handler for Main Menu scene
     static class MenuHandler implements EventHandler<KeyEvent> {

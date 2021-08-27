@@ -26,7 +26,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-public class ArticleController extends SceneSwitch implements Initializable {
+public class ArticleController extends SceneHandler implements Initializable {
     private final int WORDSIZE = 18;
     private final ArrayList<Item> items;
     private final int categoryIndex;

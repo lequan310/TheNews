@@ -13,7 +13,7 @@ import javafx.scene.layout.*;
 import java.net.URL;
 import java.util.*;
 
-public class MenuController extends SceneSwitch implements Initializable {
+public class MenuController extends SceneHandler implements Initializable {
     // UI components in Main Menu scene
     @FXML private Label categoryLabel;
     @FXML private Label header;

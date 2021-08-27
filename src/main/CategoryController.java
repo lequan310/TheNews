@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
-public class CategoryController extends SceneSwitch implements Initializable {
+public class CategoryController extends SceneHandler implements Initializable {
     @FXML private AnchorPane anchorPane;
     @FXML private Button mainMenu;
     @FXML private Button button1;

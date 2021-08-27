@@ -43,6 +43,7 @@ public class NewsController extends Task<Void> {
     private final String[] NHANDAN = {"https://nhandan.vn/", "https://nhandan.vn/y-te", "https://nhandan.vn/chinhtri",
             "https://nhandan.vn/kinhte", "https://nhandan.vn/khoahoc-congnghe", "https://nhandan.vn/y-te", "https://nhandan.vn/thethao",
             "https://nhandan.vn/vanhoa", "https://nhandan.vn/thegioi", "https://nhandan.vn/xahoi", "https://nhandan.vn/giaoduc", "https://nhandan.vn/bandoc"};
+
     private int categoryIndex = 0, progress = 0, maxProgress = 0; // Index to read from the arrays below
     private String error = ""; // Error message
 
