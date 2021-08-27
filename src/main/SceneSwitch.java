@@ -19,7 +19,7 @@ public class SceneSwitch {
     private Parent root;
     @FXML private AnchorPane anchorPane;
 
-    protected boolean resizeLeft, resizeRight, resizeUp, resizeDown, resizing = false;
+    protected boolean moving, resizeLeft, resizeRight, resizeUp, resizeDown, resizing = false;
     protected double x, y;
 
     public SceneSwitch() {}
@@ -123,6 +123,7 @@ public class SceneSwitch {
             stage.setFullScreen(false);
             stage.setX(event.getScreenX() - x);
             stage.setY(event.getScreenY() - y);
+            moving = true;
         }
     }
 
@@ -149,7 +150,7 @@ public class SceneSwitch {
 
     // Function for resizing windows
     @FXML protected void checkBound(MouseEvent event) {
-        if (!resizing) {
+        if (!resizing && !moving) {
             final int LIMIT = 3;
             x = event.getSceneX();
             y = event.getSceneY();
@@ -217,7 +218,7 @@ public class SceneSwitch {
     }
 
     @FXML protected void stopResize() {
-        resizing = false;
+        resizing = false; moving = false;
         anchorPane.setCursor(Cursor.DEFAULT);
     }
 }
