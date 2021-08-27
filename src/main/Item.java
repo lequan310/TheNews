@@ -85,7 +85,6 @@ public class Item implements Comparable<Item> {
     }
 
     public boolean equal(Item item) {
-        if (this.link.compareTo(item.link) == 0) return true;
-        return false;
+        return this.link.compareTo(item.link) == 0;
     }
 }

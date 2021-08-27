@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 
-public class NewsController extends Task {
+public class NewsController extends Task<Void> {
     private final ArrayList<Item> items = new ArrayList<>(); // List of items that is scraped and sorted to be displayed
 
     // List of URL to scrape from
@@ -71,7 +71,7 @@ public class NewsController extends Task {
     }
 
     @Override
-    protected Object call() throws Exception {
+    protected Void call() throws Exception {
         long start = System.currentTimeMillis();
         updateProgress(0, 1);
 
@@ -335,8 +335,7 @@ public class NewsController extends Task {
                         updateProgress(progress++, maxProgress);
                     }
                     // Catch error lines which sometimes existed in ThanhNien RSS
-                    catch (StringIndexOutOfBoundsException e) {
-                    }
+                    catch (StringIndexOutOfBoundsException e) {}
                 }
             }
 
@@ -393,7 +392,6 @@ public class NewsController extends Task {
                 Item item = new Item(title, link, date, imgSrc, Source.ZING);
                 if (!inList(item)) items.add(item);
                 updateProgress(progress++, maxProgress);
-                if (item.getDuration().toHours() > 24) break;
             }
         }
         catch (IOException e) {
@@ -464,7 +462,6 @@ public class NewsController extends Task {
                 Item item = new Item(title, link, date, imgSrc, Source.ND);
                 if (!inList(item)) items.add(item);
                 updateProgress(progress++, maxProgress);
-                if (item.getDuration().toHours() > 24) break;
             }
         }
         catch (IOException e) {

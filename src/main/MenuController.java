@@ -5,14 +5,11 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.stage.Stage;
-
 import java.net.URL;
 import java.util.*;
 
@@ -115,12 +112,12 @@ public class MenuController extends SceneSwitch implements Initializable {
 
         try {
             // Create a news controller for menu scene to use
-            new Service() {
+            new Service<Void>() {
                 @Override
-                protected Task createTask() {
-                    return new Task() {
+                protected Task<Void> createTask() {
+                    return new Task<>() {
                         @Override
-                        protected Object call() throws Exception {
+                        protected Void call() throws Exception {
                             // Start scraping articles from 5 sources
                             Thread thread = new Thread(newsController);
                             thread.start();
@@ -141,7 +138,7 @@ public class MenuController extends SceneSwitch implements Initializable {
             }.start();
         }
         catch (Exception e) {
-            e.printStackTrace();
+            throwAlert(e.getClass().getCanonicalName(), "", e.toString());
         }
     }
 
@@ -149,8 +146,8 @@ public class MenuController extends SceneSwitch implements Initializable {
     public void throwAlert(String title, String content, String error) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Read Error");
-            alert.setContentText("Please check your internet connection.");
+            alert.setTitle(title);
+            alert.setContentText(content);
 
             TextArea area = new TextArea(error);
             alert.getDialogPane().setExpandableContent(area);

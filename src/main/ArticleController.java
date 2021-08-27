@@ -225,7 +225,7 @@ public class ArticleController extends SceneSwitch implements Initializable {
 
             // Video article
             if (urlAddress.contains("https://thanhnien.vn/video")){
-                Label label = createLabel(doc.select("div.sapo").text(), WORDSIZE); // Create description label
+                Label label = createDescription(doc.select("div.sapo").text()); // Create description label
                 Label author = createDescription(doc.select("div.details__author h4").text()); // Create author label
                 author.setAlignment(Pos.TOP_RIGHT);
 
@@ -603,12 +603,11 @@ public class ArticleController extends SceneSwitch implements Initializable {
                     content.getChildren().add(createImageLabel(image, ""));
                 }
                 // Create and add group of text
-                else if (e.is("ul") || e.is("li") || e.is("div")) {
+                else if (e.is("ul")  || e.is("div")) {
                     addZing(e.select("> *"), content);
                 }
-                else if (e.hasText() && e.parent().is("li")) {
-                    content.getChildren().add(createLabel(e.parent().text(), WORDSIZE));
-                    break;
+                else if (e.hasText() && e.is("li")) {
+                    content.getChildren().add(createLabel(e.text(), WORDSIZE));
                 }
             }
             catch (IllegalArgumentException ex) { continue; }
@@ -639,7 +638,8 @@ public class ArticleController extends SceneSwitch implements Initializable {
 
     private Label createDescription(String text){
         Label description = createLabel(text, WORDSIZE);
-        description.setFont(Font.font("Arial", FontWeight.BOLD, WORDSIZE + 4));
+        description.setFont(Font.font("Arial", FontWeight.BOLD,
+                text.length() >= 250 ? WORDSIZE + 2 : WORDSIZE + 4));
 
         return description;
     }
@@ -732,7 +732,6 @@ public class ArticleController extends SceneSwitch implements Initializable {
         });
     }
 
-    // Title bar functions
     @FXML private void menuHome(){
         super.menuHome(categoryIndex);
     }
