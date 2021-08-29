@@ -154,7 +154,12 @@ public class ArticleController extends SceneHandler implements Initializable {
             }
             // Normal article
             else {
-                Element article = doc.select("article.fck_detail").first();
+                Element article;
+
+                if (doc.select("article.fck_detail").size() > 0)
+                    article = doc.select("article.fck_detail").first();
+                else
+                    article = doc.select("div[class*=fck_detail]").first();
 
                 // Add description to article view
                 Label description = createDescription(doc.select("p.description").text());
@@ -421,6 +426,9 @@ public class ArticleController extends SceneHandler implements Initializable {
                     label.setFont(Font.font("Roboto", FontWeight.BOLD, WORDSIZE));
 
                 content.getChildren().add(label);
+            }
+            else if (e.is("h2")) {
+                content.getChildren().add(createDescription(e.text()));
             }
             // If element is image
             else if (e.is("figure") && e.select("img").size() > 0) {

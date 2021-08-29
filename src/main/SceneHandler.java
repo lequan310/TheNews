@@ -146,6 +146,7 @@ public class SceneHandler {
     @FXML protected void close(MouseEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
+        System.exit(0);
     }
 
     // Function for resizing windows
