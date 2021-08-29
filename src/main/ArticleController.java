@@ -612,7 +612,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                 // For covid graph
                 else if (e.is("div") && e.attr("class").contains("widget")) {
                     Image image = new Image(e.attr("data-src"));
-                    content.getChildren().add(createImageLabel(image, ""));
+                    content.getChildren().add(createImageLabel(image, " "));
                 }
                 // Create and add group of text
                 else if (e.is("ul")  || e.is("div")) {
