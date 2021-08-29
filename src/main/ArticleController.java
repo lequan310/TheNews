@@ -240,8 +240,12 @@ public class ArticleController extends SceneHandler implements Initializable {
                 Elements article = doc.select("div[id=abody] > *");
 
                 // Create Description label
-                Label description = createDescription(body.select("div.sapo").text());
-                content.getChildren().add(description);
+                if (body.select("div.sapo").size() > 0) {
+                    content.getChildren().add(createDescription(body.select("div.sapo").text()));
+                }
+                else {
+                    content.getChildren().add(createDescription(doc.select("div.summary").text()));
+                }
 
                 // Thumbnail image
                 try {
@@ -493,8 +497,13 @@ public class ArticleController extends SceneHandler implements Initializable {
                 }
                 // Add image if child is image
                 else if (i.is("figure") && i.attr("class").compareTo("picture") == 0) {
-                    Image image = new Image(i.select("img").attr("data-src"));
-                    content.getChildren().add(createImageLabel(image, i.select("figcaption").text()));
+                    if (i.select("img").size() > 0) {
+                        Image image = new Image(i.select("img").attr("data-src"));
+                        content.getChildren().add(createImageLabel(image, i.select("figcaption").text()));
+                    }
+                    else if (i.hasText()) {
+                        content.getChildren().add(createLabel(i.text(), WORDSIZE));
+                    }
                 }
                 // Add quote table
                 else if (i.is("table") && i.attr("class").compareTo("quotetable") == 0) {
@@ -641,8 +650,7 @@ public class ArticleController extends SceneHandler implements Initializable {
 
     private Label createDescription(String text){
         Label description = createLabel(text, WORDSIZE);
-        description.setFont(Font.font("Arial", FontWeight.BOLD,
-                text.length() >= 250 ? WORDSIZE + 2 : WORDSIZE + 4));
+        description.setFont(Font.font("Corbel", FontWeight.BOLD, WORDSIZE + 4));
 
         return description;
     }
