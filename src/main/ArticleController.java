@@ -580,7 +580,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                     content.getChildren().add(pane);
                 }
                 // Create and add header label if element is header
-                else if (e.is("h3") || e.is("h2")) {
+                else if (e.is("h3")) {
                     content.getChildren().add(createHeader(e.text()));
                 }
                 // Create and add video if element is video
@@ -596,6 +596,10 @@ public class ArticleController extends SceneHandler implements Initializable {
                         Image image = new Image(imageURL);
                         content.getChildren().add(createImageLabel(image, e.select("td[class=\"pCaption caption\"]").text()));
                     }
+                }
+                else if (e.is("h1") && e.select("img").size() > 0) {
+                    Image image = new Image(e.select("img").attr("data-src"));
+                    content.getChildren().add(createImageLabel(image, ""));
                 }
                 // For covid graph
                 else if (e.is("div") && e.attr("class").contains("widget")) {
@@ -690,10 +694,12 @@ public class ArticleController extends SceneHandler implements Initializable {
     private Label createGraphicLabel(String caption) {
         Label label = new Label(caption);
         if (caption.compareTo("") != 0)
-            label.setBackground(new Background(new BackgroundFill(Color.valueOf("#b4b4b4"), new CornerRadii(0), new Insets(0))));
+            label.setStyle("-fx-border-color: #404040; -fx-background-color: #bcbcbc");
+        else
+            label.setStyle("-fx-background-color: transparent");
+
         label.setContentDisplay(ContentDisplay.TOP);
         label.setAlignment(Pos.TOP_CENTER);
-        label.setStyle("-fx-border-color: #404040; -fx-background-color: #bcbcbc");
         label.setTextAlignment(TextAlignment.CENTER);
         label.setFont(Font.font("Arial", FontPosture.ITALIC, 16));
         label.setTextOverrun(OverrunStyle.CLIP);
@@ -707,7 +713,7 @@ public class ArticleController extends SceneHandler implements Initializable {
 
         pane.setStyle("-fx-border-color: #2c91c7; -fx-background-color: #404040; -fx-alignment: center");
         pane.prefWidthProperty().bind(content.widthProperty().subtract(380));
-        pane.setVgap(20);
+        pane.setVgap(15);
 
         return pane;
     }
