@@ -120,7 +120,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         sourceLabel.setText(item.getLink());
 
         try {
-            thumbnail.setImage(new Image(item.getImgSrc()));
+            thumbnail.setImage(new Image(item.getImgSrc(), true));
         }
         catch (IllegalArgumentException e) {
             thumbnail.setImage(null);
@@ -249,7 +249,7 @@ public class ArticleController extends SceneHandler implements Initializable {
 
                 // Thumbnail image
                 try {
-                    Image thumbnail = new Image(body.select("div[id=contentAvatar] img").attr("src"));
+                    Image thumbnail = new Image(body.select("div[id=contentAvatar] img").attr("src"), true);
                     Label tnImage = createImageLabel(thumbnail, body.select("div[id=contentAvatar] div.imgcaption").text());
                     content.getChildren().add(tnImage);
                 }
@@ -349,7 +349,7 @@ public class ArticleController extends SceneHandler implements Initializable {
 
             // Create and add Thumbnail image
             try {
-                Image thumb = new Image(body.select("div.box-detail-thumb img").attr("src"));
+                Image thumb = new Image(body.select("div.box-detail-thumb img").attr("src"), true);
                 Label thumbnail = createImageLabel(thumb, body.select("div.box-detail-thumb span").text());
                 content.getChildren().add(thumbnail);
             }
@@ -373,7 +373,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                     }
                     // Create and add image if element is image
                     else if (e.is("div") && e.attr("class").compareTo("light-img") == 0) {
-                        Image image = new Image(e.select("figure").attr("data-src"));
+                        Image image = new Image(e.select("figure").attr("data-src"), true);
                         content.getChildren().add(createImageLabel(image, e.select("figcaption").text()));
                     }
                     // Create and add label
@@ -427,7 +427,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                 String imageURL = e.select("img").attr("data-src");
                 if (imageURL.compareTo("") == 0) imageURL = e.select("img").attr("src");
 
-                Image image = new Image(imageURL);
+                Image image = new Image(imageURL, true);
                 content.getChildren().add(createImageLabel(image, e.select("figcaption").text()));
             }
             // If element is either video or image
@@ -439,7 +439,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                     String imageURL = e.select("img").attr("data-src");
                     if (imageURL.compareTo("") == 0) imageURL = e.select("img").attr("src");
 
-                    Image image = new Image(imageURL);
+                    Image image = new Image(imageURL, true);
                     content.getChildren().add(createImageLabel(image, e.select("p").text()));
                 }
             }
@@ -487,7 +487,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                 }
                 // Add image if child is image
                 else if (i.attr("class").contains("image")) {
-                    Image image = new Image(i.select("img").attr("data-src"));
+                    Image image = new Image(i.select("img").attr("data-src"), true);
                     content.getChildren().add(createImageLabel(image, i.select("p").text()));
                 }
                 // Add video if child is video
@@ -498,7 +498,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                 // Add image if child is image
                 else if (i.is("figure") && i.attr("class").compareTo("picture") == 0) {
                     if (i.select("img").size() > 0) {
-                        Image image = new Image(i.select("img").attr("data-src"));
+                        Image image = new Image(i.select("img").attr("data-src"), true);
                         content.getChildren().add(createImageLabel(image, i.select("figcaption").text()));
                     }
                     else if (i.hasText()) {
@@ -544,7 +544,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                 else if (e.is("div")) {
                     // Add image if element is image
                     if (e.attr("type").compareTo("Photo") == 0) {
-                        Image image = new Image(e.select("img").attr("src"));
+                        Image image = new Image(e.select("img").attr("src"), true);
                         content.getChildren().add(createImageLabel(image, e.select("p").text()));
                     }
                     // Add video if element is video
@@ -601,17 +601,17 @@ public class ArticleController extends SceneHandler implements Initializable {
                         String imageURL = i.select("img").attr("data-src");
                         if (imageURL.compareTo("") == 0) imageURL = i.select("img").attr("src");
 
-                        Image image = new Image(imageURL);
+                        Image image = new Image(imageURL, true);
                         content.getChildren().add(createImageLabel(image, e.select("td[class=\"pCaption caption\"]").text()));
                     }
                 }
                 else if (e.is("h1") && e.select("img").size() > 0) {
-                    Image image = new Image(e.select("img").attr("data-src"));
+                    Image image = new Image(e.select("img").attr("data-src"), true);
                     content.getChildren().add(createImageLabel(image, ""));
                 }
                 // For covid graph
                 else if (e.is("div") && e.attr("class").contains("widget")) {
-                    Image image = new Image(e.attr("data-src"));
+                    Image image = new Image(e.attr("data-src"), true);
                     content.getChildren().add(createImageLabel(image, " "));
                 }
                 // Create and add group of text

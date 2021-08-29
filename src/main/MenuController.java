@@ -215,7 +215,8 @@ public class MenuController extends SceneHandler implements Initializable {
                             }
 
                             try {
-                                images.get(currentButton).setImage(new Image(items.get(idx).getImgSrc()));
+                                Image image = new Image(items.get(idx).getImgSrc(), true);
+                                images.get(currentButton).setImage(image);
                             } catch (IllegalArgumentException e) {
                                 images.get(currentButton).setImage(null);
                             }
