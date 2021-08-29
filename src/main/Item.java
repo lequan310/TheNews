@@ -47,10 +47,6 @@ public class Item implements Comparable<Item> {
         return source;
     }
 
-    public Duration getDuration() {
-        return duration;
-    }
-
     // String functions
     public String durationToString(){
         String day = "", hour = "", min = "", sec = "";
@@ -82,9 +78,5 @@ public class Item implements Comparable<Item> {
     public int compareTo(Item item) {
         // Function to compare item published date
         return duration.compareTo(item.duration);
-    }
-
-    public boolean equal(Item item) {
-        return this.link.compareTo(item.link) == 0;
     }
 }
