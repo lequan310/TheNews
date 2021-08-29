@@ -14,18 +14,15 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.ConcurrentModificationException;
+import java.util.*;
 
 public class NewsController extends Task<Void> {
     private final ArrayList<Item> items = new ArrayList<>(); // List of items that is scraped and sorted to be displayed
 
     // List of URL to scrape from
     // New, Covid, Politics, Business, Technology, Health, Sports, Entertainment, World, Others
-    private final String[] VNEXPRESS = {"https://vnexpress.net/rss/tin-moi-nhat.rss", "https://vnexpress.net/rss/tin-noi-bat.rss", "https://vnexpress.net/rss/phap-luat.rss",
-            "https://vnexpress.net/kinh-doanh", "https://vnexpress.net/so-hoa", "https://vnexpress.net/suc-khoe",
+    private final String[] VNEXPRESS = {"https://vnexpress.net/rss/tin-moi-nhat.rss", "https://vnexpress.net/rss/tin-noi-bat.rss", "https://vnexpress.net/thoi-su/chinh-tri",
+            "https://vnexpress.net/kinh-doanh", "https://vnexpress.net/so-hoa", "https://vnexpress.net/rss/suc-khoe.rss",
             "https://vnexpress.net/the-thao", "https://vnexpress.net/giai-tri", "https://vnexpress.net/rss/the-gioi.rss",
             "https://vnexpress.net/rss/cuoi.rss", "https://vnexpress.net/rss/giao-duc.rss", "https://vnexpress.net/rss/khoa-hoc.rss"};
     private final String[] TUOITRE = {"https://tuoitre.vn/rss/tin-moi-nhat.rss", "https://tuoitre.vn/rss/suc-khoe.rss", "https://tuoitre.vn/rss/phap-luat.rss",
@@ -75,37 +72,34 @@ public class NewsController extends Task<Void> {
     @Override
     protected Void call() throws Exception {
         long start = System.currentTimeMillis();
+        HashSet<Thread> threads = new HashSet<>();
         updateProgress(0, 1);
-
-        Thread t1 = new Thread(() -> readVE(VNEXPRESS[categoryIndex]));
-        Thread t2 = new Thread(() -> readRSSTuoiTre(TUOITRE[categoryIndex]));
-        Thread t3 = new Thread(() -> readRSSThanhNien(THANHNIEN[categoryIndex]));
-        Thread t4 = new Thread(() -> readZing(ZING[categoryIndex]));
-        Thread t5 = new Thread(() -> readNhanDan(NHANDAN[categoryIndex]));
 
         // If category is Others
         if (categoryIndex == 9) {
             maxProgress = 500;
 
-            Thread t6 = new Thread(() -> readVE(VNEXPRESS[categoryIndex + 1]));
-            Thread t7 = new Thread(() -> readRSSTuoiTre(TUOITRE[categoryIndex + 1]));
-            Thread t8 = new Thread(() -> readRSSThanhNien(THANHNIEN[categoryIndex + 1]));
-            Thread t9 = new Thread(() -> readZing(ZING[categoryIndex + 1]));
-            Thread t10 = new Thread(() -> readNhanDan(NHANDAN[categoryIndex + 1]));
-            Thread t11 = new Thread(() -> readVE(VNEXPRESS[categoryIndex + 2]));
-            Thread t12 = new Thread(() -> readRSSTuoiTre(TUOITRE[categoryIndex + 2]));
-            Thread t13 = new Thread(() -> readRSSThanhNien(THANHNIEN[categoryIndex + 2]));
-            Thread t14 = new Thread(() -> readZing(ZING[categoryIndex + 2]));
-            Thread t15 = new Thread(() -> readNhanDan(NHANDAN[categoryIndex + 2]));
+            for (int i = 0; i < 3; i++) {
+                int current = i;
 
-            for (Thread t : Arrays.asList(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15)) {
-                t.start();
+                threads.add(new Thread(() -> readVE(VNEXPRESS[categoryIndex + current])));
+                threads.add(new Thread(() -> readRSSTuoiTre(TUOITRE[categoryIndex + current])));
+                threads.add(new Thread(() -> readRSSThanhNien(THANHNIEN[categoryIndex + current])));
+                threads.add(new Thread(() -> readZing(ZING[categoryIndex + current])));
+                threads.add(new Thread(() -> readNhanDan(NHANDAN[categoryIndex + current])));
             }
-            for (Thread t : Arrays.asList(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15)) {
-                t.join();
-            }
+
+            for (Thread t : threads) t.start();
+            for (Thread t : threads) t.join();
         } else {
             maxProgress = 250;
+
+            Thread t1 = new Thread(() -> readVE(VNEXPRESS[categoryIndex]));
+            Thread t2 = new Thread(() -> readRSSTuoiTre(TUOITRE[categoryIndex]));
+            Thread t3 = new Thread(() -> readRSSThanhNien(THANHNIEN[categoryIndex]));
+            Thread t4 = new Thread(() -> readZing(ZING[categoryIndex]));
+            Thread t5 = new Thread(() -> readNhanDan(NHANDAN[categoryIndex]));
+
             for (Thread t : Arrays.asList(t1, t2, t3, t4, t5)) {
                 t.start();
             }
@@ -178,45 +172,55 @@ public class NewsController extends Task<Void> {
             else {
                 Document doc = Jsoup.connect(urlAddress).timeout(10000).get();
                 Elements article = doc.select("article");
-                String title = "", pubDate = "", link = "", imgSrc = "";
+                HashSet<Thread> threads = new HashSet<>();
 
                 for (Element e : article) {
-                    LocalDateTime date = LocalDateTime.MIN;
+                    Thread thread = new Thread(() -> {
+                        String title = "", pubDate = "", link = "", imgSrc = "";
+                        boolean add = true;
+                        LocalDateTime date = LocalDateTime.MIN;
 
-                    // Get title
-                    title = e.select("h3").text();
-                    if (title.compareTo("") == 0) title = e.select("h2").text();
-                    if (title.compareTo("") == 0) continue;
-                    if (categoryIndex == 1 && !checkCovidKeyword(title)) continue;
+                        // Get title
+                        title = e.select("h3").text();
+                        if (title.compareTo("") == 0) title = e.select("h2").text();
+                        if (title.compareTo("") == 0) add = false;
+                        if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
 
-                    // Get article link and thumbnail url
-                    link = e.select("a").attr("href");
-                    imgSrc = e.select("div.thumb-art").select("img").attr("data-src");
+                        // Get article link and thumbnail url
+                        link = e.select("a").attr("href");
+                        imgSrc = e.select("div.thumb-art").select("img").attr("data-src");
 
-                    Document temp = Jsoup.connect(link).timeout(10000).get();
-                    if (imgSrc.compareTo("") == 0) // Find first image in article if can't find thumbnail
-                        imgSrc = temp.select("article.fck_detail").select("img").attr("data-src");
+                        try {
+                            Document temp = Jsoup.connect(link).timeout(10000).get();
+                            if (imgSrc.compareTo("") == 0) // Find first image in article if can't find thumbnail
+                                imgSrc = temp.select("article.fck_detail").select("img").attr("data-src");
 
-                    // Get published date
-                    pubDate = temp.select("span.date").text();
-                    if (pubDate.compareTo("") == 0) pubDate = temp.select("span.time").text();
-                    if (pubDate.compareTo("") == 0) continue;
+                            // Get published date
+                            pubDate = temp.select("span.date").text();
+                            if (pubDate.compareTo("") == 0) pubDate = temp.select("span.time").text();
+                            if (pubDate.compareTo("") == 0) add = false;
 
-                    pubDate = extract(pubDate, ", ", " (GMT+7)");
-                    DateTimeFormatter df = DateTimeFormatter.ofPattern("d/M/yyyy, HH:mm");
-                    date = LocalDateTime.parse(pubDate, df);
+                            pubDate = extract(pubDate, ", ", " (GMT+7)");
+                            DateTimeFormatter df = DateTimeFormatter.ofPattern("d/M/yyyy, HH:mm");
+                            date = LocalDateTime.parse(pubDate, df);
+                        } catch (Exception exception) { add = false; }
 
-                    // Create and add news item to list
-                    Item item = new Item(title, link, date, imgSrc, Item.Source.VE);
-                    if (!inList(item)) items.add(item);
-                    updateProgress(progress++, maxProgress);
-
-                    if (item.getDuration().toHours() > 24) break;
+                        // Create and add news item to list
+                        Item item = new Item(title, link, date, imgSrc, Item.Source.VE);
+                        if (add) items.add(item);
+                        updateProgress(progress++, maxProgress);
+                    });
+                    thread.start();
+                    threads.add(thread);
                 }
+
+                for (Thread t : threads) t.join();
             }
-        } catch (MalformedURLException e) {
+        }
+        catch (MalformedURLException | InterruptedException e) {
             e.printStackTrace();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
             error += urlAddress + ": " + e.getMessage() + "\n";
         }
@@ -355,43 +359,57 @@ public class NewsController extends Task<Void> {
 
         try {
             // Connect to URL and add all article element into list
+            HashSet<Thread> threads = new HashSet<>();
             Document doc = Jsoup.connect(urlAddress).timeout(10000).get();
             Elements body = doc.select("section[id~=.*-latest]");
             Elements featured = doc.select("section[id~=.*-featured]");
             body.addAll(featured);
 
-            String title = "", pubDate = "", link = "", imgSrc = "";
-            LocalDateTime date = LocalDateTime.MIN;
-
             // Loop through each article-item
             for (Element e : body.select("article.article-item")) {
-                // Get image source
-                imgSrc = e.select("img").attr("src");
-                if (!imgSrc.contains("https")) imgSrc = e.select("img").attr("data-src");
+                Thread thread = new Thread(() -> {
+                    String title = "", pubDate = "", link = "", imgSrc = "";
+                    boolean add = true;
+                    LocalDateTime date = LocalDateTime.MIN;
 
-                // Get title
-                title = e.getElementsByClass("article-title").text();
-                if (categoryIndex == 1 && !checkCovidKeyword(title)) continue;
+                    // Get image source
+                    imgSrc = e.select("img").attr("src");
+                    if (!imgSrc.contains("https")) imgSrc = e.select("img").attr("data-src");
 
-                // Get link
-                link = e.select("a").attr("href");
-                link = "https://zingnews.vn" + link;
+                    // Get title
+                    title = e.getElementsByClass("article-title").text();
+                    if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
 
-                // Get published date
-                pubDate = e.select("span.time").text();
-                pubDate += " " + e.select("span.date").text();
-                pubDate = pubDate.trim();
+                    // Get link
+                    link = e.select("a").attr("href");
+                    link = "https://zingnews.vn" + link;
 
-                if (pubDate.compareTo("") == 0) pubDate = e.select("span.friendly-time").text();
-                DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm d/M/yyyy");
-                date = LocalDateTime.parse(pubDate, df);
+                    // Get published date
+                    pubDate = e.select("span.time").text();
+                    pubDate += " " + e.select("span.date").text();
+                    pubDate = pubDate.trim();
 
-                // Create and add news item to list
-                Item item = new Item(title, link, date, imgSrc, Item.Source.ZING);
-                if (!inList(item)) items.add(item);
-                updateProgress(progress++, maxProgress);
+                    if (pubDate.compareTo("") == 0) pubDate = e.select("span.friendly-time").text();
+                    DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm d/M/yyyy");
+                    date = LocalDateTime.parse(pubDate, df);
+
+                    // Create and add news item to list
+                    Item item = new Item(title, link, date, imgSrc, Item.Source.ZING);
+                    if (add) items.add(item);
+                    updateProgress(progress++, maxProgress);
+                });
+                thread.start();
+                threads.add(thread);
             }
-        } catch (IOException e) {
+
+            try {
+                for (Thread t : threads) {
+                    t.join();
+                }
+            } catch (InterruptedException e) {}
+
+        }
+        catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
             error += urlAddress + ": " + e.getMessage() + "\n";
         }
@@ -406,61 +424,71 @@ public class NewsController extends Task<Void> {
             // Connect to URL and add all article element into list
             Document doc = Jsoup.connect(urlAddress).timeout(10000).get();
             Elements body = doc.select("div[class*=uk-width-3-4@m]");
-
-            String title = "", pubDate = "", link = "", imgSrc = "";
+            HashSet<Thread> threads = new HashSet<>();
 
             // Loop through article items in list
             for (Element e : body.select("article")) {
-                LocalDateTime date = LocalDateTime.MIN;
+                Thread thread = new Thread(() -> {
+                    String title = "", pubDate = "", link = "", imgSrc = "";
+                    boolean add = true;
+                    LocalDateTime date = LocalDateTime.MIN;
 
-                // Get title
-                title = e.getElementsByClass("box-title").text();
-                if (title.compareTo("") == 0) continue;
-                if (categoryIndex == 1 && !checkCovidKeyword(title)) continue;
+                    // Get title
+                    title = e.getElementsByClass("box-title").text();
+                    if (title.compareTo("") == 0) add = false;
+                    if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
 
-                // Get image source
-                imgSrc = e.select("img").attr("data-src");
+                    // Get image source
+                    imgSrc = e.select("img").attr("data-src");
 
-                // Get link
-                link = e.select("a").attr("href");
-                if (!link.contains("https://")) link = "https://nhandan.vn" + link;
+                    // Get link
+                    link = e.select("a").attr("href");
+                    if (!link.contains("https://")) link = "https://nhandan.vn" + link;
 
-                // Get pubDate
-                pubDate = e.select("div[class*=box-meta]").text();
-                if (pubDate.compareTo("") != 0) {
-                    DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm dd/M/yyyy");
-                    date = LocalDateTime.parse(pubDate, df);
-                } else {
-                    try {
-                        Document temp = Jsoup.connect(link).timeout(5000).get();
-                        pubDate = temp.select("div.box-date").text();
-
-                        if (pubDate.compareTo("") != 0) {
-                            pubDate = pubDate.substring(pubDate.indexOf(", ") + 2);
-                        }
-
-                        try {
-                            DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy, HH:mm");
-                            date = LocalDateTime.parse(pubDate, df);
-                        } catch (DateTimeParseException exception) {
-                            try {
-                                DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-                                date = LocalDateTime.parse(pubDate, df);
-                            } catch (DateTimeParseException ex) {
-                                continue;
-                            }
-                        }
-                    } catch (IOException exception) {
-                        continue;
+                    // Get pubDate
+                    pubDate = e.select("div[class*=box-meta]").text();
+                    if (pubDate.compareTo("") != 0) {
+                        DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm dd/M/yyyy");
+                        date = LocalDateTime.parse(pubDate, df);
                     }
-                }
+                    else {
+                        try {
+                            Document temp = Jsoup.connect(link).timeout(5000).get();
+                            pubDate = temp.select("div.box-date").text();
 
-                // Create and add news item to list
-                Item item = new Item(title, link, date, imgSrc, Item.Source.ND);
-                if (!inList(item)) items.add(item);
-                updateProgress(progress++, maxProgress);
+                            if (pubDate.compareTo("") != 0) {
+                                pubDate = pubDate.substring(pubDate.indexOf(", ") + 2);
+                            }
+
+                            try {
+                                DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy, HH:mm");
+                                date = LocalDateTime.parse(pubDate, df);
+                            } catch (DateTimeParseException exception) {
+                                try {
+                                    DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+                                    date = LocalDateTime.parse(pubDate, df);
+                                } catch (DateTimeParseException ex) {
+                                    add = false;
+                                }
+                            }
+                        } catch (IOException exception) {
+                            add = false;
+                        }
+                    }
+
+                    // Create and add news item to list
+                    Item item = new Item(title, link, date, imgSrc, Item.Source.ND);
+                    if (add) items.add(item);
+                    updateProgress(progress++, maxProgress);
+                });
+                thread.start();
+                threads.add(thread);
             }
-        } catch (IOException e) {
+
+            for (Thread t : threads) {
+                t.join();
+            }
+        } catch (IOException | InterruptedException e) {
             System.out.println("Can't connect to " + urlAddress);
             error += urlAddress + ": " + e.getMessage() + "\n";
         }
@@ -479,18 +507,5 @@ public class NewsController extends Task<Void> {
         }
 
         return false;
-    }
-
-    private boolean inList(Item item) {
-        try {
-            for (Item i : items) {
-                if (item.equal(i)) return true;
-            }
-
-            return false;
-        } catch (ConcurrentModificationException e) {
-            System.out.println(e.getMessage());
-            return true;
-        }
     }
 }
