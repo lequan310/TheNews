@@ -745,10 +745,6 @@ public class ArticleController extends SceneHandler implements Initializable {
         });
     }
 
-    @FXML private void menuHome(){
-        super.menuHome(categoryIndex);
-    }
-
     // Function to navigate next and previous articles
     public void nextArticle(){
         if (index == items.size() - 1) return; // If last item of the list reached, return
@@ -776,5 +772,9 @@ public class ArticleController extends SceneHandler implements Initializable {
         // Disable previous article button if first item of the list reached
         if (index == 0)
             previousButton.setDisable(true);
+    }
+
+    @FXML private void menuHome(){
+        menuHome(categoryIndex);
     }
 }
