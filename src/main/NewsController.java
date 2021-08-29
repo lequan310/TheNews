@@ -74,6 +74,7 @@ public class NewsController extends Task<Void> {
         long start = System.currentTimeMillis();
         HashSet<Thread> threads = new HashSet<>();
         updateProgress(0, 1);
+        System.out.println();
 
         // If category is Others
         if (categoryIndex == 9) {
