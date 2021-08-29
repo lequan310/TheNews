@@ -46,7 +46,7 @@ public class CategoryController extends SceneHandler implements Initializable {
 
     // Function to switch to main menu scene
     public void menuHome(int idx){
-        menuHome(idx);
+        super.menuHome(idx);
     }
 
     // Add buttons to list for easier access
