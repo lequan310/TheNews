@@ -492,7 +492,7 @@ public class NewsController extends Task<Void> {
     }
 
     // Check if title of article is in covid category using keywords
-    private boolean checkCovidKeyword(String title) {
+    private static boolean checkCovidKeyword(String title) {
         final String check = title.toLowerCase();
         final String[] keywords = {"cov", "ca", "f0", "f1", "vaccine", "vắc xin", "xét nghiệm", "phong tỏa", "mũi", "biến thể",
                 "nhiễm", "dịch", "test", "pcr", "âm tính", "dương tính", "giãn cách", "chỉ thị", "mắc", "tiêm", "delta"};
