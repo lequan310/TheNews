@@ -88,25 +88,20 @@ public class NewsController extends Task<Void> {
                 threads.add(new Thread(() -> readZing(ZING[categoryIndex + current])));
                 threads.add(new Thread(() -> readNhanDan(NHANDAN[categoryIndex + current])));
             }
-
-            for (Thread t : threads) t.start();
-            for (Thread t : threads) t.join();
-        } else {
+        }
+        // If category is not Others
+        else {
             maxProgress = 250;
 
-            Thread t1 = new Thread(() -> readVE(VNEXPRESS[categoryIndex]));
-            Thread t2 = new Thread(() -> readRSSTuoiTre(TUOITRE[categoryIndex]));
-            Thread t3 = new Thread(() -> readRSSThanhNien(THANHNIEN[categoryIndex]));
-            Thread t4 = new Thread(() -> readZing(ZING[categoryIndex]));
-            Thread t5 = new Thread(() -> readNhanDan(NHANDAN[categoryIndex]));
-
-            for (Thread t : Arrays.asList(t1, t2, t3, t4, t5)) {
-                t.start();
-            }
-            for (Thread t : Arrays.asList(t1, t2, t3, t4, t5)) {
-                t.join();
-            }
+            threads.add(new Thread(() -> readVE(VNEXPRESS[categoryIndex])));
+            threads.add(new Thread(() -> readRSSTuoiTre(TUOITRE[categoryIndex])));
+            threads.add(new Thread(() -> readRSSThanhNien(THANHNIEN[categoryIndex])));
+            threads.add(new Thread(() -> readZing(ZING[categoryIndex])));
+            threads.add(new Thread(() -> readNhanDan(NHANDAN[categoryIndex])));
         }
+
+        for (Thread t : threads) t.start();
+        for (Thread t : threads) t.join();
 
         // Sort items and update progress bar
         Collections.sort(items);
