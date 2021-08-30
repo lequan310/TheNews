@@ -105,6 +105,14 @@ public class NewsController extends Task<Void> {
 
         // Sort items and update progress bar
         Collections.sort(items);
+        // Remove duplicate
+        for (int i = 1; i < items.size(); i++) {
+            if (items.get(i).equalTo(items.get(i - 1))){
+                items.remove(i);
+                i--;
+            }
+        }
+
         updateProgress(1, 1);
         System.out.println("Achieve item list: " + (System.currentTimeMillis() - start) + " ms");
         return null;

@@ -79,4 +79,8 @@ public class Item implements Comparable<Item> {
         // Function to compare item published date
         return duration.compareTo(item.duration);
     }
+
+    public boolean equalTo(Item item) {
+        return this.link.equals(item.getLink());
+    }
 }
