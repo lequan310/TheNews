@@ -675,7 +675,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         final double MAX_WIDTH = content.getWidth();
         ImageView imageView = new ImageView(image);
         imageView.setPreserveRatio(true);
-        imageView.setFitWidth(Math.min(600, image.getWidth()));
+        imageView.setFitWidth(Math.max(600, image.getWidth()));
 
         // Adjust label position and size
         Label label = createGraphicLabel(caption);
