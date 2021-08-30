@@ -111,7 +111,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                 case ND -> readArticleND(item.getLink());
             }
 
-            content.getChildren().addAll(createLabel("", WORDSIZE));
+            content.getChildren().addAll(createLabel(""));
         })).start();
 
         // Initialize UI components
@@ -266,7 +266,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                 for (Element e : article) {
                     // Add label if element is text
                     if (e.is("p")) {
-                        content.getChildren().add(createLabel(e.text(), WORDSIZE));
+                        content.getChildren().add(createLabel(e.text()));
                     }
                     // Add header label if element is header text
                     else if (e.is("h2") || e.is("h3")) {
@@ -309,7 +309,7 @@ public class ArticleController extends SceneHandler implements Initializable {
 
                 // Creating and adding video, summary and author to article view
                 Label videoButton = createVideoButton(videos.first().attr("src"), "");
-                Label label = createLabel(articles.select("p.video-summary").text(), WORDSIZE);
+                Label label = createLabel(articles.select("p.video-summary").text());
                 Label author = createDescription(articles.select("span.video-author").text());
                 author.setAlignment(Pos.TOP_RIGHT);
                 content.getChildren().addAll(videoButton, label, author);
@@ -371,7 +371,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                     // Create and add label if element is text
                     if (e.is("p")) {
                         if (e.select("video").size() == 0) {
-                            content.getChildren().add(createLabel(e.text(), WORDSIZE));
+                            content.getChildren().add(createLabel(e.text()));
                         }
                         else {
                             content.getChildren().add(createVideoButton(e.select("source").attr("src"), ""));
@@ -385,7 +385,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                     // Create and add label
                     else if (e.is("ol")) {
                         for (Element li : e.select("> *")) {
-                            content.getChildren().add(createLabel(li.text(), WORDSIZE));
+                            content.getChildren().add(createLabel(li.text()));
                         }
                     }
                     // Create and add wrapnote if element is wrapnote
@@ -394,7 +394,7 @@ public class ArticleController extends SceneHandler implements Initializable {
 
                         for (Element i : e.select("> *")){
                             if (i.is("p")) {
-                                pane.getChildren().add(createLabel(i.text(), WORDSIZE));
+                                pane.getChildren().add(createLabel(i.text()));
                             }
                         }
 
@@ -421,7 +421,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         for (Element e : div.select("> *")) {
             // If element is text not author
             if (e.is("p") && !e.attr("style").contains("text-align:right;") && !e.attr("class").contains("author")) {
-                Label label = createLabel(e.text(), WORDSIZE);
+                Label label = createLabel(e.text());
 
                 if (e.select("strong").size() > 0)
                     label.setFont(Font.font("Roboto", FontWeight.BOLD, WORDSIZE));
@@ -463,7 +463,7 @@ public class ArticleController extends SceneHandler implements Initializable {
 
                 for (Element i : e.select("> *")) {
                     if (i.is("p")) {
-                        pane.getChildren().add(createLabel(i.text(), WORDSIZE));
+                        pane.getChildren().add(createLabel(i.text()));
                     }
                 }
 
@@ -479,7 +479,7 @@ public class ArticleController extends SceneHandler implements Initializable {
     private void checkDivTN(Element div, FlowPane content) {
         // If element has 0 children and is not an ad div
         if (div.select("> *").size() == 0 && !div.className().contains("ads") && div.hasText()){
-            content.getChildren().add(createLabel(div.text(), WORDSIZE));
+            content.getChildren().add(createLabel(div.text()));
             return;
         }
 
@@ -492,7 +492,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                 }
                 // Add text label if child is text
                 else if (i.is("p")) {
-                    content.getChildren().add(createLabel(i.text(), WORDSIZE));
+                    content.getChildren().add(createLabel(i.text()));
                 }
                 // Add image if child is image
                 else if (i.attr("class").contains("image")) {
@@ -511,7 +511,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                         content.getChildren().add(createImageLabel(image, i.select("figcaption").text()));
                     }
                     else if (i.hasText()) {
-                        content.getChildren().add(createLabel(i.text(), WORDSIZE));
+                        content.getChildren().add(createLabel(i.text()));
                     }
                 }
                 // Add quote table
@@ -529,7 +529,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                 }
                 // Add text label if child is neither image nor video and has text
                 else if (i.hasText()) {
-                    content.getChildren().add(createLabel(div.text(), WORDSIZE));
+                    content.getChildren().add(createLabel(div.text()));
                     break;
                 }
             }
@@ -543,7 +543,7 @@ public class ArticleController extends SceneHandler implements Initializable {
             try {
                 // Add label if element is text
                 if (e.is("p") && e.hasText()) {
-                    Label label = createLabel(e.text(), WORDSIZE);
+                    Label label = createLabel(e.text());
                     if (e.select("b").size() > 0)
                         label.setFont(Font.font("Roboto", FontWeight.BOLD, WORDSIZE));
 
@@ -588,7 +588,7 @@ public class ArticleController extends SceneHandler implements Initializable {
             try {
                 // Create and add label if element is text
                 if (e.is("p")) {
-                    content.getChildren().add(createLabel(e.text(), WORDSIZE));
+                    content.getChildren().add(createLabel(e.text()));
                 }
                 // Create and add wrapnote if element is wrapnote
                 else if (e.is("div") && e.attr("class").equals("notebox ncenter")){
@@ -628,7 +628,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                     addZing(e.select("> *"), content);
                 }
                 else if (e.hasText() && e.is("li")) {
-                    content.getChildren().add(createLabel(e.text(), WORDSIZE));
+                    content.getChildren().add(createLabel(e.text()));
                 }
                 // Create and add blockquote
                 else if (e.is("blockquote")) {
@@ -642,10 +642,10 @@ public class ArticleController extends SceneHandler implements Initializable {
     }
 
     // Create UI components to add to article view
-    private Label createLabel(String text, int size){
+    private Label createLabel(String text){
         Label label = new Label(text);
 
-        label.setFont(Font.font("Roboto", size));
+        label.setFont(Font.font("Roboto", WORDSIZE));
         label.setTextFill(Color.valueOf("#ffffff"));
         label.setTextOverrun(OverrunStyle.CLIP);
         label.setWrapText(true);
@@ -657,14 +657,14 @@ public class ArticleController extends SceneHandler implements Initializable {
     }
 
     private Label createHeader(String text) {
-        Label label = createLabel(text, WORDSIZE);
+        Label label = createLabel(text);
         label.setFont(Font.font("Roboto", FontWeight.BOLD, WORDSIZE + 2));
 
         return label;
     }
 
     private Label createDescription(String text){
-        Label description = createLabel(text, WORDSIZE);
+        Label description = createLabel(text);
         description.setFont(Font.font("Corbel", FontWeight.BOLD, WORDSIZE + 4));
 
         return description;
