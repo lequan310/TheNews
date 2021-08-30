@@ -171,7 +171,7 @@ public class ArticleController extends SceneHandler implements Initializable {
 
                 // Add author label to article view
                 Label author = createDescription(article.select("p[style*=text-align:right]").text());
-                if (author.getText().compareTo("") == 0)
+                if (author.getText().equals(""))
                     author.setText(article.select("p[class*=author]").text());
 
                 author.setAlignment(Pos.TOP_RIGHT);
@@ -273,7 +273,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                         content.getChildren().add(createHeader(e.text()));
                     }
                     // Call TN utilities function for div elements
-                    else if (e.is("div") && e.className().compareTo("details__morenews") != 0) {
+                    else if (e.is("div") && !e.className().equals("details__morenews")) {
                         checkDivTN(e, content);
                     }
                 }
@@ -378,7 +378,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                         }
                     }
                     // Create and add image if element is image
-                    else if (e.is("div") && e.attr("class").compareTo("light-img") == 0) {
+                    else if (e.is("div") && e.attr("class").equals("light-img")) {
                         Image image = new Image(e.select("figure").attr("data-src"), true);
                         content.getChildren().add(createImageLabel(image, e.select("figcaption").text()));
                     }
@@ -434,7 +434,7 @@ public class ArticleController extends SceneHandler implements Initializable {
             // If element is image
             else if (e.is("figure") && e.select("img").size() > 0) {
                 String imageURL = e.select("img").attr("data-src");
-                if (imageURL.compareTo("") == 0) imageURL = e.select("img").attr("src");
+                if (imageURL.equals("")) imageURL = e.select("img").attr("src");
 
                 Image image = new Image(imageURL, true);
                 content.getChildren().add(createImageLabel(image, e.select("figcaption").text()));
@@ -446,7 +446,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                 }
                 else if (e.select("img").size() > 0) {
                     String imageURL = e.select("img").attr("data-src");
-                    if (imageURL.compareTo("") == 0) imageURL = e.select("img").attr("src");
+                    if (imageURL.equals("")) imageURL = e.select("img").attr("src");
 
                     Image image = new Image(imageURL, true);
                     content.getChildren().add(createImageLabel(image, e.select("p").text()));
@@ -458,7 +458,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                 content.getChildren().add(createVideoButton(videoVE(e.select("video").attr("src")), e.select("p").text()));
             }
             // If element is wrapnote
-            else if (e.is("div") && e.attr("class").compareTo("box_brief_info") == 0) {
+            else if (e.is("div") && e.attr("class").equals("box_brief_info")) {
                 FlowPane pane = createWrapNote();
 
                 for (Element i : e.select("> *")) {
@@ -500,12 +500,12 @@ public class ArticleController extends SceneHandler implements Initializable {
                     content.getChildren().add(createImageLabel(image, i.select("p").text()));
                 }
                 // Add video if child is video
-                else if (i.is("table") && i.attr("class").compareTo("video") == 0) {
+                else if (i.is("table") && i.attr("class").equals("video")) {
                     Label videoButton = createVideoButton(i.select("div[class=\"clearfix cms-video\"]").attr("data-video-src"), i.select("p").text());
                     content.getChildren().add(videoButton);
                 }
                 // Add image if child is image
-                else if (i.is("figure") && i.attr("class").compareTo("picture") == 0) {
+                else if (i.is("figure") && i.attr("class").equals("picture")) {
                     if (i.select("img").size() > 0) {
                         Image image = new Image(i.select("img").attr("data-src"), true);
                         content.getChildren().add(createImageLabel(image, i.select("figcaption").text()));
@@ -515,7 +515,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                     }
                 }
                 // Add quote table
-                else if (i.is("table") && i.attr("class").compareTo("quotetable") == 0) {
+                else if (i.is("table") && i.attr("class").equals("quotetable")) {
                     FlowPane pane = createWrapNote();
 
                     Element inQuote = i.select("div.quote").first();
@@ -552,12 +552,12 @@ public class ArticleController extends SceneHandler implements Initializable {
                 // Else if element is div
                 else if (e.is("div")) {
                     // Add image if element is image
-                    if (e.attr("type").compareTo("Photo") == 0) {
+                    if (e.attr("type").equals("Photo")) {
                         Image image = new Image(e.select("img").attr("src"), true);
                         content.getChildren().add(createImageLabel(image, e.select("p").text()));
                     }
                     // Add video if element is video
-                    else if (e.attr("type").compareTo("VideoStream") == 0) {
+                    else if (e.attr("type").equals("VideoStream")) {
                         // Extract video url from data-src attribute
                         String videoSrc = e.attr("data-src");
                         videoSrc = videoSrc.substring(videoSrc.indexOf("hls"));
@@ -568,7 +568,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                         content.getChildren().add(createVideoButton(videoSrc, e.select("p").text()));
                     }
                     // Add wrapnote if element is wrapnote
-                    else if (e.attr("type").compareTo("wrapnote") == 0) {
+                    else if (e.attr("type").equals("wrapnote")) {
                         FlowPane pane = createWrapNote();
 
                         // Loop through elements in wrap note and add into wrapnote
@@ -591,7 +591,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                     content.getChildren().add(createLabel(e.text(), WORDSIZE));
                 }
                 // Create and add wrapnote if element is wrapnote
-                else if (e.is("div") && e.attr("class").compareTo("notebox ncenter") == 0){
+                else if (e.is("div") && e.attr("class").equals("notebox ncenter")){
                     FlowPane pane = createWrapNote();
                     addZing(e.select("> *"), pane);
                     content.getChildren().add(pane);
@@ -608,7 +608,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                 else if (e.is("table") && e.attr("class").contains("picture")) {
                     for (Element i : e.select("td.pic > *")) {
                         String imageURL = i.select("img").attr("data-src");
-                        if (imageURL.compareTo("") == 0) imageURL = i.select("img").attr("src");
+                        if (imageURL.equals("")) imageURL = i.select("img").attr("src");
 
                         Image image = new Image(imageURL, true);
                         content.getChildren().add(createImageLabel(image, e.select("td[class=\"pCaption caption\"]").text()));
@@ -715,7 +715,7 @@ public class ArticleController extends SceneHandler implements Initializable {
 
     private Label createGraphicLabel(String caption) {
         Label label = new Label(caption);
-        if (caption.compareTo("") != 0)
+        if (!caption.equals(""))
             label.setStyle("-fx-border-color: #404040; -fx-background-color: #bcbcbc");
         else
             label.setStyle("-fx-background-color: transparent");

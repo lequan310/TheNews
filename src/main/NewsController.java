@@ -185,8 +185,8 @@ public class NewsController extends Task<Void> {
 
                         // Get title
                         title = e.select("h3").text();
-                        if (title.compareTo("") == 0) title = e.select("h2").text();
-                        if (title.compareTo("") == 0) add = false;
+                        if (title.equals("")) title = e.select("h2").text();
+                        if (title.equals("")) add = false;
                         if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
 
                         // Get article link and thumbnail url
@@ -195,13 +195,13 @@ public class NewsController extends Task<Void> {
 
                         try {
                             Document temp = Jsoup.connect(link).timeout(10000).get();
-                            if (imgSrc.compareTo("") == 0) // Find first image in article if can't find thumbnail
+                            if (imgSrc.equals("")) // Find first image in article if can't find thumbnail
                                 imgSrc = temp.select("article.fck_detail").select("img").attr("data-src");
 
                             // Get published date
                             pubDate = temp.select("span.date").text();
-                            if (pubDate.compareTo("") == 0) pubDate = temp.select("span.time").text();
-                            if (pubDate.compareTo("") == 0) add = false;
+                            if (pubDate.equals("")) pubDate = temp.select("span.time").text();
+                            if (pubDate.equals("")) add = false;
 
                             pubDate = extract(pubDate, ", ", " (GMT+7)");
                             DateTimeFormatter df = DateTimeFormatter.ofPattern("d/M/yyyy, HH:mm");
@@ -301,7 +301,7 @@ public class NewsController extends Task<Void> {
 
                         // Get title
                         title = e.select("h3").text();
-                        if (title.compareTo("") == 0) add = false;
+                        if (title.equals("")) add = false;
                         if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
 
                         // Get article link and thumbnail url
@@ -443,7 +443,7 @@ public class NewsController extends Task<Void> {
                     pubDate += " " + e.select("span.date").text();
                     pubDate = pubDate.trim();
 
-                    if (pubDate.compareTo("") == 0) pubDate = e.select("span.friendly-time").text();
+                    if (pubDate.equals("")) pubDate = e.select("span.friendly-time").text();
                     DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm d/M/yyyy");
                     date = LocalDateTime.parse(pubDate, df);
 
@@ -489,7 +489,7 @@ public class NewsController extends Task<Void> {
 
                     // Get title
                     title = e.getElementsByClass("box-title").text();
-                    if (title.compareTo("") == 0) add = false;
+                    if (title.equals("")) add = false;
                     if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
 
                     // Get image source
@@ -501,7 +501,7 @@ public class NewsController extends Task<Void> {
 
                     // Get pubDate
                     pubDate = e.select("div[class*=box-meta]").text();
-                    if (pubDate.compareTo("") != 0) {
+                    if (!pubDate.equals("")) {
                         DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm dd/M/yyyy");
                         date = LocalDateTime.parse(pubDate, df);
                     }
@@ -510,7 +510,7 @@ public class NewsController extends Task<Void> {
                             Document temp = Jsoup.connect(link).timeout(5000).get();
                             pubDate = temp.select("div.box-date").text();
 
-                            if (pubDate.compareTo("") != 0) {
+                            if (!pubDate.equals("")) {
                                 pubDate = pubDate.substring(pubDate.indexOf(", ") + 2);
                             }
 
