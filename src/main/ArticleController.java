@@ -85,6 +85,7 @@ public class ArticleController extends SceneHandler implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Read current article and assigning buttons functions
+        System.out.println();
         readArticle();
         previousButton.setOnAction(e -> previousArticle());
         nextButton.setOnAction(e -> nextArticle());
