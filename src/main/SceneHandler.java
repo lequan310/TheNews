@@ -105,9 +105,14 @@ public class SceneHandler {
             loader.setController(controller);
             root = loader.load();
             root.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-                if (event.getCode() == KeyCode.LEFT) controller.previousArticle(); // Control + Left Arrow = previous article
-                else if (event.getCode() == KeyCode.RIGHT) controller.nextArticle(); // Control + Right Arrow = next article
-                else if (event.getCode() == KeyCode.F5 || reload.match(event)) controller.readArticle(); // F5 = refresh
+                if (event.getCode() == KeyCode.LEFT)
+                    controller.previousArticle(); // Left Arrow = previous article
+                else if (event.getCode() == KeyCode.RIGHT)
+                    controller.nextArticle(); // Right Arrow = next article
+                else if (event.getCode() == KeyCode.F5 || reload.match(event))
+                    controller.readArticle(); // F5 or Ctrl + R
+                else if (event.getCode() == KeyCode.ESCAPE)  // Escape to return to Menu
+                    controller.menuHome(categoryIndex);
             });
             anchorPane.getScene().setRoot(root);
             root.requestFocus();
