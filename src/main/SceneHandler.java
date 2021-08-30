@@ -69,6 +69,9 @@ public class SceneHandler {
             loader.setController(controller);
 
             root = loader.load();
+            root.setOnKeyPressed(e -> {
+                if (e.getCode() == KeyCode.ESCAPE) controller.menuHome(categoryIndex);
+            });
             anchorPane.getScene().setRoot(root);
             root.requestFocus();
         }catch (IOException e){
