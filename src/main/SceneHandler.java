@@ -70,6 +70,7 @@ public class SceneHandler {
 
             root = loader.load();
             anchorPane.getScene().setRoot(root);
+            root.requestFocus();
         }catch (IOException e){
             System.out.println(e.getMessage());
         }
@@ -87,6 +88,7 @@ public class SceneHandler {
             root = loader.load();
             root.setOnKeyPressed(new MenuHandler(controller));
             anchorPane.getScene().setRoot(root);
+            root.requestFocus();
         }
         catch (IOException e){
             System.out.println(e.getMessage());
@@ -98,18 +100,17 @@ public class SceneHandler {
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/NewsTemplate.fxml"));
             ArticleController controller = new ArticleController(items, index, categoryIndex);
-            KeyCombination left = new KeyCodeCombination(KeyCode.LEFT, KeyCombination.CONTROL_DOWN);
-            KeyCombination right = new KeyCodeCombination(KeyCode.RIGHT, KeyCombination.CONTROL_DOWN);
             KeyCombination reload = new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN);
 
             loader.setController(controller);
             root = loader.load();
             root.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-                if (left.match(event)) controller.previousArticle(); // Control + Left Arrow = previous article
-                else if (right.match(event)) controller.nextArticle(); // Control + Right Arrow = next article
+                if (event.getCode() == KeyCode.LEFT) controller.previousArticle(); // Control + Left Arrow = previous article
+                else if (event.getCode() == KeyCode.RIGHT) controller.nextArticle(); // Control + Right Arrow = next article
                 else if (event.getCode() == KeyCode.F5 || reload.match(event)) controller.readArticle(); // F5 = refresh
             });
             anchorPane.getScene().setRoot(root);
+            root.requestFocus();
         }
         catch (Exception e){
             e.printStackTrace();

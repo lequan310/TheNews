@@ -629,6 +629,12 @@ public class ArticleController extends SceneHandler implements Initializable {
                 else if (e.hasText() && e.is("li")) {
                     content.getChildren().add(createLabel(e.text(), WORDSIZE));
                 }
+                // Create and add blockquote
+                else if (e.is("blockquote")) {
+                    FlowPane pane = createWrapNote();
+                    addZing(e.select("> *"), pane);
+                    content.getChildren().add(pane);
+                }
             }
             catch (IllegalArgumentException ex) { continue; }
         }

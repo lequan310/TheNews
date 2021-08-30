@@ -138,7 +138,7 @@ public class MenuController extends SceneHandler implements Initializable {
             }.start();
         }
         catch (Exception e) {
-            throwAlert(e.getClass().getCanonicalName(), "", e.toString());
+            throwAlert(e.getClass().getCanonicalName(), e.getMessage(), e.toString());
         }
     }
 
@@ -183,60 +183,67 @@ public class MenuController extends SceneHandler implements Initializable {
     }
 
     public void changePage(int page) {
-        new Thread(() -> {
-            scrollPane.setVvalue(0); // Reset scroll bar
+        try {
+            Thread thread = new Thread(() -> {
+                scrollPane.setVvalue(0); // Reset scroll bar
 
-            // Change page if selected page is not the current active page
-            if (currentPage != page) {
-                final int ITEMCOUNT = 10;
-                long start = System.currentTimeMillis();
-                currentPage = page;
+                // Change page if selected page is not the current active page
+                if (currentPage != page) {
+                    final int ITEMCOUNT = 10;
+                    long start = System.currentTimeMillis();
+                    currentPage = page;
 
-                System.out.println("\nInitializing new items:");
+                    System.out.println("\nInitializing new items:");
 
-                // Initializing article buttons
-                for (int i = 0; i < ITEMCOUNT; i++) {
-                    int idx = i + (page * ITEMCOUNT);
-                    int currentButton = i;
+                    // Initializing article buttons
+                    for (int i = 0; i < ITEMCOUNT; i++) {
+                        int idx = i + (page * ITEMCOUNT);
+                        int currentButton = i;
 
-                    new Thread(() -> Platform.runLater(() -> {
-                        // If item exists
-                        try {
-                            labels.get(currentButton).setText(items.get(idx).getTitle());
-                            timeLabels.get(currentButton).setText(items.get(idx).durationToString());
-                            buttons.get(currentButton).setOnAction(e -> article(idx, categoryIndex));
-
-                            switch (items.get(idx).getSource()) {
-                                case VE -> icons.get(currentButton).setImage(new Image("/image/iconVE.png"));
-                                case TT -> icons.get(currentButton).setImage(new Image("/image/iconTT.png"));
-                                case TN -> icons.get(currentButton).setImage(new Image("/image/iconTN.jpeg"));
-                                case ZING -> icons.get(currentButton).setImage(new Image("/image/iconZING.png"));
-                                case ND -> icons.get(currentButton).setImage(new Image("/image/iconND.png"));
-                            }
-
+                        new Thread(() -> Platform.runLater(() -> {
+                            // If item exists
                             try {
-                                Image image = new Image(items.get(idx).getImgSrc(), true);
-                                images.get(currentButton).setImage(image);
-                            } catch (IllegalArgumentException e) {
-                                images.get(currentButton).setImage(null);
-                            }
+                                labels.get(currentButton).setText(items.get(idx).getTitle());
+                                timeLabels.get(currentButton).setText(items.get(idx).durationToString());
+                                buttons.get(currentButton).setOnAction(e -> article(idx, categoryIndex));
 
-                            buttons.get(currentButton).setDisable(false);
-                        }
-                        // If no more item left
-                        catch (IndexOutOfBoundsException e) {
-                            buttons.get(currentButton).setDisable(true);
-                            labels.get(currentButton).setText("Empty");
-                            images.get(currentButton).setImage(null);
-                            timeLabels.get(currentButton).setText("Not available");
-                            icons.get(currentButton).setImage(null);
-                        } finally {
-                            System.out.println("Item " + currentButton + " " + (System.currentTimeMillis() - start) + " ms");
-                        }
-                    })).start();
+                                switch (items.get(idx).getSource()) {
+                                    case VE -> icons.get(currentButton).setImage(new Image("/image/iconVE.png"));
+                                    case TT -> icons.get(currentButton).setImage(new Image("/image/iconTT.png"));
+                                    case TN -> icons.get(currentButton).setImage(new Image("/image/iconTN.jpeg"));
+                                    case ZING -> icons.get(currentButton).setImage(new Image("/image/iconZING.png"));
+                                    case ND -> icons.get(currentButton).setImage(new Image("/image/iconND.png"));
+                                }
+
+                                try {
+                                    Image image = new Image(items.get(idx).getImgSrc(), true);
+                                    images.get(currentButton).setImage(image);
+                                } catch (IllegalArgumentException e) {
+                                    images.get(currentButton).setImage(null);
+                                }
+
+                                buttons.get(currentButton).setDisable(false);
+                            }
+                            // If no more item left
+                            catch (IndexOutOfBoundsException e) {
+                                buttons.get(currentButton).setDisable(true);
+                                labels.get(currentButton).setText("Empty");
+                                images.get(currentButton).setImage(null);
+                                timeLabels.get(currentButton).setText("Not available");
+                                icons.get(currentButton).setImage(null);
+                            } finally {
+                                System.out.println("Item " + currentButton + " " + (System.currentTimeMillis() - start) + " ms");
+                            }
+                        })).start();
+                    }
                 }
-            }
-        }).start();
+            });
+            thread.start();
+            thread.join();
+        }
+        catch (Exception e) {
+            throwAlert(e.getClass().getCanonicalName(), e.getMessage(), e.toString());
+        }
     }
 
     // Function to switch to article scene
