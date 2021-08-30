@@ -553,7 +553,13 @@ public class ArticleController extends SceneHandler implements Initializable {
                 else if (e.is("div")) {
                     // Add image if element is image
                     if (e.attr("type").equals("Photo")) {
-                        Image image = new Image(e.select("img").attr("src"), true);
+                        String imageSrc = e.select("img").attr("src");
+                        try {
+                            imageSrc = imageSrc.replace("thumb_w/586/", "");
+                        }
+                        catch (StringIndexOutOfBoundsException exception) {}
+
+                        Image image = new Image(imageSrc, true);
                         content.getChildren().add(createImageLabel(image, e.select("p").text()));
                     }
                     // Add video if element is video
@@ -675,7 +681,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         final double MAX_WIDTH = content.getWidth();
         ImageView imageView = new ImageView(image);
         imageView.setPreserveRatio(true);
-        imageView.setFitWidth(Math.max(600, image.getWidth()));
+        imageView.setFitWidth(600);
 
         // Adjust label position and size
         Label label = createGraphicLabel(caption);
