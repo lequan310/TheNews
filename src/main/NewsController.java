@@ -166,7 +166,7 @@ public class NewsController extends Task<Void> {
                         inItem = false;
                         Item item = new Item(title, link, date, imgSrc, Item.Source.VE);
                         items.add(item);
-                        updateProgress(progress++, maxProgress);
+                        loadProgress(); // updateProgress(progress++, maxProgress);
                     }
                 }
 
@@ -211,7 +211,7 @@ public class NewsController extends Task<Void> {
                         // Create and add news item to list
                         Item item = new Item(title, link, date, imgSrc, Item.Source.VE);
                         if (add) items.add(item);
-                        updateProgress(progress++, maxProgress);
+                        loadProgress(); // updateProgress(progress++, maxProgress);
                     });
                     thread.start();
                     threads.add(thread);
@@ -282,7 +282,7 @@ public class NewsController extends Task<Void> {
                         inItem = false;
                         Item item = new Item(title, link, date, imgSrc, Item.Source.TT);
                         items.add(item);
-                        updateProgress(progress++, maxProgress);
+                        loadProgress(); // updateProgress(progress++, maxProgress);
                     }
                 }
 
@@ -327,7 +327,7 @@ public class NewsController extends Task<Void> {
                         Item item = new Item(title, link, date, imgSrc, Item.Source.TT);
                         if (add) items.add(item);
                         //System.out.println(item);
-                        updateProgress(progress++, maxProgress);
+                        loadProgress(); // updateProgress(progress++, maxProgress);
                     });
                     thread.start();
                     threads.add(thread);
@@ -389,7 +389,7 @@ public class NewsController extends Task<Void> {
                         Item item = new Item(title, link, date, imgSrc, Item.Source.TN);
                         items.add(item);
                         inItem = false;
-                        updateProgress(progress++, maxProgress);
+                        loadProgress(); // updateProgress(progress++, maxProgress);
                     }
                     // Catch error lines which sometimes existed in ThanhNien RSS
                     catch (StringIndexOutOfBoundsException e) {
@@ -450,7 +450,7 @@ public class NewsController extends Task<Void> {
                     // Create and add news item to list
                     Item item = new Item(title, link, date, imgSrc, Item.Source.ZING);
                     if (add) items.add(item);
-                    updateProgress(progress++, maxProgress);
+                    loadProgress(); // updateProgress(progress++, maxProgress);
                 });
                 thread.start();
                 threads.add(thread);
@@ -533,7 +533,7 @@ public class NewsController extends Task<Void> {
                     // Create and add news item to list
                     Item item = new Item(title, link, date, imgSrc, Item.Source.ND);
                     if (add) items.add(item);
-                    updateProgress(progress++, maxProgress);
+                    loadProgress(); // updateProgress(progress++, maxProgress);
                 });
                 thread.start();
                 threads.add(thread);
@@ -561,5 +561,9 @@ public class NewsController extends Task<Void> {
         }
 
         return false;
+    }
+
+    private synchronized void loadProgress() {
+        updateProgress(progress++, maxProgress);
     }
 }
