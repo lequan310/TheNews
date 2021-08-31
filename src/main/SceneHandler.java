@@ -14,11 +14,14 @@ import javafx.stage.Stage;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SceneHandler {
     private Parent root;
     @FXML private AnchorPane anchorPane;
 
+    protected final ExecutorService es = Executors.newCachedThreadPool();
     protected boolean moving, resizeLeft, resizeRight, resizeUp, resizeDown, resizing = false;
     protected double x, y;
 
@@ -68,6 +71,7 @@ public class SceneHandler {
             CategoryController controller = new CategoryController(categoryIndex);
             loader.setController(controller);
 
+            es.shutdown();
             root = loader.load();
             root.setOnKeyPressed(e -> {
                 if (e.getCode() == KeyCode.ESCAPE) controller.menuHome(categoryIndex);
@@ -84,7 +88,6 @@ public class SceneHandler {
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/Home.fxml"));
             MenuController controller = new MenuController();
-
             controller.setCategoryIndex(categoryIndex);
             loader.setController(controller);
 
@@ -104,8 +107,9 @@ public class SceneHandler {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/NewsTemplate.fxml"));
             ArticleController controller = new ArticleController(items, index, categoryIndex);
             KeyCombination reload = new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN);
-
             loader.setController(controller);
+
+            es.shutdown();
             root = loader.load();
             root.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
                 if (event.getCode() == KeyCode.LEFT)
@@ -153,6 +157,7 @@ public class SceneHandler {
     }
 
     @FXML protected void close(MouseEvent event) {
+        es.shutdown();
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
         System.exit(0);

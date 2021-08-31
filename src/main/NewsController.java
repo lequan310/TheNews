@@ -14,9 +14,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class NewsController extends Task<Void> {
     private final ArrayList<Item> items = new ArrayList<>(); // List of items that is scraped and sorted to be displayed
+    private final ExecutorService es = Executors.newCachedThreadPool();
 
     // List of URL to scrape from
     // New, Covid, Politics, Business, Technology, Health, Sports, Entertainment, World, Others
@@ -40,11 +44,29 @@ public class NewsController extends Task<Void> {
             "https://nhandan.vn/kinhte", "https://nhandan.vn/khoahoc-congnghe", "https://nhandan.vn/y-te", "https://nhandan.vn/thethao",
             "https://nhandan.vn/vanhoa", "https://nhandan.vn/thegioi", "https://nhandan.vn/xahoi", "https://nhandan.vn/giaoduc", "https://nhandan.vn/bandoc"};
 
+    private boolean t1, t2, t3, t4, t5;
     private int categoryIndex = 0, progress = 0, maxProgress = 0; // Index to read from the arrays below
     private String error = ""; // Error message
 
     public NewsController(int categoryIndex) {
         this.categoryIndex = categoryIndex;
+
+        // If category is Others
+        if (categoryIndex == 9) {
+            maxProgress = 500;
+
+            for (int i = 0; i < 3; i++) {
+                scrapeAll(categoryIndex + i);
+                if (i == 2) {
+                    t4 = true;
+                }
+            }
+        }
+        // If category is not Others
+        else {
+            maxProgress = 250;
+            scrapeAll(categoryIndex);
+        }
     }
 
     // Utilities function to trim the string from start to end
@@ -69,60 +91,43 @@ public class NewsController extends Task<Void> {
     }
 
     @Override
-    protected Void call() throws Exception {
-        long start = System.currentTimeMillis();
-        HashSet<Thread> threads = new HashSet<>();
-        updateProgress(0, 1);
-        System.out.println();
+    protected Void call()  {
+        try {
+            long start = System.currentTimeMillis();
+            updateProgress(0, 1);
+            System.out.println();
 
-        // If category is Others
-        if (categoryIndex == 9) {
-            maxProgress = 500;
-
-            for (int i = 0; i < 3; i++) {
-                int current = i;
-
-                threads.add(new Thread(() -> scrapeVE(VNEXPRESS[categoryIndex + current])));
-                threads.add(new Thread(() -> scrapeTuoiTre(TUOITRE[categoryIndex + current])));
-                threads.add(new Thread(() -> scrapeThanhNien(THANHNIEN[categoryIndex + current])));
-                threads.add(new Thread(() -> scrapeZing(ZING[categoryIndex + current])));
-                threads.add(new Thread(() -> scrapeNhanDan(NHANDAN[categoryIndex + current])));
+            // Sort items and update progress bar
+            while (!t1 || !t2 || !t3 || !t4 || !t5){
+                String temp = t1 + " " + t2 + t3 + t4 + t5;
             }
-        }
-        // If category is not Others
-        else {
-            maxProgress = 250;
 
-            threads.add(new Thread(() -> scrapeVE(VNEXPRESS[categoryIndex])));
-            threads.add(new Thread(() -> scrapeTuoiTre(TUOITRE[categoryIndex])));
-            threads.add(new Thread(() -> scrapeThanhNien(THANHNIEN[categoryIndex])));
-            threads.add(new Thread(() -> scrapeZing(ZING[categoryIndex])));
-            threads.add(new Thread(() -> scrapeNhanDan(NHANDAN[categoryIndex])));
-        }
+            if (categoryIndex == 9) Thread.sleep(1500);
+            es.shutdown();
+            es.awaitTermination(10, TimeUnit.SECONDS);
+            Collections.sort(items);
 
-        for (Thread t : threads) t.start();
-        for (Thread t : threads) t.join();
-
-        // Sort items and update progress bar
-        Collections.sort(items);
-        // Remove duplicate
-        for (int i = 1; i < items.size(); i++) {
-            if (items.get(i).equalTo(items.get(i - 1))){
-                items.remove(i);
-                i--;
+            // Remove duplicate
+            for (int i = 1; i < items.size(); i++) {
+                if (items.get(i).equalTo(items.get(i - 1))){
+                    items.remove(i);
+                    i--;
+                }
             }
-        }
 
-        updateProgress(1, 1);
-        System.out.println("Achieve item list: " + (System.currentTimeMillis() - start) + " ms");
-        return null;
+            updateProgress(1, 1);
+            System.out.println("Achieve item list: " + (System.currentTimeMillis() - start) + " ms");
+            return null;
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
 
     private void scrapeVE(String urlAddress) {
-        long start = System.currentTimeMillis();
-
         try {
             if (urlAddress.contains(".rss")) {
+                t1 = true;
                 // Creating buffered reader to read RSS file and extract items information
                 URL rssURL = new URL(urlAddress);
                 BufferedReader in = new BufferedReader(new InputStreamReader(rssURL.openStream()));
@@ -175,22 +180,26 @@ public class NewsController extends Task<Void> {
             else {
                 Document doc = Jsoup.connect(urlAddress).timeout(10000).get();
                 Elements article = doc.select("article");
-                HashSet<Thread> threads = new HashSet<>();
+                int count = Math.min(article.size(), 20);
 
-                for (Element e : article) {
-                    Thread thread = new Thread(() -> {
+                for (int i = 0; i < count; i++) {
+                    int current = i;
+                    es.execute(() -> {
+                        Element e = article.get(current);
                         String title = "", pubDate = "", link = "", imgSrc = "";
                         boolean add = true;
                         LocalDateTime date = LocalDateTime.MIN;
 
                         // Get title
                         title = e.select("h3").text();
-                        if (title.equals("")) title = e.select("h2").text();
+                        if (title.equals("")) {
+                            title = e.select("h2").text();
+                        }
                         if (title.equals("")) add = false;
                         if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
 
                         // Get article link and thumbnail url
-                        link = e.select("a").attr("href");
+                        link = e.select(" a").attr("href");
                         imgSrc = e.select("div.thumb-art").select("img").attr("data-src");
 
                         try {
@@ -206,36 +215,32 @@ public class NewsController extends Task<Void> {
                             pubDate = extract(pubDate, ", ", " (GMT+7)");
                             DateTimeFormatter df = DateTimeFormatter.ofPattern("d/M/yyyy, HH:mm");
                             date = LocalDateTime.parse(pubDate, df);
-                        } catch (Exception exception) { add = false; }
+                        } catch (Exception exception) {
+                            add = false;
+                        }
 
                         // Create and add news item to list
                         Item item = new Item(title, link, date, imgSrc, Item.Source.VE);
                         if (add) items.add(item);
                         loadProgress(); // updateProgress(progress++, maxProgress);
                     });
-                    thread.start();
-                    threads.add(thread);
+                    if (i == count - 1) t1 = true;
                 }
-
-                for (Thread t : threads) t.join();
             }
         }
-        catch (MalformedURLException | InterruptedException e) {
+        catch (MalformedURLException e) {
             e.printStackTrace();
         }
         catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
             error += urlAddress + ": " + e.getMessage() + "\n";
         }
-
-        System.out.println("VN Express: " + items.size() + " " + (System.currentTimeMillis() - start) + " ms");
     }
 
     private void scrapeTuoiTre(String urlAddress) {
-        long start = System.currentTimeMillis();
-
         try {
             if (urlAddress.contains(".rss")) {
+                t2 = true;
                 // Creating buffered reader to read RSS file and extract items information
                 URL rssURL = new URL(urlAddress);
                 BufferedReader in = new BufferedReader(new InputStreamReader(rssURL.openStream()));
@@ -291,10 +296,12 @@ public class NewsController extends Task<Void> {
             else {
                 Document doc = Jsoup.connect(urlAddress).timeout(10000).get();
                 Elements article = doc.select("li.news-item");
-                HashSet<Thread> threads = new HashSet<>();
+                int count = article.size();
 
-                for (Element e : article) {
-                    Thread thread = new Thread(() -> {
+                for (int i = 0; i < count; i++) {
+                    int current = i;
+                    es.execute(() -> {
+                        Element e = article.get(current);
                         String title = "", pubDate = "", link = "", imgSrc = "";
                         boolean add = true;
                         LocalDateTime date = LocalDateTime.MIN;
@@ -326,31 +333,24 @@ public class NewsController extends Task<Void> {
                         // Create and add news item to list
                         Item item = new Item(title, link, date, imgSrc, Item.Source.TT);
                         if (add) items.add(item);
-                        //System.out.println(item);
                         loadProgress(); // updateProgress(progress++, maxProgress);
                     });
-                    thread.start();
-                    threads.add(thread);
+                    if (i == count - 1) t2 = true;
                 }
-
-                for (Thread t : threads) t.join();
             }
         }
-        catch (MalformedURLException | InterruptedException e) {
+        catch (MalformedURLException e) {
             e.printStackTrace();
         }
         catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
             error += urlAddress + ": " + e.getMessage() + "\n";
         }
-
-        System.out.println("Tuoi Tre: " + items.size() + " " + (System.currentTimeMillis() - start) + " ms");
     }
 
     private void scrapeThanhNien(String urlAddress) {
-        long start = System.currentTimeMillis();
-
         try {
+            t3 = true;
             // Creating buffered reader to read RSS file and extract items information
             URL rssURL = new URL(urlAddress);
             BufferedReader in = new BufferedReader(new InputStreamReader(rssURL.openStream()));
@@ -398,30 +398,31 @@ public class NewsController extends Task<Void> {
             }
 
             in.close();
-        } catch (MalformedURLException e) {
+        }
+        catch (MalformedURLException e) {
             e.printStackTrace();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
             error += urlAddress + ": " + e.getMessage() + "\n";
         }
-
-        System.out.println("Thanh Nien: " + items.size() + " " + (System.currentTimeMillis() - start) + " ms");
     }
 
     private void scrapeZing(String urlAddress) {
-        long start = System.currentTimeMillis();
-
         try {
             // Connect to URL and add all article element into list
-            HashSet<Thread> threads = new HashSet<>();
             Document doc = Jsoup.connect(urlAddress).timeout(10000).get();
             Elements body = doc.select("section[id~=.*-latest]");
             Elements featured = doc.select("section[id~=.*-featured]");
             body.addAll(featured);
+            Elements article = body.select("article.article-item");
+            int count = article.size();
 
             // Loop through each article-item
-            for (Element e : body.select("article.article-item")) {
-                Thread thread = new Thread(() -> {
+            for (int i = 0; i < count; i++) {
+                int current = i;
+                es.execute(() -> {
+                    Element e = article.get(current);
                     String title = "", pubDate = "", link = "", imgSrc = "";
                     boolean add = true;
                     LocalDateTime date = LocalDateTime.MIN;
@@ -452,37 +453,28 @@ public class NewsController extends Task<Void> {
                     if (add) items.add(item);
                     loadProgress(); // updateProgress(progress++, maxProgress);
                 });
-                thread.start();
-                threads.add(thread);
+                if (i == count - 1) t4 = true;
             }
-
-            try {
-                for (Thread t : threads) {
-                    t.join();
-                }
-            } catch (InterruptedException e) {}
-
         }
         catch (IOException e) {
             System.out.println("Can't connect to " + urlAddress);
             error += urlAddress + ": " + e.getMessage() + "\n";
         }
-
-        System.out.println("Zing: " + items.size() + " " + (System.currentTimeMillis() - start) + " ms");
     }
 
     private void scrapeNhanDan(String urlAddress) {
-        long start = System.currentTimeMillis();
-
         try {
             // Connect to URL and add all article element into list
             Document doc = Jsoup.connect(urlAddress).timeout(10000).get();
             Elements body = doc.select("div[class*=uk-width-3-4@m]");
-            HashSet<Thread> threads = new HashSet<>();
+            Elements article = body.select("article");
+            int count = article.size();
 
             // Loop through article items in list
-            for (Element e : body.select("article")) {
-                Thread thread = new Thread(() -> {
+            for (int i = 0; i < count; i++) {
+                int current = i;
+                es.execute(() -> {
+                    Element e = article.get(current);
                     String title = "", pubDate = "", link = "", imgSrc = "";
                     boolean add = true;
                     LocalDateTime date = LocalDateTime.MIN;
@@ -535,19 +527,20 @@ public class NewsController extends Task<Void> {
                     if (add) items.add(item);
                     loadProgress(); // updateProgress(progress++, maxProgress);
                 });
-                thread.start();
-                threads.add(thread);
+                if (i == count - 1) t5 = true;
             }
-
-            for (Thread t : threads) {
-                t.join();
-            }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException  e) {
             System.out.println("Can't connect to " + urlAddress);
             error += urlAddress + ": " + e.getMessage() + "\n";
         }
+    }
 
-        System.out.println("Nhan Dan: " + items.size() + " " + (System.currentTimeMillis() - start) + " ms");
+    private void scrapeAll(int categoryIndex) {
+        es.execute(() -> scrapeVE(VNEXPRESS[categoryIndex]));
+        es.execute(() -> scrapeTuoiTre(TUOITRE[categoryIndex]));
+        es.execute(() -> scrapeThanhNien(THANHNIEN[categoryIndex]));
+        es.execute(() -> scrapeZing(ZING[categoryIndex]));
+        es.execute(() -> scrapeNhanDan(NHANDAN[categoryIndex]));
     }
 
     // Check if title of article is in covid category using keywords

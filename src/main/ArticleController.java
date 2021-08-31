@@ -99,7 +99,7 @@ public class ArticleController extends SceneHandler implements Initializable {
     }
 
     public void readArticle(){
-        new Thread(() -> Platform.runLater(() -> {
+        es.submit(() -> Platform.runLater(() -> {
             content.getChildren().clear();
 
             // Call read article function depends on which source
@@ -112,7 +112,7 @@ public class ArticleController extends SceneHandler implements Initializable {
             }
 
             content.getChildren().addAll(createLabel(""));
-        })).start();
+        }));
 
         // Initialize UI components
         scrollPane.setVvalue(0);
