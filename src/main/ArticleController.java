@@ -14,6 +14,7 @@ import javafx.scene.layout.*;
 import javafx.scene.media.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -132,9 +133,10 @@ public class ArticleController extends SceneHandler implements Initializable {
     private void readArticleVE(String urlAddress) {
         try {
             // Try to connect to item url
-            Document doc = Jsoup.connect(urlAddress).timeout(10000).get();
-            final int statusCode = doc.connection().response().statusCode();
-            System.out.println("Status code: " + statusCode + " " + urlAddress);
+            Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
+            System.out.println("Status code: " + response.statusCode() + " " + urlAddress);
+            if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
+            Document doc = response.parse();
 
             // Video article
             if (urlAddress.contains("video.vnexpress.net")) {
@@ -190,9 +192,10 @@ public class ArticleController extends SceneHandler implements Initializable {
     private void readArticleTT(String urlAddress){
         try {
             // Connect to article URL
-            Document doc = Jsoup.connect(urlAddress).timeout(10000).get();
-            final int statusCode = doc.connection().response().statusCode();
-            System.out.println("Status code: " + statusCode + " " + urlAddress);
+            Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
+            System.out.println("Status code: " + response.statusCode() + " " + urlAddress);
+            if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
+            Document doc = response.parse();
 
             // Extracting article contents
             Elements body = doc.select("div#mainContentDetail");
@@ -224,9 +227,10 @@ public class ArticleController extends SceneHandler implements Initializable {
     private void readArticleTN(String urlAddress) {
         try {
             // Connect to article URL
-            Document doc = Jsoup.connect(urlAddress).timeout(10000).get();
-            final int statusCode = doc.connection().response().statusCode();
-            System.out.println("Status code: " + statusCode + " " + urlAddress);
+            Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
+            System.out.println("Status code: " + response.statusCode() + " " + urlAddress);
+            if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
+            Document doc = response.parse();
 
             // Video article
             if (urlAddress.contains("https://thanhnien.vn/video")){
@@ -296,9 +300,10 @@ public class ArticleController extends SceneHandler implements Initializable {
     private void readArticleZing(String urlAddress){
         try{
             // Connect to article URL
-            Document doc = Jsoup.connect(urlAddress).timeout(10000).get();
-            final int statusCode = doc.connection().response().statusCode();
-            System.out.println("Status code: " + statusCode + " " + urlAddress);
+            Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
+            System.out.println("Status code: " + response.statusCode() + " " + urlAddress);
+            if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
+            Document doc = response.parse();
 
             // Video article
             if (urlAddress.contains("https://zingnews.vn/video")){
@@ -345,9 +350,10 @@ public class ArticleController extends SceneHandler implements Initializable {
     private void readArticleND(String urlAddress) {
         try {
             // Connect to article URL
-            Document doc = Jsoup.connect(urlAddress).timeout(10000).get();
-            final int statusCode = doc.connection().response().statusCode();
-            System.out.println("Status code: " + statusCode + " " + urlAddress);
+            Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
+            System.out.println("Status code: " + response.statusCode() + " " + urlAddress);
+            if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
+            Document doc = response.parse();
 
             // Extract elements from main article
             Elements body = doc.select("div.box-content-detail");
