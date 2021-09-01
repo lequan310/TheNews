@@ -21,7 +21,7 @@ public class SceneHandler {
     private Parent root;
     @FXML private AnchorPane anchorPane;
 
-    protected final ExecutorService es = Executors.newCachedThreadPool();
+    protected final ExecutorService es = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
     protected boolean moving, resizeLeft, resizeRight, resizeUp, resizeDown, resizing = false;
     protected double x, y;
 
