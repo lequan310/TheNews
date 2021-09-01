@@ -20,53 +20,48 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class NewsController extends Task<Void> {
+    private static NewsController newsController = null;
     private final ArrayList<Item> items = new ArrayList<>(); // List of items that is scraped and sorted to be displayed
-    private final ExecutorService es = Executors.newCachedThreadPool();
+    private ExecutorService es;
 
     // List of URL to scrape from
     // New, Covid, Politics, Business, Technology, Health, Sports, Entertainment, World, Others
     private final ArrayList<String> VNEXPRESS = new ArrayList<>(
-    List.of("https://vnexpress.net/rss/tin-moi-nhat.rss", "https://vnexpress.net/rss/tin-noi-bat.rss", "https://vnexpress.net/thoi-su/chinh-tri",
-            "https://vnexpress.net/kinh-doanh", "https://vnexpress.net/so-hoa", "https://vnexpress.net/rss/suc-khoe.rss", "https://vnexpress.net/the-thao",
-            "https://vnexpress.net/giai-tri", "https://vnexpress.net/rss/the-gioi.rss", "https://vnexpress.net/rss/cuoi.rss",
-            "https://vnexpress.net/rss/giao-duc.rss", "https://vnexpress.net/rss/khoa-hoc.rss", "https://vnexpress.net/rss/y-kien.rss"));
+            List.of("https://vnexpress.net/rss/tin-moi-nhat.rss", "https://vnexpress.net/rss/tin-noi-bat.rss", "https://vnexpress.net/thoi-su/chinh-tri",
+                    "https://vnexpress.net/kinh-doanh", "https://vnexpress.net/so-hoa", "https://vnexpress.net/rss/suc-khoe.rss", "https://vnexpress.net/the-thao",
+                    "https://vnexpress.net/giai-tri", "https://vnexpress.net/rss/the-gioi.rss", "https://vnexpress.net/rss/cuoi.rss",
+                    "https://vnexpress.net/rss/giao-duc.rss", "https://vnexpress.net/rss/khoa-hoc.rss", "https://vnexpress.net/rss/y-kien.rss"));
     private final ArrayList<String> TUOITRE = new ArrayList<>(
-    List.of ("https://tuoitre.vn/rss/tin-moi-nhat.rss", "https://tuoitre.vn/rss/suc-khoe.rss", "https://tuoitre.vn/tim-kiem.htm?keywords=ch%C3%ADnh%20tr%E1%BB%8B",
-            "https://tuoitre.vn/rss/kinh-doanh.rss", "https://tuoitre.vn/rss/cong-nghe.rss", "https://tuoitre.vn/rss/suc-khoe.rss",
-            "https://tuoitre.vn/rss/the-thao.rss", "https://tuoitre.vn/rss/giai-tri.rss", "https://tuoitre.vn/rss/the-gioi.rss", "https://tuoitre.vn/rss/xe.rss",
-            "https://tuoitre.vn/rss/giao-duc.rss", "https://tuoitre.vn/rss/nhip-song-tre.rss", "https://tuoitre.vn/rss/ban-doc-lam-bao.rss"));
+            List.of("https://tuoitre.vn/rss/tin-moi-nhat.rss", "https://tuoitre.vn/rss/suc-khoe.rss", "https://tuoitre.vn/tim-kiem.htm?keywords=ch%C3%ADnh%20tr%E1%BB%8B",
+                    "https://tuoitre.vn/rss/kinh-doanh.rss", "https://tuoitre.vn/rss/cong-nghe.rss", "https://tuoitre.vn/rss/suc-khoe.rss",
+                    "https://tuoitre.vn/rss/the-thao.rss", "https://tuoitre.vn/rss/giai-tri.rss", "https://tuoitre.vn/rss/the-gioi.rss", "https://tuoitre.vn/rss/xe.rss",
+                    "https://tuoitre.vn/rss/giao-duc.rss", "https://tuoitre.vn/rss/nhip-song-tre.rss", "https://tuoitre.vn/rss/ban-doc-lam-bao.rss"));
     private final ArrayList<String> THANHNIEN = new ArrayList<>(
-    List.of ("https://thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/suc-khoe.rss", "https://thanhnien.vn/rss/thoi-su/chinh-tri.rss",
-            "https://thanhnien.vn/rss/tai-chinh-kinh-doanh.rss", "https://thanhnien.vn/rss/cong-nghe.rss", "https://thanhnien.vn/rss/suc-khoe.rss",
-            "https://thethao.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giai-tri.rss", "https://thanhnien.vn/rss/the-gioi.rss",
-            "https://game.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giao-duc.rss", "https://thanhnien.vn/rss/ban-can-biet.rss", "https://thanhnien.vn/rss/gioi-tre.rss"));
+            List.of("https://thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/suc-khoe.rss", "https://thanhnien.vn/rss/thoi-su/chinh-tri.rss",
+                    "https://thanhnien.vn/rss/tai-chinh-kinh-doanh.rss", "https://thanhnien.vn/rss/cong-nghe.rss", "https://thanhnien.vn/rss/suc-khoe.rss",
+                    "https://thethao.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giai-tri.rss", "https://thanhnien.vn/rss/the-gioi.rss",
+                    "https://game.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giao-duc.rss", "https://thanhnien.vn/rss/ban-can-biet.rss", "https://thanhnien.vn/rss/gioi-tre.rss"));
     private final ArrayList<String> ZING = new ArrayList<>(
-    List.of ("https://zingnews.vn/", "https://zingnews.vn/suc-khoe.html", "https://zingnews.vn/chinh-tri.html",
-            "https://zingnews.vn/kinh-doanh-tai-chinh.html", "https://zingnews.vn/cong-nghe.html", "https://zingnews.vn/suc-khoe.html",
-            "https://zingnews.vn/the-thao.html", "https://zingnews.vn/giai-tri.html", "https://zingnews.vn/the-gioi.html",
-            "https://zingnews.vn/doi-song.html", "https://zingnews.vn/giao-duc.html", "https://zingnews.vn/du-lich.html", "https://zingnews.vn/oto-xe-may.html"));
+            List.of("https://zingnews.vn/", "https://zingnews.vn/suc-khoe.html", "https://zingnews.vn/chinh-tri.html",
+                    "https://zingnews.vn/kinh-doanh-tai-chinh.html", "https://zingnews.vn/cong-nghe.html", "https://zingnews.vn/suc-khoe.html",
+                    "https://zingnews.vn/the-thao.html", "https://zingnews.vn/giai-tri.html", "https://zingnews.vn/the-gioi.html",
+                    "https://zingnews.vn/doi-song.html", "https://zingnews.vn/giao-duc.html", "https://zingnews.vn/du-lich.html", "https://zingnews.vn/oto-xe-may.html"));
     private final ArrayList<String> NHANDAN = new ArrayList<>(
-    List.of ("https://nhandan.vn/", "https://nhandan.vn/y-te", "https://nhandan.vn/chinhtri", "https://nhandan.vn/kinhte",
-            "https://nhandan.vn/khoahoc-congnghe", "https://nhandan.vn/y-te", "https://nhandan.vn/thethao", "https://nhandan.vn/vanhoa",
-            "https://nhandan.vn/thegioi", "https://nhandan.vn/xahoi", "https://nhandan.vn/giaoduc", "https://nhandan.vn/bandoc", "https://nhandan.vn/phapluat"));
+            List.of("https://nhandan.vn/", "https://nhandan.vn/y-te", "https://nhandan.vn/chinhtri", "https://nhandan.vn/kinhte",
+                    "https://nhandan.vn/khoahoc-congnghe", "https://nhandan.vn/y-te", "https://nhandan.vn/thethao", "https://nhandan.vn/vanhoa",
+                    "https://nhandan.vn/thegioi", "https://nhandan.vn/xahoi", "https://nhandan.vn/giaoduc", "https://nhandan.vn/bandoc", "https://nhandan.vn/phapluat"));
 
     private volatile boolean t1, t2, t3, t4, t5;
     private int categoryIndex, progress = 0, maxProgress; // Index to read from the arrays below
     private String error = ""; // Error message
 
-    public NewsController(int categoryIndex) {
-        this.categoryIndex = categoryIndex;
+    private NewsController() {}
 
-        // If category is Others
-        if (categoryIndex == 9) {
-            maxProgress = 600;
-            scrapeAll(categoryIndex, 4);
-        }
-        // If category is not Others
-        else {
-            maxProgress = 250;
-            scrapeAll(categoryIndex, 1);
-        }
+    public static NewsController getInstance() {
+        if (newsController == null)
+            newsController = new NewsController();
+
+        return newsController;
     }
 
     // Utilities function to trim the string from start to end
@@ -90,23 +85,49 @@ public class NewsController extends Task<Void> {
         return this.error;
     }
 
-    @Override
-    protected Void call()  {
+    public void setCategoryIndex(int categoryIndex) {
+        this.categoryIndex = categoryIndex;
+    }
+
+    public void start() {
         try {
+            es = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
+            t1 = t2 = t3 = t4 = t5 = false;
+            items.clear();
+            progress = 0;
+
+            System.out.println(categoryIndex);
             long start = System.currentTimeMillis();
             updateProgress(0, 1);
             System.out.println();
 
+            // If category is Others
+            if (categoryIndex == 9) {
+                maxProgress = 600;
+                scrapeAll(categoryIndex, 4);
+            }
+            // If category is not Others
+            else {
+                maxProgress = 250;
+                scrapeAll(categoryIndex, 1);
+            }
+
             // Sort items and update progress bar
-            while (!t1 || !t2 || !t3 || !t4 || !t5) {}
+            while (!t1 || !t2 || !t3 || !t4 || !t5) {
+            }
 
             es.shutdown();
             es.awaitTermination(10, TimeUnit.SECONDS);
+            es = null;
+
             Collections.sort(items);
+            System.gc();
+            Runtime.getRuntime().freeMemory();
+            System.out.println(Math.round((double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Math.pow(1024, 2)) + " MB");
 
             // Remove duplicate
             for (int i = 1; i < items.size(); i++) {
-                if (items.get(i).equalTo(items.get(i - 1))){
+                if (items.get(i).equalTo(items.get(i - 1))) {
                     items.remove(i);
                     i--;
                 }
@@ -114,12 +135,14 @@ public class NewsController extends Task<Void> {
 
             updateProgress(1, 1);
             System.out.println("Achieve item list: " + (System.currentTimeMillis() - start) + " ms");
-            return null;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
-            return null;
         }
+    }
+
+    @Override
+    protected Void call() {
+        return null;
     }
 
     private void scrapeVE(List<String> links) {
@@ -174,14 +197,13 @@ public class NewsController extends Task<Void> {
                     }
 
                     in.close();
-                }
-                else {
+                } else {
                     Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
                     if (response.statusCode() >= 400) throw new IOException();
 
                     Document doc = response.parse();
                     Elements article = doc.select("article");
-                    int count = Math.max(article.size(), 25);
+                    int count = Math.max(article.size(), 20);
 
                     for (int i = 0; i < count; i++) {
                         int current = i;
@@ -227,14 +249,12 @@ public class NewsController extends Task<Void> {
                         });
                     }
                 }
-            }
-            catch (MalformedURLException e) {
+            } catch (MalformedURLException e) {
                 e.printStackTrace();
+            } catch (IOException e) {
+                System.out.println("Can't connect to " + urlAddress);
+                error += urlAddress + ": " + e.getMessage() + "\n";
             }
-            catch (IOException e) {
-                    System.out.println("Can't connect to " + urlAddress);
-                    error += urlAddress + ": " + e.getMessage() + "\n";
-                }
         }
         t1 = true;
     }
@@ -294,8 +314,7 @@ public class NewsController extends Task<Void> {
                     }
 
                     in.close();
-                }
-                else {
+                } else {
                     Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
                     if (response.statusCode() >= 400) throw new IOException();
 
@@ -322,8 +341,8 @@ public class NewsController extends Task<Void> {
                             imgSrc = e.select("img").attr("src");
                             try {
                                 imgSrc = imgSrc.replace("zoom/212_132/", "");
+                            } catch (StringIndexOutOfBoundsException exception) {
                             }
-                            catch (StringIndexOutOfBoundsException exception) {}
 
                             try {
                                 Document temp = Jsoup.connect(link).timeout(10000).get();
@@ -333,7 +352,9 @@ public class NewsController extends Task<Void> {
                                 pubDate = pubDate.replace(" GMT+7", "");
                                 DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
                                 date = LocalDateTime.parse(pubDate, df);
-                            } catch (Exception exception) { add = false; }
+                            } catch (Exception exception) {
+                                add = false;
+                            }
 
                             // Create and add news item to list
                             Item item = new Item(title, link, date, imgSrc, Item.Source.TT);
@@ -342,14 +363,12 @@ public class NewsController extends Task<Void> {
                         });
                     }
                 }
-            }
-            catch (MalformedURLException e) {
+            } catch (MalformedURLException e) {
                 e.printStackTrace();
+            } catch (IOException e) {
+                System.out.println("Can't connect to " + urlAddress);
+                error += urlAddress + ": " + e.getMessage() + "\n";
             }
-            catch (IOException e) {
-                    System.out.println("Can't connect to " + urlAddress);
-                    error += urlAddress + ": " + e.getMessage() + "\n";
-                }
         }
         t2 = true;
     }
@@ -404,14 +423,12 @@ public class NewsController extends Task<Void> {
                 }
 
                 in.close();
-            }
-            catch (MalformedURLException e) {
+            } catch (MalformedURLException e) {
                 e.printStackTrace();
+            } catch (IOException e) {
+                System.out.println("Can't connect to " + urlAddress);
+                error += urlAddress + ": " + e.getMessage() + "\n";
             }
-            catch (IOException e) {
-                    System.out.println("Can't connect to " + urlAddress);
-                    error += urlAddress + ": " + e.getMessage() + "\n";
-                }
         }
         t3 = true;
     }
@@ -466,11 +483,10 @@ public class NewsController extends Task<Void> {
                         loadProgress(); // updateProgress(progress++, maxProgress);
                     });
                 }
+            } catch (IOException e) {
+                System.out.println("Can't connect to " + urlAddress);
+                error += urlAddress + ": " + e.getMessage() + "\n";
             }
-            catch (IOException e) {
-                    System.out.println("Can't connect to " + urlAddress);
-                    error += urlAddress + ": " + e.getMessage() + "\n";
-                }
         }
         t4 = true;
     }
@@ -514,8 +530,7 @@ public class NewsController extends Task<Void> {
                         if (!pubDate.equals("")) {
                             DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm dd/M/yyyy");
                             date = LocalDateTime.parse(pubDate, df);
-                        }
-                        else {
+                        } else {
                             try {
                                 Document temp = Jsoup.connect(link).timeout(5000).get();
                                 pubDate = temp.select("div.box-date").text();
@@ -546,11 +561,10 @@ public class NewsController extends Task<Void> {
                         loadProgress(); // updateProgress(progress++, maxProgress);
                     });
                 }
+            } catch (IOException e) {
+                System.out.println("Can't connect to " + urlAddress);
+                error += urlAddress + ": " + e.getMessage() + "\n";
             }
-            catch (IOException  e) {
-                    System.out.println("Can't connect to " + urlAddress);
-                    error += urlAddress + ": " + e.getMessage() + "\n";
-                }
         }
         t5 = true;
     }

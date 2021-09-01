@@ -100,6 +100,7 @@ public class ArticleController extends SceneHandler implements Initializable {
     }
 
     public void readArticle(){
+        System.out.println(Math.round((double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Math.pow(1024, 2)) + " MB");
         es.submit(() -> Platform.runLater(() -> {
             content.getChildren().clear();
 

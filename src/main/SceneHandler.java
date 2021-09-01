@@ -91,6 +91,7 @@ public class SceneHandler {
             controller.setCategoryIndex(categoryIndex);
             loader.setController(controller);
 
+            es.shutdown();
             root = loader.load();
             root.setOnKeyPressed(new MenuHandler(controller));
             anchorPane.getScene().setRoot(root);

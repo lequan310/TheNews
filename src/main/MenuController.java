@@ -88,6 +88,7 @@ public class MenuController extends SceneHandler implements Initializable {
     private final ArrayList<Button> buttons = new ArrayList<>();
     private final ArrayList<Button> pages = new ArrayList<>();
     private ArrayList<Item> items;
+    private NewsController newsController;
 
     private final String[] categories = {"NEW", "COVID", "POLITICS", "BUSINESS", "TECHNOLOGY", "HEALTH", "SPORTS", "ENTERTAINMENT", "WORLD", "OTHERS"};
     private int categoryIndex = 0, currentPage = 1;
@@ -99,7 +100,8 @@ public class MenuController extends SceneHandler implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Create news controller to scrape news in specific category
-        NewsController newsController = new NewsController(categoryIndex);
+        newsController = NewsController.getInstance();
+        newsController.setCategoryIndex(categoryIndex);
         pb.progressProperty().bind(newsController.progressProperty()); // Bind loading bar to scraping progress
 
         addNodeToList();
@@ -112,14 +114,14 @@ public class MenuController extends SceneHandler implements Initializable {
 
         try {
             // Create a news controller for menu scene to use
-            new Service<Void>() {
+            Service<Void> service = new Service<>() {
                 @Override
                 protected Task<Void> createTask() {
                     return new Task<>() {
                         @Override
                         protected Void call() throws Exception {
                             // Start scraping articles from 5 sources
-                            Thread thread = new Thread(newsController);
+                            Thread thread = new Thread(() -> newsController.start());
                             thread.start();
                             thread.join();
 
@@ -131,11 +133,13 @@ public class MenuController extends SceneHandler implements Initializable {
                             if (newsController.getError().compareTo("") != 0) {
                                 throwAlert("Read Error", "Please check your Internet connection", newsController.getError());
                             }
+
                             return null;
                         }
                     };
                 }
-            }.start();
+            };
+            service.start();
         }
         catch (Exception e) {
             throwAlert(e.getClass().getCanonicalName(), e.getMessage(), e.toString());
