@@ -103,10 +103,10 @@ public class SceneHandler {
     }
 
     // Loading article scene and assigning controller
-    public void article(ArrayList<Item> items, int index, int categoryIndex){
+    public void article(int index, int categoryIndex){
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/NewsTemplate.fxml"));
-            ArticleController controller = new ArticleController(items, index, categoryIndex);
+            ArticleController controller = new ArticleController(index, categoryIndex);
             KeyCombination reload = new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN);
             loader.setController(controller);
 

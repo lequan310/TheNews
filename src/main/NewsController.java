@@ -96,7 +96,6 @@ public class NewsController extends Task<Void> {
             items.clear();
             progress = 0;
 
-            System.out.println(categoryIndex);
             long start = System.currentTimeMillis();
             updateProgress(0, 1);
             System.out.println();
@@ -113,8 +112,7 @@ public class NewsController extends Task<Void> {
             }
 
             // Sort items and update progress bar
-            while (!t1 || !t2 || !t3 || !t4 || !t5) {
-            }
+            while (!t1 || !t2 || !t3 || !t4 || !t5) {}
 
             es.shutdown();
             es.awaitTermination(10, TimeUnit.SECONDS);
@@ -197,13 +195,14 @@ public class NewsController extends Task<Void> {
                     }
 
                     in.close();
-                } else {
+                }
+                else {
                     Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
                     if (response.statusCode() >= 400) throw new IOException();
 
                     Document doc = response.parse();
                     Elements article = doc.select("article");
-                    int count = Math.max(article.size(), 20);
+                    int count = article.size();
 
                     for (int i = 0; i < count; i++) {
                         int current = i;
@@ -226,7 +225,10 @@ public class NewsController extends Task<Void> {
                             imgSrc = e.select("div.thumb-art").select("img").attr("data-src");
 
                             try {
-                                Document temp = Jsoup.connect(link).timeout(10000).get();
+                                Connection.Response tempResponse = Jsoup.connect(link).timeout(10000).execute();
+                                if (tempResponse.statusCode() >= 400) throw new IOException();
+
+                                Document temp = tempResponse.parse();
                                 if (imgSrc.equals("")) // Find first image in article if can't find thumbnail
                                     imgSrc = temp.select("article.fck_detail").select("img").attr("data-src");
 
@@ -345,7 +347,10 @@ public class NewsController extends Task<Void> {
                             }
 
                             try {
-                                Document temp = Jsoup.connect(link).timeout(10000).get();
+                                Connection.Response tempResponse = Jsoup.connect(link).timeout(10000).execute();
+                                if (tempResponse.statusCode() >= 400) throw new IOException();
+
+                                Document temp = tempResponse.parse();
 
                                 // Get published date
                                 pubDate = temp.select("div.date-time").text();
@@ -532,7 +537,10 @@ public class NewsController extends Task<Void> {
                             date = LocalDateTime.parse(pubDate, df);
                         } else {
                             try {
-                                Document temp = Jsoup.connect(link).timeout(5000).get();
+                                Connection.Response tempResponse = Jsoup.connect(link).timeout(10000).execute();
+                                if (tempResponse.statusCode() >= 400) throw new IOException();
+
+                                Document temp = tempResponse.parse();
                                 pubDate = temp.select("div.box-date").text();
 
                                 if (!pubDate.equals("")) {

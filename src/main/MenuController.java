@@ -248,7 +248,7 @@ public class MenuController extends SceneHandler implements Initializable {
 
     // Function to switch to article scene
     public void article(int index, int categoryIndex) {
-        article(items, index, categoryIndex);
+        super.article(index, categoryIndex);
     }
 
     // Function to switch to category scene

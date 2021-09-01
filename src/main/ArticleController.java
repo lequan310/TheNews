@@ -45,8 +45,8 @@ public class ArticleController extends SceneHandler implements Initializable {
     private Item item;
     private int index;
 
-    public ArticleController(ArrayList<Item> items, int index, int categoryIndex){
-        this.items = items;
+    public ArticleController(int index, int categoryIndex){
+        this.items = NewsController.getInstance().getItems();
         this.index = index;
         this.categoryIndex = categoryIndex;
         item = items.get(index);
