@@ -119,6 +119,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         }));
 
         // Initialize UI components
+        anchorPane.focusedProperty().addListener(observable -> anchorPane.requestFocus());
         scrollPane.setVvalue(0);
         title.setText(item.getTitle());
         timeLabel.setText(item.getPubDate());
@@ -699,7 +700,6 @@ public class ArticleController extends SceneHandler implements Initializable {
 
         // Make label more interactive with mouse event
         label.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            anchorPane.requestFocus();
             if (imageView.getFitWidth() == 600) {
                 imageView.setFitWidth(Math.min(image.getWidth(), MAX_WIDTH));
             }
