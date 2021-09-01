@@ -182,7 +182,16 @@ public class NewsController extends Task<Void> {
                                 imgSrc = extract(line, "<description>", "</description>");
                                 imgSrc = extract(imgSrc, "<img src=\"", "\"");
                             } catch (StringIndexOutOfBoundsException e) {
-                                imgSrc = "";
+                                try {
+                                    Connection.Response tempResponse = Jsoup.connect(link).timeout(5000).response();
+                                    if (tempResponse.statusCode() >= 400) throw new IOException();
+
+                                    Document temp = tempResponse.parse();
+                                    imgSrc = temp.select("article.fck_detail img").first().attr("data-src");
+                                }
+                                catch (Exception exception) {
+                                    inItem = false;
+                                }
                             }
                         }
                         // Add item to list at the end of item (when all information of an item object is gathered)
@@ -198,7 +207,7 @@ public class NewsController extends Task<Void> {
                 }
                 else {
                     Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
-                    if (response.statusCode() >= 400) throw new IOException();
+                    if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
 
                     Document doc = response.parse();
                     Elements article = doc.select("article");
@@ -316,9 +325,10 @@ public class NewsController extends Task<Void> {
                     }
 
                     in.close();
-                } else {
+                }
+                else {
                     Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
-                    if (response.statusCode() >= 400) throw new IOException();
+                    if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
 
                     Document doc = response.parse();
                     Elements article = doc.select("li.news-item");
@@ -442,7 +452,7 @@ public class NewsController extends Task<Void> {
         for (String urlAddress : links) {
             try {
                 Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
-                if (response.statusCode() >= 400) throw new IOException();
+                if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
 
                 // Connect to URL and add all article element into list
                 Document doc = response.parse();
@@ -501,7 +511,7 @@ public class NewsController extends Task<Void> {
         for (String urlAddress : links) {
             try {
                 Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
-                if (response.statusCode() >= 400) throw new IOException();
+                if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
 
                 // Connect to URL and add all article element into list
                 Document doc = response.parse();
