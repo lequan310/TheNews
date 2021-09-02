@@ -14,8 +14,6 @@ import main.Model.Item;
 import main.Model.NewsController;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class MenuController extends SceneHandler implements Initializable {
     // UI components in Main Menu scene
@@ -95,7 +93,7 @@ public class MenuController extends SceneHandler implements Initializable {
     private NewsController newsController;
 
     private final String[] categories = {"NEW", "COVID", "POLITICS", "BUSINESS", "TECHNOLOGY", "HEALTH", "SPORTS", "ENTERTAINMENT", "WORLD", "OTHERS"};
-    private int categoryIndex, currentPage = 1;
+    private int categoryIndex = 0, currentPage = 1;
     private final boolean reload;
 
     public MenuController(int categoryIndex, boolean reload) {
@@ -210,7 +208,6 @@ public class MenuController extends SceneHandler implements Initializable {
             // Change page if selected page is not the current active page
             if (currentPage != page) {
                 final int ITEMCOUNT = 10;
-                long start = System.currentTimeMillis();
                 currentPage = page;
 
                 // Initializing article buttons

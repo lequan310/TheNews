@@ -120,7 +120,6 @@ public class NewsController extends Task<Void> {
 
             Collections.sort(items);
             System.gc();
-            Runtime.getRuntime().freeMemory();
             System.out.println(Math.round((double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Math.pow(1024, 2)) + " MB");
 
             // Remove duplicate
@@ -353,8 +352,7 @@ public class NewsController extends Task<Void> {
                             imgSrc = e.select("img").attr("src");
                             try {
                                 imgSrc = imgSrc.replace("zoom/212_132/", "");
-                            } catch (StringIndexOutOfBoundsException exception) {
-                            }
+                            } catch (StringIndexOutOfBoundsException exception) {}
 
                             try {
                                 Connection.Response tempResponse = Jsoup.connect(link).timeout(5000).execute();
@@ -588,6 +586,12 @@ public class NewsController extends Task<Void> {
     }
 
     private void scrapeAll(int categoryIndex, int count) {
+        try {
+            System.gc();
+            Thread.sleep(500);
+        }
+        catch (InterruptedException e) {}
+
         es.execute(() -> scrapeVE(VNEXPRESS.subList(categoryIndex, categoryIndex + count)));
         es.execute(() -> scrapeTuoiTre(TUOITRE.subList(categoryIndex, categoryIndex + count)));
         es.execute(() -> scrapeThanhNien(THANHNIEN.subList(categoryIndex, categoryIndex + count)));
