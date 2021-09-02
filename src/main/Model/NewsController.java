@@ -1,4 +1,4 @@
-package main;
+package main.Model;
 
 import javafx.concurrent.Task;
 import org.jsoup.Connection;
@@ -132,7 +132,7 @@ public class NewsController extends Task<Void> {
             }
 
             updateProgress(1, 1);
-            System.out.println("Achieve item list: " + (System.currentTimeMillis() - start) + " ms");
+            System.out.println("Achieve " + items.size() + " items: " + (System.currentTimeMillis() - start) + " ms");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -234,7 +234,7 @@ public class NewsController extends Task<Void> {
                             imgSrc = e.select("div.thumb-art").select("img").attr("data-src");
 
                             try {
-                                Connection.Response tempResponse = Jsoup.connect(link).timeout(10000).execute();
+                                Connection.Response tempResponse = Jsoup.connect(link).timeout(5000).execute();
                                 if (tempResponse.statusCode() >= 400) throw new IOException();
 
                                 Document temp = tempResponse.parse();
@@ -357,7 +357,7 @@ public class NewsController extends Task<Void> {
                             }
 
                             try {
-                                Connection.Response tempResponse = Jsoup.connect(link).timeout(10000).execute();
+                                Connection.Response tempResponse = Jsoup.connect(link).timeout(5000).execute();
                                 if (tempResponse.statusCode() >= 400) throw new IOException();
 
                                 Document temp = tempResponse.parse();
@@ -547,7 +547,7 @@ public class NewsController extends Task<Void> {
                             date = LocalDateTime.parse(pubDate, df);
                         } else {
                             try {
-                                Connection.Response tempResponse = Jsoup.connect(link).timeout(10000).execute();
+                                Connection.Response tempResponse = Jsoup.connect(link).timeout(5000).execute();
                                 if (tempResponse.statusCode() >= 400) throw new IOException();
 
                                 Document temp = tempResponse.parse();

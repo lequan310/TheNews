@@ -1,4 +1,4 @@
-package main;
+package main.SceneController;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -14,6 +14,7 @@ import javafx.scene.layout.*;
 import javafx.scene.media.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
+import main.Model.Item;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -25,11 +26,15 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ArticleController extends SceneHandler implements Initializable {
     private final int WORDSIZE = 18;
     private final ArrayList<Item> items;
     private final int categoryIndex;
+    private Item item;
+    private int index;
 
     @FXML private AnchorPane anchorPane;
     @FXML private FlowPane content;
@@ -42,11 +47,8 @@ public class ArticleController extends SceneHandler implements Initializable {
     @FXML private ScrollPane scrollPane;
     @FXML private Pane blackPane;
 
-    private Item item;
-    private int index;
-
-    public ArticleController(int index, int categoryIndex){
-        this.items = NewsController.getInstance().getItems();
+    public ArticleController(ArrayList<Item> items, int index, int categoryIndex){
+        this.items = items;
         this.index = index;
         this.categoryIndex = categoryIndex;
         item = items.get(index);
@@ -86,7 +88,6 @@ public class ArticleController extends SceneHandler implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Read current article and assigning buttons functions
-        System.out.println();
         readArticle();
         previousButton.setOnAction(e -> previousArticle());
         nextButton.setOnAction(e -> nextArticle());
@@ -103,7 +104,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         System.gc();
         Runtime.getRuntime().freeMemory();
         System.out.println(Math.round((double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Math.pow(1024, 2)) + " MB");
-        es.submit(() -> Platform.runLater(() -> {
+        Platform.runLater(() -> {
             content.getChildren().clear();
 
             // Call read article function depends on which source
@@ -116,7 +117,7 @@ public class ArticleController extends SceneHandler implements Initializable {
             }
 
             content.getChildren().addAll(createLabel(""));
-        }));
+        });
 
         // Initialize UI components
         anchorPane.focusedProperty().addListener(observable -> anchorPane.requestFocus());
@@ -658,7 +659,7 @@ public class ArticleController extends SceneHandler implements Initializable {
     }
 
     // Create UI components to add to article view
-    private Label createLabel(String text){
+    protected Label createLabel(String text){
         Label label = new Label(text);
 
         label.setFont(Font.font("Roboto", WORDSIZE));
@@ -672,21 +673,21 @@ public class ArticleController extends SceneHandler implements Initializable {
         return label;
     }
 
-    private Label createHeader(String text) {
+    protected Label createHeader(String text) {
         Label label = createLabel(text);
         label.setFont(Font.font("Roboto", FontWeight.BOLD, WORDSIZE + 2));
 
         return label;
     }
 
-    private Label createDescription(String text){
+    protected Label createDescription(String text){
         Label description = createLabel(text);
         description.setFont(Font.font("Corbel", FontWeight.BOLD, WORDSIZE + 4));
 
         return description;
     }
 
-    private Label createImageLabel(Image image, String caption){
+    protected Label createImageLabel(Image image, String caption){
         // Create ImageView and Label, and set label graphic to image view
         final double MAX_WIDTH = content.getWidth();
         ImageView imageView = new ImageView(image);
@@ -712,7 +713,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         return label;
     }
 
-    private Label createVideoButton(String videoSrc, String caption){
+    protected Label createVideoButton(String videoSrc, String caption){
         // Create media player
         Media media = new Media(videoSrc);
         MediaPlayer mediaPlayer = new MediaPlayer(media);
@@ -729,7 +730,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         return label;
     }
 
-    private Label createGraphicLabel(String caption) {
+    protected Label createGraphicLabel(String caption) {
         Label label = new Label(caption);
         if (!caption.equals(""))
             label.setStyle("-fx-border-color: #404040; -fx-background-color: #bcbcbc");
@@ -746,7 +747,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         return label;
     }
 
-    private FlowPane createWrapNote() {
+    protected FlowPane createWrapNote() {
         FlowPane pane = new FlowPane();
 
         pane.setStyle("-fx-border-color: #2c91c7; -fx-background-color: #404040; -fx-alignment: center");
@@ -757,7 +758,7 @@ public class ArticleController extends SceneHandler implements Initializable {
     }
 
     // Function to display alert
-    private void dealException(Exception e, Item item){
+    protected void dealException(Exception e, Item item) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Poor Internet Connection");
@@ -806,6 +807,6 @@ public class ArticleController extends SceneHandler implements Initializable {
     }
 
     @FXML private void menuHome(){
-        menuHome(categoryIndex);
+        menuHome(categoryIndex, false);
     }
 }

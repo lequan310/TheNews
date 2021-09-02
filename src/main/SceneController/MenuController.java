@@ -1,4 +1,4 @@
-package main;
+package main.SceneController;
 
 import javafx.application.Platform;
 import javafx.concurrent.Service;
@@ -10,8 +10,12 @@ import javafx.scene.effect.BoxBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import main.Model.Item;
+import main.Model.NewsController;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MenuController extends SceneHandler implements Initializable {
     // UI components in Main Menu scene
@@ -92,9 +96,11 @@ public class MenuController extends SceneHandler implements Initializable {
 
     private final String[] categories = {"NEW", "COVID", "POLITICS", "BUSINESS", "TECHNOLOGY", "HEALTH", "SPORTS", "ENTERTAINMENT", "WORLD", "OTHERS"};
     private int categoryIndex = 0, currentPage = 1;
+    private final boolean reload;
 
-    public void setCategoryIndex(int index) {
-        categoryIndex = index;
+    public MenuController(int categoryIndex, boolean reload) {
+        this.categoryIndex = categoryIndex;
+        this.reload = reload;
     }
 
     @Override
@@ -111,38 +117,50 @@ public class MenuController extends SceneHandler implements Initializable {
         for (Button b : pages) {
             b.setDisable(true);
         }
-
-        try {
-            // Create a news controller for menu scene to use
-            Service<Void> service = new Service<>() {
-                @Override
-                protected Task<Void> createTask() {
-                    return new Task<>() {
-                        @Override
-                        protected Void call() throws Exception {
-                            // Start scraping articles from 5 sources
-                            Thread thread = new Thread(() -> newsController.start());
-                            thread.start();
-                            thread.join();
-
-                            // Get articles after sorted by published date and initialize buttons
-                            items = newsController.getItems();
-                            Platform.runLater(() -> loadAfterBar());
-
-                            // Display error if there is error message
-                            if (newsController.getError().compareTo("") != 0) {
-                                throwAlert("Read Error", "Please check your Internet connection", newsController.getError());
-                            }
-
-                            return null;
-                        }
-                    };
-                }
-            };
-            service.start();
+        for (Button b : buttons) {
+            b.setDisable(true);
         }
-        catch (Exception e) {
-            throwAlert(e.getClass().getCanonicalName(), e.getMessage(), e.toString());
+
+        if (reload) {
+            try {
+                // Create a news controller for menu scene to use
+                Service<Void> service = new Service<>() {
+                    @Override
+                    protected Task<Void> createTask() {
+                        return new Task<>() {
+                            @Override
+                            protected Void call() throws Exception {
+                                // Start scraping articles from 5 sources
+                                Thread thread = new Thread(() -> newsController.start());
+                                thread.start();
+                                thread.join();
+
+
+                                // Get articles after sorted by published date and initialize buttons
+                                items = newsController.getItems();
+                                changePage(0);
+                                Platform.runLater(() -> loadAfterBar());
+
+                                // Display error if there is error message
+                                if (newsController.getError().compareTo("") != 0) {
+                                    throwAlert("Read Error", "Please check your Internet connection", newsController.getError());
+                                }
+
+                                return null;
+                            }
+                        };
+                    }
+                };
+                service.start();
+            }
+            catch (Exception e) {
+                throwAlert(e.getClass().getCanonicalName(), e.getMessage(), e.toString());
+            }
+        }
+        else {
+            items = newsController.getItems();
+            changePage(0);
+            Platform.runLater(() -> loadAfterBar());
         }
     }
 
@@ -164,7 +182,6 @@ public class MenuController extends SceneHandler implements Initializable {
     private void loadAfterBar() {
         // Setting category label and set current page to first page
         categoryButton.setDisable(false);
-        changePage(0);
 
         // Assigning function to page buttons
         for (int i = 0; i < pages.size(); i++) {
@@ -196,19 +213,18 @@ public class MenuController extends SceneHandler implements Initializable {
                 long start = System.currentTimeMillis();
                 currentPage = page;
 
-                System.out.println("\nInitializing new items:");
-
                 // Initializing article buttons
                 for (int i = 0; i < ITEMCOUNT; i++) {
                     int idx = i + (page * ITEMCOUNT);
                     int currentButton = i;
 
-                    es.submit(() -> Platform.runLater(() -> {
-                        // If item exists
-                        try {
+                    // If item exists
+                    try {
+                        buttons.get(currentButton).setOnAction(e -> article(idx, categoryIndex));
+                        Platform.runLater(() -> {
                             labels.get(currentButton).setText(items.get(idx).getTitle());
                             timeLabels.get(currentButton).setText(items.get(idx).durationToString());
-                            buttons.get(currentButton).setOnAction(e -> article(idx, categoryIndex));
+                            buttons.get(currentButton).setDisable(false);
 
                             switch (items.get(idx).getSource()) {
                                 case VE -> icons.get(currentButton).setImage(new Image("/image/iconVE.png"));
@@ -224,20 +240,18 @@ public class MenuController extends SceneHandler implements Initializable {
                             } catch (IllegalArgumentException e) {
                                 images.get(currentButton).setImage(null);
                             }
-
-                            buttons.get(currentButton).setDisable(false);
-                        }
-                        // If no more item left
-                        catch (IndexOutOfBoundsException e) {
+                        });
+                    }
+                    // If no more item left
+                    catch (IndexOutOfBoundsException e) {
+                        Platform.runLater(() -> {
                             buttons.get(currentButton).setDisable(true);
                             labels.get(currentButton).setText("Empty");
                             images.get(currentButton).setImage(null);
                             timeLabels.get(currentButton).setText("Not available");
                             icons.get(currentButton).setImage(null);
-                        } finally {
-                            System.out.println("Item " + currentButton + " " + (System.currentTimeMillis() - start) + " ms");
-                        }
-                    }));
+                        });
+                    }
                 }
             }
         }
@@ -248,7 +262,7 @@ public class MenuController extends SceneHandler implements Initializable {
 
     // Function to switch to article scene
     public void article(int index, int categoryIndex) {
-        super.article(index, categoryIndex);
+        article(items, index, categoryIndex);
     }
 
     // Function to switch to category scene

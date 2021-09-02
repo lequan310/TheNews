@@ -1,4 +1,4 @@
-package main;
+package main.SceneController;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -33,20 +33,20 @@ public class CategoryController extends SceneHandler implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Set return button to return to main menu
-        mainMenu.setOnAction(e -> menuHome(previousCategoryIndex));
+        mainMenu.setOnAction(e -> menuHome(previousCategoryIndex, false));
         addNodeToList();
 
         // Assigning category buttons to read articles from specific category
         for (int i = 0; i < buttons.size(); i++){
             int categoryIndex = i;
 
-            buttons.get(i).setOnAction(e -> menuHome(categoryIndex));
+            buttons.get(i).setOnAction(e -> menuHome(categoryIndex, true));
         }
     }
 
     // Function to switch to main menu scene
-    public void menuHome(int idx){
-        super.menuHome(idx);
+    public void menuHome(int idx, boolean reload){
+        super.menuHome(idx, reload);
     }
 
     // Add buttons to list for easier access

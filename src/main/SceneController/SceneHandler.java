@@ -1,4 +1,4 @@
-package main;
+package main.SceneController;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -11,17 +11,18 @@ import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import main.Model.Item;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class SceneHandler {
     private Parent root;
     @FXML private AnchorPane anchorPane;
 
-    protected final ExecutorService es = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
     protected boolean moving, resizeLeft, resizeRight, resizeUp, resizeDown, resizing = false;
     protected double x, y;
 
@@ -49,9 +50,8 @@ public class SceneHandler {
 
     // Creating Main Menu scene and assigning controller
     public Scene loadMenuScene(int index) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/Home.fxml"));
-        MenuController controller = new MenuController();
-        controller.setCategoryIndex(index);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Home.fxml"));
+        MenuController controller = new MenuController(0, true);
         loader.setController(controller);
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -65,52 +65,48 @@ public class SceneHandler {
     }
 
     // Loading Categories scene and assigning controller
-    public void menuCategories(int categoryIndex) {
+    @FXML protected void menuCategories(int categoryIndex) {
         try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/Categories.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Categories.fxml"));
             CategoryController controller = new CategoryController(categoryIndex);
             loader.setController(controller);
 
-            es.shutdown();
             root = loader.load();
             root.setOnKeyPressed(e -> {
-                if (e.getCode() == KeyCode.ESCAPE) controller.menuHome(categoryIndex);
+                if (e.getCode() == KeyCode.ESCAPE) controller.menuHome(categoryIndex, false);
             });
             anchorPane.getScene().setRoot(root);
             root.requestFocus();
-        }catch (IOException e){
+        }catch (Exception e){
             System.out.println(e.getMessage());
         }
     }
 
     // Loading Main Menu scene and assigning controller
-    public void menuHome(int categoryIndex) {
+    @FXML protected void menuHome(int categoryIndex, boolean reload) {
         try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/Home.fxml"));
-            MenuController controller = new MenuController();
-            controller.setCategoryIndex(categoryIndex);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Home.fxml"));
+            MenuController controller = new MenuController(categoryIndex, reload);
             loader.setController(controller);
 
-            es.shutdown();
             root = loader.load();
             root.setOnKeyPressed(new MenuHandler(controller));
             anchorPane.getScene().setRoot(root);
             root.requestFocus();
         }
-        catch (IOException e){
+        catch (Exception e){
             System.out.println(e.getMessage());
         }
     }
 
     // Loading article scene and assigning controller
-    public void article(int index, int categoryIndex){
+    @FXML protected void article(ArrayList<Item> items, int index, int categoryIndex){
         try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/NewsTemplate.fxml"));
-            ArticleController controller = new ArticleController(index, categoryIndex);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/NewsTemplate.fxml"));
+            ArticleController controller = new ArticleController(items, index, categoryIndex);
             KeyCombination reload = new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN);
             loader.setController(controller);
 
-            es.shutdown();
             root = loader.load();
             root.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
                 if (event.getCode() == KeyCode.LEFT)
@@ -120,7 +116,7 @@ public class SceneHandler {
                 else if (event.getCode() == KeyCode.F5 || reload.match(event))
                     controller.readArticle(); // F5 or Ctrl + R
                 else if (event.getCode() == KeyCode.ESCAPE)  // Escape to return to Menu
-                    controller.menuHome(categoryIndex);
+                    controller.menuHome(categoryIndex, false);
             });
             anchorPane.getScene().setRoot(root);
             root.requestFocus();
@@ -158,7 +154,6 @@ public class SceneHandler {
     }
 
     @FXML protected void close(MouseEvent event) {
-        es.shutdown();
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
         System.exit(0);
