@@ -732,11 +732,8 @@ public class ArticleController extends SceneHandler implements Initializable {
 
     protected Label createGraphicLabel(String caption) {
         Label label = new Label(caption);
-        if (!caption.equals(""))
-            label.setStyle("-fx-border-color: #404040; -fx-background-color: #bcbcbc");
-        else
-            label.setStyle("-fx-background-color: transparent");
 
+        label.setStyle("-fx-border-color: #404040; -fx-background-color: #bcbcbc");
         label.setContentDisplay(ContentDisplay.TOP);
         label.setAlignment(Pos.TOP_CENTER);
         label.setTextAlignment(TextAlignment.CENTER);

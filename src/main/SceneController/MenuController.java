@@ -95,7 +95,7 @@ public class MenuController extends SceneHandler implements Initializable {
     private NewsController newsController;
 
     private final String[] categories = {"NEW", "COVID", "POLITICS", "BUSINESS", "TECHNOLOGY", "HEALTH", "SPORTS", "ENTERTAINMENT", "WORLD", "OTHERS"};
-    private int categoryIndex = 0, currentPage = 1;
+    private int categoryIndex, currentPage = 1;
     private final boolean reload;
 
     public MenuController(int categoryIndex, boolean reload) {
