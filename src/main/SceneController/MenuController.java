@@ -224,16 +224,16 @@ public class MenuController extends SceneHandler implements Initializable {
                             buttons.get(currentButton).setDisable(false);
 
                             switch (items.get(idx).getSource()) {
-                                case VE -> icons.get(currentButton).setImage(new Image("/image/iconVE.png"));
-                                case TT -> icons.get(currentButton).setImage(new Image("/image/iconTT.png"));
-                                case TN -> icons.get(currentButton).setImage(new Image("/image/iconTN.jpeg"));
-                                case ZING -> icons.get(currentButton).setImage(new Image("/image/iconZING.png"));
-                                case ND -> icons.get(currentButton).setImage(new Image("/image/iconND.png"));
+                                case VE -> icons.get(currentButton).setImage(new Image("/image/iconVE.png", icon.getFitWidth(), icon.getFitHeight(), true, true));
+                                case TT -> icons.get(currentButton).setImage(new Image("/image/iconTT.png", icon.getFitWidth(), icon.getFitHeight(), true, true));
+                                case TN -> icons.get(currentButton).setImage(new Image("/image/iconTN.jpeg", icon.getFitWidth(), icon.getFitHeight(), true, true));
+                                case ZING -> icons.get(currentButton).setImage(new Image("/image/iconZING.png", icon.getFitWidth(), icon.getFitHeight(), true, true));
+                                case ND -> icons.get(currentButton).setImage(new Image("/image/iconND.png", icon.getFitWidth(), icon.getFitHeight(), true, true));
                             }
 
                             try {
-                                Image image = new Image(items.get(idx).getImgSrc(), true);
-                                images.get(currentButton).setImage(image);
+                                Image background = new Image(items.get(idx).getImgSrc(), image.getFitWidth(), image.getFitHeight(), true, true, true);
+                                images.get(currentButton).setImage(background);
                             } catch (IllegalArgumentException e) {
                                 images.get(currentButton).setImage(null);
                             }

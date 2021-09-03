@@ -127,7 +127,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         sourceLabel.setText(item.getLink());
 
         try {
-            thumbnail.setImage(new Image(item.getImgSrc(), true));
+            thumbnail.setImage(new Image(item.getImgSrc(), thumbnail.getFitWidth(), thumbnail.getFitHeight(), false, true, true));
         }
         catch (IllegalArgumentException e) {
             thumbnail.setImage(null);
