@@ -377,43 +377,7 @@ public class ArticleController extends SceneHandler implements Initializable {
             content.getChildren().add(description);
 
             // Loop through elements in main article
-            for (Element e : article) {
-                try {
-                    // Create and add label if element is text
-                    if (e.is("p")) {
-                        if (e.select("video").size() == 0) {
-                            content.getChildren().add(createLabel(e.text()));
-                        }
-                        else {
-                            content.getChildren().add(createVideoButton(e.select("source").attr("src"), ""));
-                        }
-                    }
-                    // Create and add image if element is image
-                    else if (e.is("div") && e.attr("class").equals("light-img")) {
-                        Image image = new Image(e.select("figure").attr("data-src"), true);
-                        content.getChildren().add(createImageLabel(image, e.select("figcaption").text()));
-                    }
-                    // Create and add label
-                    else if (e.is("ol")) {
-                        for (Element li : e.select("> *")) {
-                            content.getChildren().add(createLabel(li.text()));
-                        }
-                    }
-                    // Create and add wrapnote if element is wrapnote
-                    else if (e.is("blockquote")) {
-                        FlowPane pane = createWrapNote();
-
-                        for (Element i : e.select("> *")){
-                            if (i.is("p")) {
-                                pane.getChildren().add(createLabel(i.text()));
-                            }
-                        }
-
-                        content.getChildren().add(pane);
-                    }
-                }
-                catch (IllegalArgumentException ex) { continue; }
-            }
+            addND(article, content);
 
             // Create and add author label
             Label author = createDescription(body.select("div.box-author strong").text());
@@ -651,6 +615,40 @@ public class ArticleController extends SceneHandler implements Initializable {
                 else if (e.is("blockquote")) {
                     FlowPane pane = createWrapNote();
                     addZing(e.select("> *"), pane);
+                    content.getChildren().add(pane);
+                }
+            }
+            catch (IllegalArgumentException ex) { continue; }
+        }
+    }
+
+    private void addND(Elements elements, FlowPane content) {
+        for (Element e : elements) {
+            try {
+                // Create and add label if element is text
+                if (e.is("p")) {
+                    if (e.select("video").size() == 0) {
+                        content.getChildren().add(createLabel(e.text()));
+                    }
+                    else {
+                        content.getChildren().add(createVideoButton(e.select("source").attr("src"), ""));
+                    }
+                }
+                // Create and add image if element is image
+                else if (e.is("div") && e.attr("class").equals("light-img")) {
+                    Image image = new Image(e.select("figure").attr("data-src"), true);
+                    content.getChildren().add(createImageLabel(image, e.select("figcaption").text()));
+                }
+                // Create and add label
+                else if (e.is("ol") || e.is("ul")) {
+                    for (Element li : e.select("> *")) {
+                        content.getChildren().add(createLabel(li.text()));
+                    }
+                }
+                // Create and add wrapnote if element is wrapnote
+                else if (e.is("blockquote")) {
+                    FlowPane pane = createWrapNote();
+                    addND(e.select("> *"), pane);
                     content.getChildren().add(pane);
                 }
             }
