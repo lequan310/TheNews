@@ -133,7 +133,6 @@ public class MenuController extends SceneHandler implements Initializable {
                                 thread.start();
                                 thread.join();
 
-
                                 // Get articles after sorted by published date and initialize buttons
                                 items = newsController.getItems();
                                 changePage(0);
