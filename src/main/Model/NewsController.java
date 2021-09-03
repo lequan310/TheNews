@@ -230,7 +230,10 @@ public class NewsController extends Task<Void> {
 
                             // Get article link and thumbnail url
                             link = e.select(" a").attr("href");
-                            imgSrc = e.select("div.thumb-art").select("img").attr("data-src");
+                            imgSrc = e.select("div.thumb-art").select("source").attr("data-srcset");
+                            try {
+                                imgSrc = extract(imgSrc, "1x, ", " 2x");
+                            } catch (StringIndexOutOfBoundsException exception) {}
 
                             try {
                                 Connection.Response tempResponse = Jsoup.connect(link).timeout(5000).execute();
@@ -422,6 +425,9 @@ public class NewsController extends Task<Void> {
 
                             // Extract thumbnail link
                             imgSrc = extract(line, "<image>", "</image>");
+                            try {
+                                imgSrc = imgSrc.replace("400x300/", "");
+                            } catch (StringIndexOutOfBoundsException exception) {}
 
                             // Add item into list of items
                             Item item = new Item(title, link, date, imgSrc, Item.Source.TN);
@@ -533,6 +539,9 @@ public class NewsController extends Task<Void> {
 
                         // Get image source
                         imgSrc = e.select("img").attr("data-src");
+                        try {
+                            imgSrc = imgSrc.replace("resize/320x-/", "");
+                        } catch (StringIndexOutOfBoundsException exception) {}
 
                         // Get link
                         link = e.select("a").attr("href");

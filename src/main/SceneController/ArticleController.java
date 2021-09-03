@@ -770,6 +770,7 @@ public class ArticleController extends SceneHandler implements Initializable {
             anchorPane.setEffect(new BoxBlur(anchorPane.getWidth(), anchorPane.getHeight(), 1));
             alert.show();
         });
+        System.out.println(item.getLink());
     }
 
     // Function to navigate next and previous articles
