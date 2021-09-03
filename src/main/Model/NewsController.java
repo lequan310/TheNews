@@ -107,7 +107,7 @@ public class NewsController extends Task<Void> {
             }
             // If category is not Others
             else {
-                maxProgress = 250;
+                maxProgress = 200;
                 scrapeAll(categoryIndex, 1);
             }
 
