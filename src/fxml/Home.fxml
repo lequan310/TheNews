@@ -140,7 +140,7 @@
                         </VBox>
                         <ScrollPane fx:id="scrollPane" fitToWidth="true" prefHeight="975.0" prefWidth="1840.0" styleClass="grey-background" stylesheets="@../css/style.css">
                            <content>
-                              <FlowPane alignment="TOP_CENTER" columnHalignment="CENTER" hgap="20.0" prefHeight="1332.0" prefWidth="1818.0" styleClass="grey-background" stylesheets="@../css/style.css" vgap="20.0">
+                              <FlowPane fx:id="content" alignment="TOP_CENTER" columnHalignment="CENTER" hgap="20.0" prefHeight="1332.0" prefWidth="1818.0" styleClass="grey-background" stylesheets="@../css/style.css" vgap="20.0">
                                  <padding>
                                     <Insets bottom="20.0" left="5.0" right="5.0" top="20.0" />
                                  </padding>

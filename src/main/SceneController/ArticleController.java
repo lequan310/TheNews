@@ -99,6 +99,10 @@ public class ArticleController extends SceneHandler implements Initializable {
         blackPane.prefHeightProperty().bind(anchorPane.heightProperty().divide(3));
         thumbnail.fitHeightProperty().bind(blackPane.heightProperty().subtract(10));
         title.prefHeightProperty().bind(blackPane.heightProperty());
+        content.setOnScroll(e -> {
+            double delta = e.getDeltaY() * -5;
+            scrollPane.setVvalue(scrollPane.getVvalue() + delta / scrollPane.getContent().getBoundsInLocal().getHeight());
+        });
     }
 
     public void readArticle(){

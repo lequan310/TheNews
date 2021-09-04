@@ -81,6 +81,7 @@ public class MenuController extends SceneHandler implements Initializable {
     @FXML private Button page5;
     @FXML private AnchorPane anchorPane;
     @FXML private ScrollPane scrollPane;
+    @FXML private FlowPane content;
     @FXML private ProgressBar pb;
 
     private final ArrayList<ImageView> images = new ArrayList<>();
@@ -107,10 +108,13 @@ public class MenuController extends SceneHandler implements Initializable {
         newsController = NewsController.getInstance();
         newsController.setCategoryIndex(categoryIndex);
         pb.progressProperty().bind(newsController.progressProperty()); // Bind loading bar to scraping progress
-
-        addNodeToList();
         categoryButton.setDisable(true);
         categoryLabel.setText(categories[categoryIndex]);
+        content.setOnScroll(e -> {
+            double delta = e.getDeltaY() * -5;
+            scrollPane.setVvalue(scrollPane.getVvalue() + delta / scrollPane.getContent().getBoundsInLocal().getHeight());
+        });
+        addNodeToList();
 
         for (Button b : pages) {
             b.setDisable(true);
