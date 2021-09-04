@@ -700,7 +700,6 @@ public class ArticleController extends SceneHandler implements Initializable {
                     String imgSrc = e.select("img").attr("data-src");
                     imgSrc = imgSrc.replace("./", "");
                     imgSrc = urlAddress + imgSrc;
-                    System.out.println(imgSrc);
 
                     Image image = new Image(imgSrc, true);
                     Element figcaption = e.select("figcaption p").first();
