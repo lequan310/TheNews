@@ -1,6 +1,8 @@
 package main.SceneController;
 
 import javafx.application.Platform;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -722,8 +724,18 @@ public class ArticleController extends SceneHandler implements Initializable {
         mediaView.setOnMouseExited(e -> mediaPlayer.pause());
 
         // Adjust label position and size
-        Label label = createGraphicLabel("DRAG MOUSE IN TO PLAY: " + caption);
-        label.setGraphic(mediaView);
+        Label label = createGraphicLabel(caption);
+        label.setGraphic(new ImageView(new Image("/image/dragPlay.png", mediaView.getFitWidth(), mediaView.getFitHeight(), true, true)));
+
+        EventHandler<MouseEvent> tempHandler = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                label.setGraphic(mediaView);
+                label.removeEventHandler(MouseEvent.MOUSE_ENTERED, this);
+            }
+        };
+
+        label.addEventHandler(MouseEvent.MOUSE_ENTERED, tempHandler);
         label.setPrefWidth(mediaView.getFitWidth());
         return label;
     }
