@@ -27,29 +27,29 @@ public class NewsController extends Task<Void> {
     // List of URL to scrape from
     // New, Covid, Politics, Business, Technology, Health, Sports, Entertainment, World, Others
     private final ArrayList<String> VNEXPRESS = new ArrayList<>(
-        List.of("https://vnexpress.net/rss/tin-moi-nhat.rss", "https://vnexpress.net/rss/tin-noi-bat.rss", "https://vnexpress.net/thoi-su/chinh-tri",
-                "https://vnexpress.net/kinh-doanh", "https://vnexpress.net/so-hoa", "https://vnexpress.net/rss/suc-khoe.rss", "https://vnexpress.net/the-thao",
-                "https://vnexpress.net/giai-tri", "https://vnexpress.net/rss/the-gioi.rss", "https://vnexpress.net/rss/cuoi.rss",
-                "https://vnexpress.net/rss/giao-duc.rss", "https://vnexpress.net/rss/khoa-hoc.rss", "https://vnexpress.net/rss/y-kien.rss"));
+            List.of("https://vnexpress.net/rss/tin-moi-nhat.rss", "https://vnexpress.net/rss/tin-noi-bat.rss", "https://vnexpress.net/thoi-su/chinh-tri",
+                    "https://vnexpress.net/kinh-doanh", "https://vnexpress.net/so-hoa", "https://vnexpress.net/rss/suc-khoe.rss", "https://vnexpress.net/the-thao",
+                    "https://vnexpress.net/giai-tri", "https://vnexpress.net/rss/the-gioi.rss", "https://vnexpress.net/rss/cuoi.rss",
+                    "https://vnexpress.net/rss/giao-duc.rss", "https://vnexpress.net/rss/khoa-hoc.rss", "https://vnexpress.net/rss/y-kien.rss"));
     private final ArrayList<String> TUOITRE = new ArrayList<>(
-        List.of("https://tuoitre.vn/rss/tin-moi-nhat.rss", "https://tuoitre.vn/rss/thoi-su.rss", "https://tuoitre.vn/tim-kiem.htm?keywords=ch%C3%ADnh%20tr%E1%BB%8B",
-                "https://tuoitre.vn/rss/kinh-doanh.rss", "https://tuoitre.vn/rss/cong-nghe.rss", "https://tuoitre.vn/rss/suc-khoe.rss",
-                "https://tuoitre.vn/rss/the-thao.rss", "https://tuoitre.vn/rss/giai-tri.rss", "https://tuoitre.vn/rss/the-gioi.rss", "https://tuoitre.vn/rss/xe.rss",
-                "https://tuoitre.vn/rss/giao-duc.rss", "https://tuoitre.vn/rss/nhip-song-tre.rss", "https://tuoitre.vn/rss/ban-doc-lam-bao.rss"));
+            List.of("https://tuoitre.vn/rss/tin-moi-nhat.rss", "https://tuoitre.vn/rss/thoi-su.rss", "https://tuoitre.vn/tim-kiem.htm?keywords=ch%C3%ADnh%20tr%E1%BB%8B",
+                    "https://tuoitre.vn/rss/kinh-doanh.rss", "https://tuoitre.vn/rss/cong-nghe.rss", "https://tuoitre.vn/rss/suc-khoe.rss",
+                    "https://tuoitre.vn/rss/the-thao.rss", "https://tuoitre.vn/rss/giai-tri.rss", "https://tuoitre.vn/rss/the-gioi.rss", "https://tuoitre.vn/rss/xe.rss",
+                    "https://tuoitre.vn/rss/giao-duc.rss", "https://tuoitre.vn/rss/nhip-song-tre.rss", "https://tuoitre.vn/rss/ban-doc-lam-bao.rss"));
     private final ArrayList<String> THANHNIEN = new ArrayList<>(
-        List.of("https://thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/thoi-su.rss", "https://thanhnien.vn/rss/thoi-su/chinh-tri.rss",
-                "https://thanhnien.vn/rss/tai-chinh-kinh-doanh.rss", "https://thanhnien.vn/rss/cong-nghe.rss", "https://thanhnien.vn/rss/suc-khoe.rss",
-                "https://thethao.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giai-tri.rss", "https://thanhnien.vn/rss/the-gioi.rss",
-                "https://game.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giao-duc.rss", "https://thanhnien.vn/rss/ban-can-biet.rss", "https://thanhnien.vn/rss/gioi-tre.rss"));
+            List.of("https://thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/thoi-su.rss", "https://thanhnien.vn/rss/thoi-su/chinh-tri.rss",
+                    "https://thanhnien.vn/rss/tai-chinh-kinh-doanh.rss", "https://thanhnien.vn/rss/cong-nghe.rss", "https://thanhnien.vn/rss/suc-khoe.rss",
+                    "https://thethao.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giai-tri.rss", "https://thanhnien.vn/rss/the-gioi.rss",
+                    "https://game.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giao-duc.rss", "https://thanhnien.vn/rss/ban-can-biet.rss", "https://thanhnien.vn/rss/gioi-tre.rss"));
     private final ArrayList<String> ZING = new ArrayList<>(
-        List.of("https://zingnews.vn/", "https://zingnews.vn/suc-khoe.html", "https://zingnews.vn/chinh-tri.html",
-                "https://zingnews.vn/kinh-doanh-tai-chinh.html", "https://zingnews.vn/cong-nghe.html", "https://zingnews.vn/suc-khoe.html",
-                "https://zingnews.vn/the-thao.html", "https://zingnews.vn/giai-tri.html", "https://zingnews.vn/the-gioi.html",
-                "https://zingnews.vn/doi-song.html", "https://zingnews.vn/giao-duc.html", "https://zingnews.vn/du-lich.html", "https://zingnews.vn/oto-xe-may.html"));
+            List.of("https://zingnews.vn/", "https://zingnews.vn/suc-khoe.html", "https://zingnews.vn/chinh-tri.html",
+                    "https://zingnews.vn/kinh-doanh-tai-chinh.html", "https://zingnews.vn/cong-nghe.html", "https://zingnews.vn/suc-khoe.html",
+                    "https://zingnews.vn/the-thao.html", "https://zingnews.vn/giai-tri.html", "https://zingnews.vn/the-gioi.html",
+                    "https://zingnews.vn/doi-song.html", "https://zingnews.vn/giao-duc.html", "https://zingnews.vn/du-lich.html", "https://zingnews.vn/oto-xe-may.html"));
     private final ArrayList<String> NHANDAN = new ArrayList<>(
-        List.of("https://nhandan.vn/", "https://nhandan.vn/y-te", "https://nhandan.vn/chinhtri", "https://nhandan.vn/kinhte",
-                "https://nhandan.vn/khoahoc-congnghe", "https://nhandan.vn/y-te", "https://nhandan.vn/thethao", "https://nhandan.vn/vanhoa",
-                "https://nhandan.vn/thegioi", "https://nhandan.vn/xahoi", "https://nhandan.vn/giaoduc", "https://nhandan.vn/bandoc", "https://nhandan.vn/phapluat"));
+            List.of("https://nhandan.vn/", "https://nhandan.vn/y-te", "https://nhandan.vn/chinhtri", "https://nhandan.vn/kinhte",
+                    "https://nhandan.vn/khoahoc-congnghe", "https://nhandan.vn/y-te", "https://nhandan.vn/thethao", "https://nhandan.vn/vanhoa",
+                    "https://nhandan.vn/thegioi", "https://nhandan.vn/xahoi", "https://nhandan.vn/giaoduc", "https://nhandan.vn/bandoc", "https://nhandan.vn/phapluat"));
 
     private volatile boolean t1, t2, t3, t4, t5;
     private int categoryIndex, progress = 0, maxProgress; // Index to read from the arrays below
@@ -102,16 +102,12 @@ public class NewsController extends Task<Void> {
 
             // If category is Others
             if (categoryIndex == 9) {
-                maxProgress = 600;
+                maxProgress = 700;
                 scrapeAll(categoryIndex, 4);
-            }
-            else if (categoryIndex == 1) {
-                maxProgress = 200;
-                scrapeAll(categoryIndex, 1);
             }
             // If category is not Others
             else {
-                maxProgress = 200;
+                maxProgress = 250;
                 scrapeAll(categoryIndex, 1);
             }
 
@@ -191,8 +187,7 @@ public class NewsController extends Task<Void> {
 
                                     Document temp = tempResponse.parse();
                                     imgSrc = temp.select("article.fck_detail img").first().attr("data-src");
-                                }
-                                catch (Exception exception) {
+                                } catch (Exception exception) {
                                     inItem = false;
                                 }
                             }
@@ -207,8 +202,7 @@ public class NewsController extends Task<Void> {
                     }
 
                     in.close();
-                }
-                else {
+                } else {
                     Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
                     if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
 
@@ -237,7 +231,8 @@ public class NewsController extends Task<Void> {
                             imgSrc = e.select("div.thumb-art").select("source").attr("data-srcset");
                             try {
                                 imgSrc = extract(imgSrc, "1x, ", " 2x");
-                            } catch (StringIndexOutOfBoundsException exception) {}
+                            } catch (StringIndexOutOfBoundsException exception) {
+                            }
 
                             try {
                                 Connection.Response tempResponse = Jsoup.connect(link).timeout(5000).execute();
@@ -331,8 +326,7 @@ public class NewsController extends Task<Void> {
                     }
 
                     in.close();
-                }
-                else {
+                } else {
                     Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
                     if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
 
@@ -359,7 +353,8 @@ public class NewsController extends Task<Void> {
                             imgSrc = e.select("img").attr("src");
                             try {
                                 imgSrc = imgSrc.replace("zoom/212_132/", "");
-                            } catch (StringIndexOutOfBoundsException exception) {}
+                            } catch (StringIndexOutOfBoundsException exception) {
+                            }
 
                             try {
                                 Connection.Response tempResponse = Jsoup.connect(link).timeout(5000).execute();
@@ -431,7 +426,8 @@ public class NewsController extends Task<Void> {
                             imgSrc = extract(line, "<image>", "</image>");
                             try {
                                 imgSrc = imgSrc.replace("400x300/", "");
-                            } catch (StringIndexOutOfBoundsException exception) {}
+                            } catch (StringIndexOutOfBoundsException exception) {
+                            }
 
                             // Add item into list of items
                             Item item = new Item(title, link, date, imgSrc, Item.Source.TN);
@@ -515,7 +511,6 @@ public class NewsController extends Task<Void> {
     }
 
     private void scrapeNhanDan(List<String> links) {
-        //String urlAddress = links.get(0);
         for (String urlAddress : links) {
             try {
                 Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
@@ -545,7 +540,8 @@ public class NewsController extends Task<Void> {
                         imgSrc = e.select("img").attr("data-src");
                         try {
                             imgSrc = imgSrc.replace("resize/320x-/", "");
-                        } catch (StringIndexOutOfBoundsException exception) {}
+                        } catch (StringIndexOutOfBoundsException exception) {
+                        }
 
                         // Get link
                         link = e.select("a").attr("href");
@@ -599,7 +595,8 @@ public class NewsController extends Task<Void> {
     }
 
     private void scrapeAll(int categoryIndex, int count) {
-        if (categoryIndex == 1){
+        System.gc();
+        if (categoryIndex == 1) {
             es.execute(() -> scrapeVE(Arrays.asList(VNEXPRESS.get(1), VNEXPRESS.get(5), VNEXPRESS.get(8))));
             es.execute(() -> scrapeTuoiTre(Arrays.asList(TUOITRE.get(1), TUOITRE.get(5), TUOITRE.get(8))));
             es.execute(() -> scrapeThanhNien(Arrays.asList(THANHNIEN.get(1), THANHNIEN.get(5), THANHNIEN.get(8))));

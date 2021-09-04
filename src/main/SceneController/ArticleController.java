@@ -104,7 +104,6 @@ public class ArticleController extends SceneHandler implements Initializable {
 
     public void readArticle(){
         System.gc();
-        Runtime.getRuntime().freeMemory();
         System.out.println(Math.round((double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Math.pow(1024, 2)) + " MB");
         Platform.runLater(() -> {
             content.getChildren().clear();
@@ -881,6 +880,7 @@ public class ArticleController extends SceneHandler implements Initializable {
     }
 
     @FXML private void menuHome(){
+        content.getChildren().clear();
         menuHome(categoryIndex, false);
     }
 }
