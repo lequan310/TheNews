@@ -108,7 +108,6 @@ public class NewsController extends Task<Void> {
             else if (categoryIndex == 1) {
                 maxProgress = 200;
                 scrapeAll(categoryIndex, 1);
-                scrapeAll(categoryIndex + 4, 1);
             }
             // If category is not Others
             else {
@@ -600,11 +599,20 @@ public class NewsController extends Task<Void> {
     }
 
     private void scrapeAll(int categoryIndex, int count) {
-        es.execute(() -> scrapeVE(VNEXPRESS.subList(categoryIndex, categoryIndex + count)));
-        es.execute(() -> scrapeTuoiTre(TUOITRE.subList(categoryIndex, categoryIndex + count)));
-        es.execute(() -> scrapeThanhNien(THANHNIEN.subList(categoryIndex, categoryIndex + count)));
-        es.execute(() -> scrapeZing(ZING.subList(categoryIndex, categoryIndex + count)));
-        es.execute(() -> scrapeNhanDan(NHANDAN.subList(categoryIndex, categoryIndex + count)));
+        if (categoryIndex == 1){
+            es.execute(() -> scrapeVE(Arrays.asList(VNEXPRESS.get(1), VNEXPRESS.get(5))));
+            es.execute(() -> scrapeTuoiTre(Arrays.asList(TUOITRE.get(1), TUOITRE.get(5))));
+            es.execute(() -> scrapeThanhNien(Arrays.asList(THANHNIEN.get(1), THANHNIEN.get(5))));
+            es.execute(() -> scrapeZing(Arrays.asList(ZING.get(1), ZING.get(5))));
+            es.execute(() -> scrapeNhanDan(Arrays.asList(NHANDAN.get(1), NHANDAN.get(5))));
+        }
+        else {
+            es.execute(() -> scrapeVE(VNEXPRESS.subList(categoryIndex, categoryIndex + count)));
+            es.execute(() -> scrapeTuoiTre(TUOITRE.subList(categoryIndex, categoryIndex + count)));
+            es.execute(() -> scrapeThanhNien(THANHNIEN.subList(categoryIndex, categoryIndex + count)));
+            es.execute(() -> scrapeZing(ZING.subList(categoryIndex, categoryIndex + count)));
+            es.execute(() -> scrapeNhanDan(NHANDAN.subList(categoryIndex, categoryIndex + count)));
+        }
     }
 
     // Check if title of article is in covid category using keywords

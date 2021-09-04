@@ -362,29 +362,41 @@ public class ArticleController extends SceneHandler implements Initializable {
             if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
             Document doc = response.parse();
 
-            // Extract elements from main article
-            Elements body = doc.select("div.box-content-detail");
-            Elements article = doc.select("div.detail-content-body > *");
+            if (urlAddress.contains("special.nhandan.vn")) {
+                Elements article = doc.select("article > *");
+                String newURL = urlAddress.replace("index.html", "");
 
-            // Create and add Thumbnail image
-            try {
-                Image thumb = new Image(body.select("div.box-detail-thumb img").attr("src"), true);
-                Label thumbnail = createImageLabel(thumb, body.select("div.box-detail-thumb span").text());
-                content.getChildren().add(thumbnail);
+                for (Element e : article) {
+                    if (e.is("div") && e.attr("id").contains("section")) {
+                        addSpecialND(e.select("> *"), content, newURL);
+                    }
+                }
             }
-            catch (IllegalArgumentException ex) {}
+            else {
+                // Extract elements from main article
+                Elements body = doc.select("div.box-content-detail");
+                Elements article = doc.select("div.detail-content-body > *");
 
-            // Create and add Description label
-            Label description = createDescription(body.select("div.box-des-detail p").text());
-            content.getChildren().add(description);
+                // Create and add Thumbnail image
+                try {
+                    Image thumb = new Image(body.select("div.box-detail-thumb img").attr("src"), true);
+                    Label thumbnail = createImageLabel(thumb, body.select("div.box-detail-thumb span").text());
+                    content.getChildren().add(thumbnail);
+                }
+                catch (IllegalArgumentException ex) {}
 
-            // Loop through elements in main article
-            addND(article, content);
+                // Create and add Description label
+                Label description = createDescription(body.select("div.box-des-detail p").text());
+                content.getChildren().add(description);
 
-            // Create and add author label
-            Label author = createDescription(body.select("div.box-author strong").text());
-            author.setAlignment(Pos.TOP_RIGHT);
-            content.getChildren().add(author);
+                // Loop through elements in main article
+                addND(article, content);
+
+                // Create and add author label
+                Label author = createDescription(body.select("div.box-author strong").text());
+                author.setAlignment(Pos.TOP_RIGHT);
+                content.getChildren().add(author);
+            }
         }
         catch (Exception e){
             System.out.println(e.getMessage());
@@ -655,6 +667,61 @@ public class ArticleController extends SceneHandler implements Initializable {
                 }
             }
             catch (IllegalArgumentException ex) { continue; }
+        }
+    }
+
+    private void addSpecialND(Elements elements, FlowPane content, String urlAddress) {
+        for (Element e : elements) {
+            if (e.is("p")) {
+                Label label = createLabel(e.text());
+                if (e.select("strong").size() > 0) {
+                    label.setFont(Font.font("Roboto", FontWeight.BOLD, WORDSIZE));
+                }
+
+                content.getChildren().add(label);
+            }
+            else if (e.is("h2") || e.is("h3")) {
+                content.getChildren().add(createDescription(e.text()));
+            }
+            else if (e.is("blockquote")) {
+                FlowPane pane = createWrapNote();
+
+                if (!e.select("> *").first().is("footer")){
+                    addSpecialND(e.select("> *"), pane, urlAddress);
+                    pane.getChildren().add(createLabel(e.select("footer").text()));
+                }
+                else {
+                    pane.getChildren().add(createLabel(e.text()));
+                }
+                content.getChildren().add(pane);
+            }
+            else if ((e.is("figure") && e.select("img").size() > 0) || e.is("picture")){
+                try {
+                    String imgSrc = e.select("img").attr("data-src");
+                    imgSrc = imgSrc.replace("./", "");
+                    imgSrc = urlAddress + imgSrc;
+                    System.out.println(imgSrc);
+
+                    Image image = new Image(imgSrc, true);
+                    Element figcaption = e.select("figcaption p").first();
+                    String caption = (figcaption == null) ? "" : figcaption.text();
+
+                    if (imgSrc.endsWith("g") || imgSrc.endsWith(".gif"))
+                        content.getChildren().add(createImageLabel(image, caption));
+                }
+                catch (StringIndexOutOfBoundsException | IllegalArgumentException exception) {}
+            }
+            else if (e.is("span") && e.hasText()) {
+                content.getChildren().add(createLabel(e.text()));
+            }
+            else if (e.is("div") && e.attr("class").contains("Caption") && e.select("p").size() > 0){
+                Label caption = createLabel(e.selectFirst("p").text());
+                caption.setAlignment(Pos.CENTER);
+                content.getChildren().add(caption);
+            }
+            else if (e.is("div")) {
+                addSpecialND(e.select("> *"), content, urlAddress);
+            }
         }
     }
 
