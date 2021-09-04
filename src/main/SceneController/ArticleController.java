@@ -32,11 +32,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ArticleController extends SceneHandler implements Initializable {
-    private final int WORDSIZE = 18;
-    private final ArrayList<Item> items;
-    private final int categoryIndex;
-    private Item item;
+    private final int WORDSIZE = 18, categoryIndex;
     private int index;
+    private final ArrayList<Item> items;
+    private Item item;
 
     @FXML private AnchorPane anchorPane;
     @FXML private FlowPane content;
@@ -116,7 +115,6 @@ public class ArticleController extends SceneHandler implements Initializable {
                 case ZING -> readArticleZing(item.getLink());
                 case ND -> readArticleND(item.getLink());
             }
-
             content.getChildren().addAll(createLabel(""));
         });
 
@@ -782,6 +780,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         // Create media player
         Media media = new Media(videoSrc);
         MediaPlayer mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.setVolume(0.5);
         MediaView mediaView = new MediaView(mediaPlayer);
         mediaView.setFitWidth(800);
         mediaView.setPreserveRatio(true);
@@ -790,9 +789,14 @@ public class ArticleController extends SceneHandler implements Initializable {
 
         // Adjust label position and size
         Label label = createGraphicLabel(caption);
-        label.setGraphic(new ImageView(new Image("/image/dragPlay.png", mediaView.getFitWidth(), mediaView.getFitHeight(), true, true)));
+        StackPane container = new StackPane();
+        ImageView imageView = new ImageView(new Image("/image/dragPlay.png", mediaView.getFitWidth(), mediaView.getFitHeight(), true, true));
+        imageView.setOpacity(0.7);
+        container.getChildren().add(mediaView);
+        container.getChildren().add(imageView);
+        label.setGraphic(container);
 
-        EventHandler<MouseEvent> tempHandler = new EventHandler<MouseEvent>() {
+        EventHandler<MouseEvent> tempHandler = new EventHandler<>() {
             @Override
             public void handle(MouseEvent event) {
                 label.setGraphic(mediaView);
