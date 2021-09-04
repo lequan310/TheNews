@@ -32,12 +32,12 @@ public class NewsController extends Task<Void> {
                 "https://vnexpress.net/giai-tri", "https://vnexpress.net/rss/the-gioi.rss", "https://vnexpress.net/rss/cuoi.rss",
                 "https://vnexpress.net/rss/giao-duc.rss", "https://vnexpress.net/rss/khoa-hoc.rss", "https://vnexpress.net/rss/y-kien.rss"));
     private final ArrayList<String> TUOITRE = new ArrayList<>(
-        List.of("https://tuoitre.vn/rss/tin-moi-nhat.rss", "https://tuoitre.vn/rss/suc-khoe.rss", "https://tuoitre.vn/tim-kiem.htm?keywords=ch%C3%ADnh%20tr%E1%BB%8B",
+        List.of("https://tuoitre.vn/rss/tin-moi-nhat.rss", "https://tuoitre.vn/rss/thoi-su.rss", "https://tuoitre.vn/tim-kiem.htm?keywords=ch%C3%ADnh%20tr%E1%BB%8B",
                 "https://tuoitre.vn/rss/kinh-doanh.rss", "https://tuoitre.vn/rss/cong-nghe.rss", "https://tuoitre.vn/rss/suc-khoe.rss",
                 "https://tuoitre.vn/rss/the-thao.rss", "https://tuoitre.vn/rss/giai-tri.rss", "https://tuoitre.vn/rss/the-gioi.rss", "https://tuoitre.vn/rss/xe.rss",
                 "https://tuoitre.vn/rss/giao-duc.rss", "https://tuoitre.vn/rss/nhip-song-tre.rss", "https://tuoitre.vn/rss/ban-doc-lam-bao.rss"));
     private final ArrayList<String> THANHNIEN = new ArrayList<>(
-        List.of("https://thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/suc-khoe.rss", "https://thanhnien.vn/rss/thoi-su/chinh-tri.rss",
+        List.of("https://thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/thoi-su.rss", "https://thanhnien.vn/rss/thoi-su/chinh-tri.rss",
                 "https://thanhnien.vn/rss/tai-chinh-kinh-doanh.rss", "https://thanhnien.vn/rss/cong-nghe.rss", "https://thanhnien.vn/rss/suc-khoe.rss",
                 "https://thethao.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giai-tri.rss", "https://thanhnien.vn/rss/the-gioi.rss",
                 "https://game.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giao-duc.rss", "https://thanhnien.vn/rss/ban-can-biet.rss", "https://thanhnien.vn/rss/gioi-tre.rss"));
@@ -104,6 +104,11 @@ public class NewsController extends Task<Void> {
             if (categoryIndex == 9) {
                 maxProgress = 600;
                 scrapeAll(categoryIndex, 4);
+            }
+            else if (categoryIndex == 1) {
+                maxProgress = 200;
+                scrapeAll(categoryIndex, 1);
+                scrapeAll(categoryIndex + 4, 1);
             }
             // If category is not Others
             else {
