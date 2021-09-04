@@ -92,17 +92,14 @@ public class ArticleController extends SceneHandler implements Initializable {
         readArticle();
         previousButton.setOnAction(e -> previousArticle());
         nextButton.setOnAction(e -> nextArticle());
-
-        if (index == 0)
-            previousButton.setDisable(true);
-
         blackPane.prefHeightProperty().bind(anchorPane.heightProperty().divide(3));
         thumbnail.fitHeightProperty().bind(blackPane.heightProperty().subtract(10));
         title.prefHeightProperty().bind(blackPane.heightProperty());
         content.setOnScroll(e -> {
-            double delta = e.getDeltaY() * -5;
+            double delta = e.getDeltaY() * -4;
             scrollPane.setVvalue(scrollPane.getVvalue() + delta / scrollPane.getContent().getBoundsInLocal().getHeight());
         });
+        if (index == 0) previousButton.setDisable(true);
     }
 
     public void readArticle(){
