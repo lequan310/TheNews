@@ -18,14 +18,14 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class NewsController extends Task<Void> {
     private static NewsController newsController = null;
-    private final ArrayList<Item> items = new ArrayList<>(); // List of items that is scraped and sorted to be displayed
+    private ArrayList<Item> items = new ArrayList<>(); // List of items that is scraped and sorted to be displayed
     private ExecutorService es;
 
-    // List of URL to scrape from
-    // New, Covid, Politics, Business, Technology, Health, Sports, Entertainment, World, Others
+    // List of URL to scrape from in order: New, Covid, Politics, Business, Technology, Health, Sports, Entertainment, World, Others
     private final ArrayList<String> VNEXPRESS = new ArrayList<>(
             List.of("https://vnexpress.net/rss/tin-moi-nhat.rss", "https://vnexpress.net/rss/tin-noi-bat.rss", "https://vnexpress.net/thoi-su/chinh-tri",
                     "https://vnexpress.net/kinh-doanh", "https://vnexpress.net/so-hoa", "https://vnexpress.net/rss/suc-khoe.rss", "https://vnexpress.net/the-thao",
@@ -87,29 +87,23 @@ public class NewsController extends Task<Void> {
 
     public void setCategoryIndex(int categoryIndex) {
         this.categoryIndex = categoryIndex;
+
+        switch (categoryIndex) {
+            case 0 -> maxProgress = 2000;
+            case 9 -> maxProgress = 700;
+            default -> maxProgress = 250;
+        }
     }
 
     public void start() {
         try {
-            es = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
+            long start = System.currentTimeMillis();
+            es = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 4);
             t1 = t2 = t3 = t4 = t5 = false;
             items.clear();
             progress = 0;
-
-            long start = System.currentTimeMillis();
             updateProgress(0, 1);
-            System.out.println();
-
-            // If category is Others
-            if (categoryIndex == 9) {
-                maxProgress = 700;
-                scrapeAll(categoryIndex, 4);
-            }
-            // If category is not Others
-            else {
-                maxProgress = 250;
-                scrapeAll(categoryIndex, 1);
-            }
+            scrapeAll(categoryIndex);
 
             // Sort items and update progress bar
             while (!t1 || !t2 || !t3 || !t4 || !t5) {}
@@ -118,20 +112,20 @@ public class NewsController extends Task<Void> {
             es.awaitTermination(10, TimeUnit.SECONDS);
             es = null;
 
-            Collections.sort(items);
-            System.gc();
-            System.out.println(Math.round((double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Math.pow(1024, 2)) + " MB");
-
-            // Remove duplicate
+            // Remove duplicate and then sort
+            Collections.sort(items, Comparator.comparing(Item::getLink));
             for (int i = 1; i < items.size(); i++) {
                 if (items.get(i).equalTo(items.get(i - 1))) {
                     items.remove(i);
                     i--;
                 }
             }
-
+            Collections.sort(items);
             updateProgress(1, 1);
-            System.out.println("Achieve " + items.size() + " items: " + (System.currentTimeMillis() - start) + " ms");
+
+            System.gc();
+            System.out.println(Math.round((double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Math.pow(1024, 2)) + " MB");
+            System.out.println("Achieve " + items.size() + " items: " + (System.currentTimeMillis() - start) + " ms\n");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -142,67 +136,80 @@ public class NewsController extends Task<Void> {
         return null;
     }
 
+    // Scrape articles from category
     private void scrapeVE(List<String> links) {
         for (String urlAddress : links) {
             try {
                 if (urlAddress.contains(".rss")) {
-                    // Creating buffered reader to read RSS file and extract items information
-                    URL rssURL = new URL(urlAddress);
-                    BufferedReader in = new BufferedReader(new InputStreamReader(rssURL.openStream()));
-                    String title = "", pubDate = "", link = "", imgSrc = "", line;
-                    LocalDateTime date = LocalDateTime.MIN;
-                    boolean inItem = false;
+                    es.submit(() -> {
+                        try {
+                            // Creating buffered reader to read RSS file and extract items information
+                            URL rssURL = new URL(urlAddress);
+                            BufferedReader in = new BufferedReader(new InputStreamReader(rssURL.openStream()));
+                            String title = "", pubDate = "", link = "", imgSrc = "", line;
+                            LocalDateTime date = LocalDateTime.MIN;
+                            boolean inItem = false;
 
-                    // Loop through lines in RSS
-                    while ((line = in.readLine()) != null) {
-                        // If line contains <item> then it's start of an item
-                        if (line.contains("<item>")) {
-                            inItem = true;
-                        }
-                        // Get item title
-                        else if (line.contains("<title>") && inItem) {
-                            title = extract(line, "<title>", "</title>");
+                            // Loop through lines in RSS
+                            while ((line = in.readLine()) != null) {
+                                // If line contains <item> then it's start of an item
+                                if (line.contains("<item>")) {
+                                    inItem = true;
+                                }
+                                // Get item title
+                                else if (line.contains("<title>") && inItem) {
+                                    title = extract(line, "<title>", "</title>");
 
-                            if (categoryIndex == 1 && !checkCovidKeyword(title)) inItem = false;
-                        }
-                        // Get item published date
-                        else if (line.contains("<pubDate>") && inItem) {
-                            pubDate = extract(line, "<pubDate>", "</pubDate>");
-                            DateTimeFormatter df = DateTimeFormatter.ofPattern("E, dd MMM yyyy HH:mm:ss +0700");
-                            date = LocalDateTime.parse(pubDate, df);
-                        }
-                        // Get item source link
-                        else if (line.contains("<link>") && inItem) {
-                            link = extract(line, "<link>", "</link>");
-                        }
-                        // Get item thumbnail link in description
-                        else if (line.contains("<description>") && inItem) {
-                            try {
-                                imgSrc = extract(line, "<description>", "</description>");
-                                imgSrc = extract(imgSrc, "<img src=\"", "\"");
-                            } catch (StringIndexOutOfBoundsException e) {
-                                try {
-                                    Connection.Response tempResponse = Jsoup.connect(link).timeout(5000).response();
-                                    if (tempResponse.statusCode() >= 400) throw new IOException();
+                                    if (categoryIndex == 1 && !checkCovidKeyword(title)) inItem = false;
+                                }
+                                // Get item published date
+                                else if (line.contains("<pubDate>") && inItem) {
+                                    pubDate = extract(line, "<pubDate>", "</pubDate>");
+                                    DateTimeFormatter df = DateTimeFormatter.ofPattern("E, dd MMM yyyy HH:mm:ss +0700");
+                                    date = LocalDateTime.parse(pubDate, df);
+                                }
+                                // Get item source link
+                                else if (line.contains("<link>") && inItem) {
+                                    link = extract(line, "<link>", "</link>");
+                                }
+                                // Get item thumbnail link in description
+                                else if (line.contains("<description>") && inItem) {
+                                    try {
+                                        imgSrc = extract(line, "<description>", "</description>");
+                                        imgSrc = extract(imgSrc, "<img src=\"", "\"");
+                                    } catch (StringIndexOutOfBoundsException e) {
+                                        try {
+                                            Connection.Response tempResponse = Jsoup.connect(link).timeout(5000).response();
+                                            if (tempResponse.statusCode() >= 400) throw new IOException();
 
-                                    Document temp = tempResponse.parse();
-                                    imgSrc = temp.select("article.fck_detail img").first().attr("data-src");
-                                } catch (Exception exception) {
+                                            Document temp = tempResponse.parse();
+                                            imgSrc = temp.select("article.fck_detail img").first().attr("data-src");
+                                        } catch (Exception exception) {
+                                            inItem = false;
+                                        }
+                                    }
+                                }
+                                // Add item to list at the end of item (when all information of an item object is gathered)
+                                else if (line.contains("</item>") && inItem) {
                                     inItem = false;
+                                    Item item = new Item(title, link, date, imgSrc, Item.Source.VE);
+                                    items.add(item);
+                                    loadProgress(); // updateProgress(progress++, maxProgress);
                                 }
                             }
-                        }
-                        // Add item to list at the end of item (when all information of an item object is gathered)
-                        else if (line.contains("</item>") && inItem) {
-                            inItem = false;
-                            Item item = new Item(title, link, date, imgSrc, Item.Source.VE);
-                            items.add(item);
-                            loadProgress(); // updateProgress(progress++, maxProgress);
-                        }
-                    }
 
-                    in.close();
-                } else {
+                            in.close();
+                        }
+                        catch (MalformedURLException e) {
+                            e.printStackTrace();
+                        }
+                        catch (IOException e) {
+                            System.out.println("Can't connect to " + urlAddress);
+                            error += urlAddress + ": " + e.getMessage() + "\n";
+                        }
+                    });
+                }
+                else {
                     Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
                     if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
 
@@ -275,58 +282,69 @@ public class NewsController extends Task<Void> {
         for (String urlAddress : links) {
             try {
                 if (urlAddress.contains(".rss")) {
-                    // Creating buffered reader to read RSS file and extract items information
-                    URL rssURL = new URL(urlAddress);
-                    BufferedReader in = new BufferedReader(new InputStreamReader(rssURL.openStream()));
-                    String title = "", pubDate = "", link = "", imgSrc = "", line;
-                    LocalDateTime date = LocalDateTime.MIN;
-                    boolean inItem = false;
+                    es.submit(() -> {
+                        try {
+                            // Creating buffered reader to read RSS file and extract items information
+                            URL rssURL = new URL(urlAddress);
+                            BufferedReader in = new BufferedReader(new InputStreamReader(rssURL.openStream()));
+                            String title = "", pubDate = "", link = "", imgSrc = "", line;
+                            LocalDateTime date = LocalDateTime.MIN;
+                            boolean inItem = false;
 
-                    // Loop through lines in RSS
-                    while ((line = in.readLine()) != null) {
-                        if (line.contains("<item>")) {
-                            inItem = true;
-                        }
-                        // Extract item title
-                        else if (line.contains("<title>") && inItem) {
-                            title = extract(line, "<title>", "</title>");
-                            title = extract(title, "<![CDATA[", "]]>");
+                            // Loop through lines in RSS
+                            while ((line = in.readLine()) != null) {
+                                if (line.contains("<item>")) {
+                                    inItem = true;
+                                }
+                                // Extract item title
+                                else if (line.contains("<title>") && inItem) {
+                                    title = extract(line, "<title>", "</title>");
+                                    title = extract(title, "<![CDATA[", "]]>");
 
-                            if (categoryIndex == 1 && !checkCovidKeyword(title)) inItem = false;
-                        }
-                        // Extract item published date
-                        else if (line.contains("<pubDate>") && inItem) {
-                            pubDate = extract(line, "<pubDate>", "</pubDate>");
-                            pubDate = extract(pubDate, "<![CDATA[", " GMT+7");
-                            DateTimeFormatter df = DateTimeFormatter.ofPattern("E, dd MMM yyyy HH:mm:ss");
-                            date = LocalDateTime.parse(pubDate, df);
-                        }
-                        // Extract item source link
-                        else if (line.contains("<link>") && inItem) {
-                            link = extract(line, "<link>", "</link>");
-                            link = extract(link, "<![CDATA[", "]]>");
-                        }
-                        // Extract item thumbnail link in description
-                        else if (line.contains("<description>") && inItem) {
-                            try {
-                                imgSrc = extract(line, "<description>", "</description>");
-                                imgSrc = extract(imgSrc, "<img src=\"", "\"");
-                                imgSrc = imgSrc.replace("zoom/80_50/", "");
-                            } catch (StringIndexOutOfBoundsException e) {
-                                imgSrc = "";
+                                    if (categoryIndex == 1 && !checkCovidKeyword(title)) inItem = false;
+                                }
+                                // Extract item published date
+                                else if (line.contains("<pubDate>") && inItem) {
+                                    pubDate = extract(line, "<pubDate>", "</pubDate>");
+                                    pubDate = extract(pubDate, "<![CDATA[", " GMT+7");
+                                    DateTimeFormatter df = DateTimeFormatter.ofPattern("E, dd MMM yyyy HH:mm:ss");
+                                    date = LocalDateTime.parse(pubDate, df);
+                                }
+                                // Extract item source link
+                                else if (line.contains("<link>") && inItem) {
+                                    link = extract(line, "<link>", "</link>");
+                                    link = extract(link, "<![CDATA[", "]]>");
+                                }
+                                // Extract item thumbnail link in description
+                                else if (line.contains("<description>") && inItem) {
+                                    try {
+                                        imgSrc = extract(line, "<description>", "</description>");
+                                        imgSrc = extract(imgSrc, "<img src=\"", "\"");
+                                        imgSrc = imgSrc.replace("zoom/80_50/", "");
+                                    } catch (StringIndexOutOfBoundsException e) {
+                                        imgSrc = "";
+                                    }
+                                }
+                                // Add item to list of items
+                                else if (line.contains("</item>") && inItem) {
+                                    inItem = false;
+                                    Item item = new Item(title, link, date, imgSrc, Item.Source.TT);
+                                    items.add(item);
+                                    loadProgress(); // updateProgress(progress++, maxProgress);
+                                }
                             }
-                        }
-                        // Add item to list of items
-                        else if (line.contains("</item>") && inItem) {
-                            inItem = false;
-                            Item item = new Item(title, link, date, imgSrc, Item.Source.TT);
-                            items.add(item);
-                            loadProgress(); // updateProgress(progress++, maxProgress);
-                        }
-                    }
 
-                    in.close();
-                } else {
+                            in.close();
+                        }
+                        catch (MalformedURLException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            System.out.println("Can't connect to " + urlAddress);
+                            error += urlAddress + ": " + e.getMessage() + "\n";
+                        }
+                    });
+                }
+                else {
                     Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
                     if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
 
@@ -390,64 +408,66 @@ public class NewsController extends Task<Void> {
 
     private void scrapeThanhNien(List<String> links) {
         for (String urlAddress : links) {
-            try {
-                // Creating buffered reader to read RSS file and extract items information
-                URL rssURL = new URL(urlAddress);
-                BufferedReader in = new BufferedReader(new InputStreamReader(rssURL.openStream()));
-                String title = "", pubDate = "", link = "", imgSrc = "", line;
-                LocalDateTime date = LocalDateTime.MIN;
-                boolean inItem = false;
+            es.submit(() -> {
+                try {
+                    // Creating buffered reader to read RSS file and extract items information
+                    URL rssURL = new URL(urlAddress);
+                    BufferedReader in = new BufferedReader(new InputStreamReader(rssURL.openStream()));
+                    String title = "", pubDate = "", link = "", imgSrc = "", line;
+                    LocalDateTime date = LocalDateTime.MIN;
+                    boolean inItem = false;
 
-                // Loop through each line in RSS file
-                while ((line = in.readLine()) != null) {
-                    if (line.contains("<item>"))
-                        inItem = true;
+                    // Loop through each line in RSS file
+                    while ((line = in.readLine()) != null) {
+                        if (line.contains("<item>"))
+                            inItem = true;
 
-                    if (inItem) {
-                        try {
-                            // Extract title
-                            title = extract(line, "<title>", "</title>");
-                            if (title.contains("<![CDATA[ "))
-                                title = extract(title, "<![CDATA[ ", "]]>");
-                            if (categoryIndex == 1 && !checkCovidKeyword(title)) continue;
-                            title = title.replaceAll("<label>", "");
-                            title = title.replaceAll("</label>", " -");
-
-                            // Extract link
-                            link = extract(line, "<link>", "</link>");
-
-                            // Extract published date
-                            pubDate = extract(line, "<pubDate>", " GMT");
-                            DateTimeFormatter df = DateTimeFormatter.ofPattern("E, dd MMM yyyy HH:mm:ss");
-                            date = LocalDateTime.parse(pubDate, df);
-                            date = date.plusHours(7);
-
-                            // Extract thumbnail link
-                            imgSrc = extract(line, "<image>", "</image>");
+                        if (inItem) {
                             try {
-                                imgSrc = imgSrc.replace("400x300/", "");
-                            } catch (StringIndexOutOfBoundsException exception) {
-                            }
+                                // Extract title
+                                title = extract(line, "<title>", "</title>");
+                                if (title.contains("<![CDATA[ "))
+                                    title = extract(title, "<![CDATA[ ", "]]>");
+                                if (categoryIndex == 1 && !checkCovidKeyword(title)) continue;
+                                title = title.replaceAll("<label>", "");
+                                title = title.replaceAll("</label>", " -");
 
-                            // Add item into list of items
-                            Item item = new Item(title, link, date, imgSrc, Item.Source.TN);
-                            items.add(item);
-                            inItem = false;
-                            loadProgress(); // updateProgress(progress++, maxProgress);
-                        }
-                        // Catch error lines which sometimes existed in ThanhNien RSS
-                        catch (StringIndexOutOfBoundsException e) {
+                                // Extract link
+                                link = extract(line, "<link>", "</link>");
+
+                                // Extract published date
+                                pubDate = extract(line, "<pubDate>", " GMT");
+                                DateTimeFormatter df = DateTimeFormatter.ofPattern("E, dd MMM yyyy HH:mm:ss");
+                                date = LocalDateTime.parse(pubDate, df);
+                                date = date.plusHours(7);
+
+                                // Extract thumbnail link
+                                imgSrc = extract(line, "<image>", "</image>");
+                                try {
+                                    imgSrc = imgSrc.replace("400x300/", "");
+                                } catch (StringIndexOutOfBoundsException exception) {
+                                }
+
+                                // Add item into list of items
+                                Item item = new Item(title, link, date, imgSrc, Item.Source.TN);
+                                items.add(item);
+                                inItem = false;
+                                loadProgress(); // updateProgress(progress++, maxProgress);
+                            }
+                            // Catch error lines which sometimes existed in ThanhNien RSS
+                            catch (StringIndexOutOfBoundsException e) {
+                            }
                         }
                     }
-                }
 
-                in.close();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                System.out.println("Can't connect to " + urlAddress);
-                error += urlAddress + ": " + e.getMessage() + "\n";
-            }
+                    in.close();
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    System.out.println("Can't connect to " + urlAddress);
+                    error += urlAddress + ": " + e.getMessage() + "\n";
+                }
+            });
         }
         t3 = true;
     }
@@ -478,6 +498,9 @@ public class NewsController extends Task<Void> {
                         // Get image source
                         imgSrc = e.select("img").attr("src");
                         if (!imgSrc.contains("https")) imgSrc = e.select("img").attr("data-src");
+                        try {
+                            imgSrc = imgSrc.replace("w{3}/", "");
+                        } catch (StringIndexOutOfBoundsException exception) {}
 
                         // Get title
                         title = e.getElementsByClass("article-title").text();
@@ -594,21 +617,35 @@ public class NewsController extends Task<Void> {
         t5 = true;
     }
 
-    private void scrapeAll(int categoryIndex, int count) {
+    private void scrapeAll(int categoryIndex) {
         System.gc();
-        if (categoryIndex == 1) {
+        if (categoryIndex == 0) {
+            es.execute(() -> scrapeVE(VNEXPRESS.stream().filter(link -> link.endsWith(".rss")).collect(Collectors.toList())));
+            es.execute(() -> scrapeTuoiTre(TUOITRE));
+            es.execute(() -> scrapeThanhNien(THANHNIEN));
+            es.execute(() -> scrapeZing(ZING));
+            es.execute(() -> scrapeNhanDan(NHANDAN.subList(categoryIndex + 1, NHANDAN.size())));
+        }
+        else if (categoryIndex == 1) {
             es.execute(() -> scrapeVE(Arrays.asList(VNEXPRESS.get(1), VNEXPRESS.get(5), VNEXPRESS.get(8))));
             es.execute(() -> scrapeTuoiTre(Arrays.asList(TUOITRE.get(1), TUOITRE.get(5), TUOITRE.get(8))));
             es.execute(() -> scrapeThanhNien(Arrays.asList(THANHNIEN.get(1), THANHNIEN.get(5), THANHNIEN.get(8))));
             es.execute(() -> scrapeZing(Arrays.asList(ZING.get(1), ZING.get(5), ZING.get(8))));
             es.execute(() -> scrapeNhanDan(Arrays.asList(NHANDAN.get(1), NHANDAN.get(5), NHANDAN.get(8))));
         }
+        else if (categoryIndex == 9) {
+            es.execute(() -> scrapeVE(VNEXPRESS.subList(categoryIndex, categoryIndex + 4)));
+            es.execute(() -> scrapeTuoiTre(TUOITRE.subList(categoryIndex, categoryIndex + 4)));
+            es.execute(() -> scrapeThanhNien(THANHNIEN.subList(categoryIndex, categoryIndex + 4)));
+            es.execute(() -> scrapeZing(ZING.subList(categoryIndex, categoryIndex + 4)));
+            es.execute(() -> scrapeNhanDan(NHANDAN.subList(categoryIndex, categoryIndex + 4)));
+        }
         else {
-            es.execute(() -> scrapeVE(VNEXPRESS.subList(categoryIndex, categoryIndex + count)));
-            es.execute(() -> scrapeTuoiTre(TUOITRE.subList(categoryIndex, categoryIndex + count)));
-            es.execute(() -> scrapeThanhNien(THANHNIEN.subList(categoryIndex, categoryIndex + count)));
-            es.execute(() -> scrapeZing(ZING.subList(categoryIndex, categoryIndex + count)));
-            es.execute(() -> scrapeNhanDan(NHANDAN.subList(categoryIndex, categoryIndex + count)));
+            es.execute(() -> scrapeVE(VNEXPRESS.subList(categoryIndex, categoryIndex + 1)));
+            es.execute(() -> scrapeTuoiTre(TUOITRE.subList(categoryIndex, categoryIndex + 1)));
+            es.execute(() -> scrapeThanhNien(THANHNIEN.subList(categoryIndex, categoryIndex + 1)));
+            es.execute(() -> scrapeZing(ZING.subList(categoryIndex, categoryIndex + 1)));
+            es.execute(() -> scrapeNhanDan(NHANDAN.subList(categoryIndex, categoryIndex + 1)));
         }
     }
 
