@@ -595,12 +595,6 @@ public class NewsController extends Task<Void> {
     }
 
     private void scrapeAll(int categoryIndex, int count) {
-        try {
-            System.gc();
-            Thread.sleep(500);
-        }
-        catch (InterruptedException e) {}
-
         es.execute(() -> scrapeVE(VNEXPRESS.subList(categoryIndex, categoryIndex + count)));
         es.execute(() -> scrapeTuoiTre(TUOITRE.subList(categoryIndex, categoryIndex + count)));
         es.execute(() -> scrapeThanhNien(THANHNIEN.subList(categoryIndex, categoryIndex + count)));
