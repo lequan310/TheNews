@@ -600,11 +600,11 @@ public class NewsController extends Task<Void> {
 
     private void scrapeAll(int categoryIndex, int count) {
         if (categoryIndex == 1){
-            es.execute(() -> scrapeVE(Arrays.asList(VNEXPRESS.get(1), VNEXPRESS.get(5))));
-            es.execute(() -> scrapeTuoiTre(Arrays.asList(TUOITRE.get(1), TUOITRE.get(5))));
-            es.execute(() -> scrapeThanhNien(Arrays.asList(THANHNIEN.get(1), THANHNIEN.get(5))));
-            es.execute(() -> scrapeZing(Arrays.asList(ZING.get(1), ZING.get(5))));
-            es.execute(() -> scrapeNhanDan(Arrays.asList(NHANDAN.get(1), NHANDAN.get(5))));
+            es.execute(() -> scrapeVE(Arrays.asList(VNEXPRESS.get(1), VNEXPRESS.get(5), VNEXPRESS.get(8))));
+            es.execute(() -> scrapeTuoiTre(Arrays.asList(TUOITRE.get(1), TUOITRE.get(5), TUOITRE.get(8))));
+            es.execute(() -> scrapeThanhNien(Arrays.asList(THANHNIEN.get(1), THANHNIEN.get(5), THANHNIEN.get(8))));
+            es.execute(() -> scrapeZing(Arrays.asList(ZING.get(1), ZING.get(5), ZING.get(8))));
+            es.execute(() -> scrapeNhanDan(Arrays.asList(NHANDAN.get(1), NHANDAN.get(5), NHANDAN.get(8))));
         }
         else {
             es.execute(() -> scrapeVE(VNEXPRESS.subList(categoryIndex, categoryIndex + count)));
