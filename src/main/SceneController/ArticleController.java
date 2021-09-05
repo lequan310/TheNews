@@ -106,14 +106,15 @@ public class ArticleController extends SceneHandler implements Initializable {
             content.getChildren().clear();
 
             // Call read article function depends on which source
-            switch (item.getSource()){
+            /*switch (item.getSource()){
                 case VE -> readArticleVE(item.getLink());
                 case TT -> readArticleTT(item.getLink());
                 case TN -> readArticleTN(item.getLink());
                 case ZING -> readArticleZing(item.getLink());
                 case ND -> readArticleND(item.getLink());
-            }
+            }*/
 
+            readArticleTN("https://thoitrangtre.thanhnien.vn/thoi-trang-247/phoi-do-vest-thanh-lich-giay-cao-got-luon-la-trang-phuc-dep-nhat-cho-cac-mua-trong-nam-42912.html");
             content.getChildren().addAll(createLabel(""));
         });
 
@@ -536,7 +537,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                     content.getChildren().add(createHeader(i.text()));
                 }
                 // Add text label if child is neither image nor video and has text
-                else if (i.hasText()) {
+                else if (i.hasText() && !i.is("span") && !i.attr("style").equals("")) {
                     content.getChildren().add(createLabel(div.text()));
                     break;
                 }
