@@ -15,6 +15,7 @@ import javafx.scene.layout.*;
 import javafx.scene.media.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
+import javafx.scene.web.WebView;
 import main.Model.Item;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -237,20 +238,37 @@ public class ArticleController extends SceneHandler implements Initializable {
 
             // Video article
             if (urlAddress.contains("https://thanhnien.vn/video")){
+                Elements article = doc.select("div[id=abody]");
                 Label label = createDescription(doc.select("div.sapo").text()); // Create description label
                 Label author = createDescription(doc.select("div.details__author h4").text()); // Create author label
                 author.setAlignment(Pos.TOP_RIGHT);
+                content.getChildren().add(label);
 
                 // Extract video url
-                String videoSrc = doc.select("div.media-player script").toString();
-                videoSrc = extract(videoSrc, "src=\"", "\"");
-                Label videoButton = createVideoButton(videoSrc, ""); // Create video
-                content.getChildren().addAll(label, videoButton, author); // Add all created components to article view
+                try {
+                    String videoSrc = doc.select("div.media-player script").toString();
+                    videoSrc = extract(videoSrc, "src=\"", "\"");
+                    Label videoButton = createVideoButton(videoSrc, ""); // Create video
+                    content.getChildren().add(videoButton); // Add all created components to article view
+                }
+                catch (Exception e) {
+                    if (doc.select("div.media-player iframe").attr("src").contains("youtube.com")) {
+                        StackPane stackPane = new StackPane();
+                        stackPane.prefWidthProperty().bind(content.prefWidthProperty());
+                        WebView webView = new WebView();
+                        webView.getEngine().load(doc.select("div.media-player iframe").attr("src"));
+                        stackPane.getChildren().add(webView);
+                        content.getChildren().add(stackPane);
+                    }
+                }
+
+                checkDivTN(article.first(), content);
+                content.getChildren().add(author);
             }
             // Normal article
             else{
                 Elements body = doc.select("div[class~=.*content]");
-                Elements article = doc.select("div[id=abody] > *");
+                Elements article = doc.select("div[id=abody]");
 
                 // Create Description label
                 if (body.select("div.sapo").size() > 0) {
@@ -270,7 +288,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                 catch (IllegalArgumentException e) {}
 
                 // Loop through elements in main article
-                for (Element e : article) {
+/*                for (Element e : article) {
                     // Add label if element is text
                     if (e.is("p")) {
                         content.getChildren().add(createLabel(e.text()));
@@ -283,7 +301,9 @@ public class ArticleController extends SceneHandler implements Initializable {
                     else if (e.is("div") && !e.className().equals("details__morenews")) {
                         checkDivTN(e, content);
                     }
-                }
+                }*/
+
+                checkDivTN(article.first(), content);
 
                 // Create author label
                 Label author = createDescription(doc.select("div.left h4").text());
@@ -495,7 +515,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         for (Element i : div.select("> *")) {
             try {
                 // Recursion call if child is div
-                if (i.is("div") && !i.attr("class").contains("image")) {
+                if (i.is("div") && !i.attr("class").contains("image") && !i.className().equals("details__morenews")) {
                     checkDivTN(i, content);
                 }
                 // Add text label if child is text
