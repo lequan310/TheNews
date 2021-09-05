@@ -251,16 +251,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                     Label videoButton = createVideoButton(videoSrc, ""); // Create video
                     content.getChildren().add(videoButton); // Add all created components to article view
                 }
-                catch (Exception e) {
-                    if (doc.select("div.media-player iframe").attr("src").contains("youtube.com")) {
-                        StackPane stackPane = new StackPane();
-                        stackPane.prefWidthProperty().bind(content.prefWidthProperty());
-                        WebView webView = new WebView();
-                        webView.getEngine().load(doc.select("div.media-player iframe").attr("src"));
-                        stackPane.getChildren().add(webView);
-                        content.getChildren().add(stackPane);
-                    }
-                }
+                catch (Exception e) {}
 
                 checkDivTN(article.first(), content);
                 content.getChildren().add(author);
@@ -288,21 +279,6 @@ public class ArticleController extends SceneHandler implements Initializable {
                 catch (IllegalArgumentException e) {}
 
                 // Loop through elements in main article
-/*                for (Element e : article) {
-                    // Add label if element is text
-                    if (e.is("p")) {
-                        content.getChildren().add(createLabel(e.text()));
-                    }
-                    // Add header label if element is header text
-                    else if (e.is("h2") || e.is("h3")) {
-                        content.getChildren().add(createHeader(e.text()));
-                    }
-                    // Call TN utilities function for div elements
-                    else if (e.is("div") && !e.className().equals("details__morenews")) {
-                        checkDivTN(e, content);
-                    }
-                }*/
-
                 checkDivTN(article.first(), content);
 
                 // Create author label
