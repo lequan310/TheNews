@@ -269,8 +269,6 @@ public class NewsController extends Task<Void> {
                         });
                     }
                 }
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 System.out.println("Can't connect to " + urlAddress);
                 error += urlAddress + ": " + e.getMessage() + "\n";
@@ -397,8 +395,6 @@ public class NewsController extends Task<Void> {
                         });
                     }
                 }
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 System.out.println("Can't connect to " + urlAddress);
                 error += urlAddress + ": " + e.getMessage() + "\n";
