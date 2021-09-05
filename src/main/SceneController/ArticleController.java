@@ -113,6 +113,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                 case ZING -> readArticleZing(item.getLink());
                 case ND -> readArticleND(item.getLink());
             }
+
             content.getChildren().addAll(createLabel(""));
         });
 
@@ -405,6 +406,11 @@ public class ArticleController extends SceneHandler implements Initializable {
     }
 
     private void checkDivVE(Element div, FlowPane content) {
+        if (div.is("p")) {
+            content.getChildren().add(createLabel(div.text()));
+            return;
+        }
+
         for (Element e : div.select("> *")) {
             // If element is text not author
             if (e.is("p") && !e.attr("style").contains("text-align:right;") && !e.attr("class").contains("author")) {
@@ -420,23 +426,38 @@ public class ArticleController extends SceneHandler implements Initializable {
             }
             // If element is image
             else if (e.is("figure") && e.select("img").size() > 0) {
-                String imageURL = e.select("img").attr("data-src");
-                if (imageURL.equals("")) imageURL = e.select("img").attr("src");
+                if (e.select("img").size() == 1) {
+                    String imageURL = e.select("img").attr("data-src");
+                    if (imageURL.equals("")) imageURL = e.select("img").attr("src");
 
-                Image image = new Image(imageURL, true);
-                content.getChildren().add(createImageLabel(image, e.select("figcaption").text()));
+                    Image image = new Image(imageURL, true);
+                    content.getChildren().add(createImageLabel(image, e.select("figcaption").text()));
+                }
+                else {
+                    for (Element el : e.select("img")) {
+                        String imageURL = el.select("img").attr("data-desktop-src");
+                        if (imageURL.equals("")) imageURL = el.select("img").attr("data-src");
+
+                        Image image = new Image(imageURL, true);
+                        content.getChildren().add(createImageLabel(image, e.select("figcaption").text()));
+                    }
+                }
             }
             // If element is either video or image
             else if (e.attr("class").contains("clearfix")) {
                 if (e.select("video").size() > 0) {
-                    content.getChildren().add(createVideoButton(videoVE(e.select("video").attr("src")), e.select("p").text()));
+                    content.getChildren().add(createVideoButton(videoVE(e.select("video").attr("src")), e.select("figcaption").text()));
                 }
                 else if (e.select("img").size() > 0) {
                     String imageURL = e.select("img").attr("data-src");
                     if (imageURL.equals("")) imageURL = e.select("img").attr("src");
 
                     Image image = new Image(imageURL, true);
-                    content.getChildren().add(createImageLabel(image, e.select("p").text()));
+                    content.getChildren().add(createImageLabel(image, ""));
+                }
+
+                for (int i = 1; i < e.select("> *").size(); i++) {
+                    checkDivVE(e.select("> *").get(i), content);
                 }
             }
             // If element is video
@@ -605,7 +626,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                         if (imageURL.equals("")) imageURL = i.select("img").attr("src");
 
                         Image image = new Image(imageURL, true);
-                        content.getChildren().add(createImageLabel(image, e.select("td[class=\"pCaption caption\"]").text()));
+                        content.getChildren().add(createImageLabel(image, e.select("td[class*=caption]").text()));
                     }
                 }
                 else if (e.is("h1") && e.select("img").size() > 0) {
@@ -816,13 +837,16 @@ public class ArticleController extends SceneHandler implements Initializable {
     protected Label createGraphicLabel(String caption) {
         Label label = new Label(caption);
 
-        label.setStyle("-fx-border-color: #404040; -fx-background-color: #bcbcbc");
         label.setContentDisplay(ContentDisplay.TOP);
         label.setAlignment(Pos.TOP_CENTER);
         label.setTextAlignment(TextAlignment.CENTER);
         label.setFont(Font.font("Arial", FontPosture.ITALIC, 16));
         label.setTextOverrun(OverrunStyle.CLIP);
         label.setWrapText(true);
+        if (!caption.equals(""))
+            label.setStyle("-fx-border-color: #404040; -fx-background-color: #bcbcbc");
+        else
+            label.setStyle("-fx-background-color: transparent");
 
         return label;
     }
