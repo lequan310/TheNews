@@ -15,9 +15,6 @@ import main.Model.Item;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class SceneHandler {
     private Parent root;
@@ -49,7 +46,7 @@ public class SceneHandler {
     }
 
     // Creating Main Menu scene and assigning controller
-    public Scene loadMenuScene(int index) throws IOException {
+    public Scene loadMenuScene() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Home.fxml"));
         MenuController controller = new MenuController(0, true);
         loader.setController(controller);

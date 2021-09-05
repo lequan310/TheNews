@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 public class NewsController extends Task<Void> {
     private static NewsController newsController = null;
-    private ArrayList<Item> items = new ArrayList<>(); // List of items that is scraped and sorted to be displayed
+    private final ArrayList<Item> items = new ArrayList<>(); // List of items that is scraped and sorted to be displayed
     private ExecutorService es;
 
     // List of URL to scrape from in order: New, Covid, Politics, Business, Technology, Health, Sports, Entertainment, World, Others
@@ -89,9 +89,10 @@ public class NewsController extends Task<Void> {
         this.categoryIndex = categoryIndex;
 
         switch (categoryIndex) {
-            case 0 -> maxProgress = 2000;
+            case 0 -> maxProgress = 2100;
+            case 1 -> maxProgress = 400;
             case 9 -> maxProgress = 700;
-            default -> maxProgress = 250;
+            default -> maxProgress = 200;
         }
     }
 
@@ -102,6 +103,7 @@ public class NewsController extends Task<Void> {
             t1 = t2 = t3 = t4 = t5 = false;
             items.clear();
             progress = 0;
+            error = "";
             updateProgress(0, 1);
             scrapeAll(categoryIndex);
 
@@ -238,12 +240,11 @@ public class NewsController extends Task<Void> {
                             imgSrc = e.select("div.thumb-art").select("source").attr("data-srcset");
                             try {
                                 imgSrc = extract(imgSrc, "1x, ", " 2x");
-                            } catch (StringIndexOutOfBoundsException exception) {
-                            }
+                            } catch (StringIndexOutOfBoundsException exception) { }
 
                             try {
                                 Connection.Response tempResponse = Jsoup.connect(link).timeout(5000).execute();
-                                if (tempResponse.statusCode() >= 400) throw new IOException();
+                                if (tempResponse.statusCode() >= 400) throw new IOException("Status code: " + tempResponse.statusCode());
 
                                 Document temp = tempResponse.parse();
                                 if (imgSrc.equals("")) // Find first image in article if can't find thumbnail
@@ -258,6 +259,7 @@ public class NewsController extends Task<Void> {
                                 DateTimeFormatter df = DateTimeFormatter.ofPattern("d/M/yyyy, HH:mm");
                                 date = LocalDateTime.parse(pubDate, df);
                             } catch (Exception exception) {
+                                System.out.println(exception.getMessage() + " " + link);
                                 add = false;
                             }
 

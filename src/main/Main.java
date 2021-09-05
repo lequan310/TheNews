@@ -11,7 +11,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception{
-        Scene scene = new SceneHandler().loadMenuScene(0);
+        Scene scene = new SceneHandler().loadMenuScene();
 
         // Adding css styles, setting app icons and titles
         scene.getStylesheets().add("css/style.css");

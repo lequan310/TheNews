@@ -1,7 +1,6 @@
 package main.SceneController;
 
 import javafx.application.Platform;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -28,8 +27,6 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class ArticleController extends SceneHandler implements Initializable {
     private final int WORDSIZE = 18, categoryIndex;
@@ -318,11 +315,14 @@ public class ArticleController extends SceneHandler implements Initializable {
                 Elements articles = body.select("div.video-info");
 
                 // Creating and adding video, summary and author to article view
-                Label videoButton = createVideoButton(videos.first().attr("src"), "");
-                Label label = createLabel(articles.select("p.video-summary").text());
-                Label author = createDescription(articles.select("span.video-author").text());
-                author.setAlignment(Pos.TOP_RIGHT);
-                content.getChildren().addAll(videoButton, label, author);
+                try {
+                    Label videoButton = createVideoButton(videos.first().attr("src"), "");
+                    Label label = createLabel(articles.select("p.video-summary").text());
+                    Label author = createDescription(articles.select("span.video-author").text());
+                    author.setAlignment(Pos.TOP_RIGHT);
+                    content.getChildren().addAll(videoButton, label, author);
+                }
+                catch (Exception e) {}
             }
             // Normal article
             else{
@@ -571,7 +571,8 @@ public class ArticleController extends SceneHandler implements Initializable {
                     }
                 }
             }
-            catch (IllegalArgumentException ex) { continue; }
+            catch (IllegalArgumentException ex) {
+            }
         }
     }
 
@@ -630,7 +631,8 @@ public class ArticleController extends SceneHandler implements Initializable {
                     content.getChildren().add(pane);
                 }
             }
-            catch (IllegalArgumentException ex) { continue; }
+            catch (IllegalArgumentException ex) {
+            }
         }
     }
 
@@ -664,7 +666,8 @@ public class ArticleController extends SceneHandler implements Initializable {
                     content.getChildren().add(pane);
                 }
             }
-            catch (IllegalArgumentException ex) { continue; }
+            catch (IllegalArgumentException ex) {
+            }
         }
     }
 
