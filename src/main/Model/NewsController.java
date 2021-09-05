@@ -259,7 +259,6 @@ public class NewsController extends Task<Void> {
                                 DateTimeFormatter df = DateTimeFormatter.ofPattern("d/M/yyyy, HH:mm");
                                 date = LocalDateTime.parse(pubDate, df);
                             } catch (Exception exception) {
-                                System.out.println(exception.getMessage() + " " + link);
                                 add = false;
                             }
 
