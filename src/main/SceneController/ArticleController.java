@@ -15,7 +15,6 @@ import javafx.scene.layout.*;
 import javafx.scene.media.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
-import javafx.scene.web.WebView;
 import main.Model.Item;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
