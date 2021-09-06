@@ -219,9 +219,9 @@ public class MenuController extends SceneHandler implements Initializable {
                     int currentButton = i;
 
                     // If item exists
-                    try {
-                        buttons.get(currentButton).setOnAction(e -> article(idx, categoryIndex));
-                        Platform.runLater(() -> {
+                    Platform.runLater(() -> {
+                        try {
+                            buttons.get(currentButton).setOnAction(e -> article(idx, categoryIndex));
                             labels.get(currentButton).setText(items.get(idx).getTitle());
                             timeLabels.get(currentButton).setText(items.get(idx).durationToString());
                             buttons.get(currentButton).setDisable(false);
@@ -240,18 +240,15 @@ public class MenuController extends SceneHandler implements Initializable {
                             } catch (IllegalArgumentException e) {
                                 images.get(currentButton).setImage(null);
                             }
-                        });
-                    }
-                    // If no more item left
-                    catch (IndexOutOfBoundsException e) {
-                        Platform.runLater(() -> {
+                        }
+                        catch (IndexOutOfBoundsException e) {
                             buttons.get(currentButton).setDisable(true);
                             labels.get(currentButton).setText("Empty");
                             images.get(currentButton).setImage(null);
                             timeLabels.get(currentButton).setText("Not available");
                             icons.get(currentButton).setImage(null);
-                        });
-                    }
+                        }
+                    });
                 }
             }
         }
