@@ -29,10 +29,10 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class ArticleController extends SceneHandler implements Initializable {
-    private final int WORDSIZE = 18, categoryIndex;
-    private int index;
-    private final ArrayList<Item> items;
-    private Item item;
+    private final int WORDSIZE = 18, categoryIndex; // default word size and category index
+    private int index; // current item index
+    private final ArrayList<Item> items; // list of items
+    private Item item; // current item
 
     @FXML private AnchorPane anchorPane;
     @FXML private FlowPane content;
@@ -45,6 +45,7 @@ public class ArticleController extends SceneHandler implements Initializable {
     @FXML private ScrollPane scrollPane;
     @FXML private Pane blackPane;
 
+    // Constructor with parameters to receive data from main menu scene
     public ArticleController(ArrayList<Item> items, int index, int categoryIndex){
         this.items = items;
         this.index = index;
@@ -103,6 +104,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         System.gc();
         System.out.println(Math.round((double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Math.pow(1024, 2)) + " MB");
         Platform.runLater(() -> {
+            // Clear previous article and read new article
             content.getChildren().clear();
 
             // Call read article function depends on which source
@@ -118,12 +120,13 @@ public class ArticleController extends SceneHandler implements Initializable {
         });
 
         // Initialize UI components
-        anchorPane.focusedProperty().addListener(observable -> anchorPane.requestFocus());
-        scrollPane.setVvalue(0);
+        anchorPane.focusedProperty().addListener(observable -> anchorPane.requestFocus()); // Help anchor pane detects key events
+        scrollPane.setVvalue(0); // Set scroll bar to the top
         title.setText(item.getTitle());
         timeLabel.setText(item.getPubDate());
         sourceLabel.setText(item.getLink());
 
+        // Set thumbnail Image
         try {
             thumbnail.setImage(new Image(item.getImgSrc(), thumbnail.getFitWidth(), thumbnail.getFitHeight(), false, true, true));
         }
@@ -147,21 +150,21 @@ public class ArticleController extends SceneHandler implements Initializable {
                 String videoURL = doc.select("script").toString();
                 videoURL = extract(videoURL, "\"contentUrl\": \"", "\",");
 
+                // Add video label
                 try {
                     content.getChildren().add(createVideoButton(videoVE(videoURL), ""));
                 }
                 catch (IllegalArgumentException e) {}
 
-                // Create description, video, and author label
+                // Create description, video, and author label and add after video
                 Label description = createDescription(doc.select("div.lead_detail").text());
                 Label author = createDescription(doc.select("p.author").text());
-
                 content.getChildren().addAll(description, author);
             }
             // Normal article
             else {
+                // Get main article element
                 Element article;
-
                 if (doc.select("article.fck_detail").size() > 0)
                     article = doc.select("article.fck_detail").first();
                 else
@@ -237,21 +240,23 @@ public class ArticleController extends SceneHandler implements Initializable {
 
             // Video article
             if (urlAddress.contains("https://thanhnien.vn/video")){
+                // Extract main article, description and author
                 Elements article = doc.select("div[id=abody]");
                 Label label = createDescription(doc.select("div.sapo").text()); // Create description label
                 Label author = createDescription(doc.select("div.details__author h4").text()); // Create author label
                 author.setAlignment(Pos.TOP_RIGHT);
                 content.getChildren().add(label);
 
-                // Extract video url
+                // Extract video url and add video label
                 try {
                     String videoSrc = doc.select("div.media-player script").toString();
                     videoSrc = extract(videoSrc, "src=\"", "\"");
                     Label videoButton = createVideoButton(videoSrc, ""); // Create video
                     content.getChildren().add(videoButton); // Add all created components to article view
                 }
-                catch (Exception e) {}
+                catch (Exception e) {} // Catch exception mostly due to video being a live stream
 
+                // Loop through main article and add content, finally add author
                 checkDivTN(article.first(), content);
                 content.getChildren().add(author);
             }
@@ -347,7 +352,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         }
     }
 
-    // Function to read article from NhanDan
+    // Function to read article from Nhan Dan
     private void readArticleND(String urlAddress) {
         try {
             // Connect to article URL
@@ -356,16 +361,19 @@ public class ArticleController extends SceneHandler implements Initializable {
             if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
             Document doc = response.parse();
 
+            // Special Nhan Dan articles
             if (urlAddress.contains("special.nhandan.vn")) {
                 Elements article = doc.select("article > *");
                 String newURL = urlAddress.replace("index.html", "");
 
                 for (Element e : article) {
+                    // Check div for each div element with id containing "section"
                     if (e.is("div") && e.attr("id").contains("section")) {
                         addSpecialND(e.select("> *"), content, newURL);
                     }
                 }
             }
+            // Normal Nhan Dan articles
             else {
                 // Extract elements from main article
                 Elements body = doc.select("div.box-content-detail");
@@ -401,13 +409,14 @@ public class ArticleController extends SceneHandler implements Initializable {
     }
 
     private void checkDivVE(Element div, FlowPane content) {
+        // If element is <p>, add text label
         if (div.is("p")) {
             content.getChildren().add(createLabel(div.text()));
             return;
         }
 
         for (Element e : div.select("> *")) {
-            // If element is text not author
+            // If element is text not author, add text label
             if (e.is("p") && !e.attr("style").contains("text-align:right;") && !e.attr("class").contains("author")) {
                 Label label = createLabel(e.text());
 
@@ -416,20 +425,25 @@ public class ArticleController extends SceneHandler implements Initializable {
 
                 content.getChildren().add(label);
             }
+            // If element is header, add header label
             else if (e.is("h2")) {
                 content.getChildren().add(createDescription(e.text()));
             }
             // If element is image
             else if (e.is("figure") && e.select("img").size() > 0) {
+                // Add single image label if the number of <img> element is 1
                 if (e.select("img").size() == 1) {
+                    // Extract image link, create image and add to content
                     String imageURL = e.select("img").attr("data-src");
                     if (imageURL.equals("")) imageURL = e.select("img").attr("src");
 
                     Image image = new Image(imageURL, true);
                     content.getChildren().add(createImageLabel(image, e.select("figcaption").text()));
                 }
+                // Add multiple image label if the number of <img> element is more than 1
                 else {
                     for (Element el : e.select("img")) {
+                        // Extract image link, create image and add to content
                         String imageURL = el.select("img").attr("data-desktop-src");
                         if (imageURL.equals("")) imageURL = el.select("img").attr("data-src");
 
@@ -440,10 +454,14 @@ public class ArticleController extends SceneHandler implements Initializable {
             }
             // If element is either video or image
             else if (e.attr("class").contains("clearfix")) {
+                // If element has <video>
                 if (e.select("video").size() > 0) {
+                    // Add video label
                     content.getChildren().add(createVideoButton(videoVE(e.select("video").attr("src")), e.select("figcaption").text()));
                 }
+                // If element doesn't have <video> and has <image>
                 else if (e.select("img").size() > 0) {
+                    // Extract and add image
                     String imageURL = e.select("img").attr("data-src");
                     if (imageURL.equals("")) imageURL = e.select("img").attr("src");
 
@@ -451,6 +469,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                     content.getChildren().add(createImageLabel(image, ""));
                 }
 
+                // Check if there is anything below video or image
                 for (int i = 1; i < e.select("> *").size(); i++) {
                     checkDivVE(e.select("> *").get(i), content);
                 }
@@ -458,27 +477,30 @@ public class ArticleController extends SceneHandler implements Initializable {
             // If element is video
             else if (e.is("div") && e.select("video").size() > 0 &&
                     (e.attr("class").contains("text-align:center") || e.attr("style").contains("center"))) {
+                // Add video label
                 content.getChildren().add(createVideoButton(videoVE(e.select("video").attr("src")), e.select("p").text()));
             }
             // If element is wrapnote
             else if (e.is("div") && e.attr("class").equals("box_brief_info")) {
+                // Create a wrapnote
                 FlowPane pane = createWrapNote();
 
+                // Loop through elements in wrapnote
                 for (Element i : e.select("> *")) {
                     if (i.is("p")) {
                         pane.getChildren().add(createLabel(i.text()));
                     }
                 }
 
-                content.getChildren().add(pane);
+                content.getChildren().add(pane); // Add wrapnote into content
             }
             else if (e.is("div")) {
-                checkDivVE(e, content);
+                checkDivVE(e, content); // Check inside div element if element is <div>
             }
         }
     }
 
-    // Utilities function to read ThanhNien article
+    // Utilities function to read Thanh Nien article
     private void checkDivTN(Element div, FlowPane content) {
         // If element has 0 children and is not an ad div
         if (div.select("> *").size() == 0 && !div.className().contains("ads") && div.hasText()){
@@ -531,9 +553,9 @@ public class ArticleController extends SceneHandler implements Initializable {
                     content.getChildren().add(createHeader(i.text()));
                 }
                 // Add text label if child is neither image nor video and has text
-                else if ((i.hasText() && div.select("> div").size() == 0) || i.is("br")) {
+                else if ((i.hasText() && i.select("div").size() == 0) || i.is("br")) {
                     content.getChildren().add(createLabel(div.text()));
-                    break;
+                    if (i.nextElementSiblings().select("table,figure").size() == 0) break;
                 }
             }
             catch (IllegalArgumentException ex) { continue; }
@@ -570,7 +592,12 @@ public class ArticleController extends SceneHandler implements Initializable {
                         // Extract video url from data-src attribute
                         String videoSrc = e.attr("data-src");
                         videoSrc = videoSrc.substring(videoSrc.indexOf("hls"));
-                        videoSrc = videoSrc.substring(0, videoSrc.indexOf(".mp4") + 4);
+
+                        if (videoSrc.contains(".mp4"))
+                            videoSrc = videoSrc.substring(0, videoSrc.indexOf(".mp4") + 4);
+                        else
+                            videoSrc = videoSrc.substring(0, videoSrc.indexOf(".webm") + 5);
+
                         videoSrc = videoSrc.replace("&vid=", "/");
                         videoSrc = "https://" + videoSrc;
 
@@ -616,7 +643,9 @@ public class ArticleController extends SceneHandler implements Initializable {
                 }
                 // Create and add images if element is image/gallery
                 else if (e.is("table") && e.attr("class").contains("picture")) {
+                    // Loop through every image in table
                     for (Element i : e.select("td.pic > *")) {
+                        // Get image link and add image to content
                         String imageURL = i.select("img").attr("data-src");
                         if (imageURL.equals("")) imageURL = i.select("img").attr("src");
 
@@ -624,6 +653,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                         content.getChildren().add(createImageLabel(image, e.select("td[class*=caption]").text()));
                     }
                 }
+                // Create and add image
                 else if (e.is("h1") && e.select("img").size() > 0) {
                     Image image = new Image(e.select("img").attr("data-src"), true);
                     content.getChildren().add(createImageLabel(image, ""));
@@ -637,11 +667,13 @@ public class ArticleController extends SceneHandler implements Initializable {
                 else if (e.is("ul")  || e.is("div")) {
                     addZing(e.select("> *"), content);
                 }
+                // Create and add label into group of text above
                 else if (e.hasText() && e.is("li")) {
                     content.getChildren().add(createLabel(e.text()));
                 }
                 // Create and add blockquote
                 else if (e.is("blockquote")) {
+                    // Create wrapnote and add content inside blockquote into wrapnote
                     FlowPane pane = createWrapNote();
                     addZing(e.select("> *"), pane);
                     content.getChildren().add(pane);
@@ -652,6 +684,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         }
     }
 
+    // Utilities function to read normal Nhan Dan article
     private void addND(Elements elements, FlowPane content) {
         for (Element e : elements) {
             try {
@@ -687,8 +720,10 @@ public class ArticleController extends SceneHandler implements Initializable {
         }
     }
 
+    // Utilities function to read special Nhan Dan article
     private void addSpecialND(Elements elements, FlowPane content, String urlAddress) {
         for (Element e : elements) {
+            // Create and add label if element is text
             if (e.is("p")) {
                 Label label = createLabel(e.text());
                 if (e.select("strong").size() > 0) {
@@ -697,9 +732,11 @@ public class ArticleController extends SceneHandler implements Initializable {
 
                 content.getChildren().add(label);
             }
+            // Create and add header if element is header
             else if (e.is("h2") || e.is("h3")) {
-                content.getChildren().add(createDescription(e.text()));
+                content.getChildren().add(createHeader(e.text()));
             }
+            // Create and add wrapnote if element is wrapnote
             else if (e.is("blockquote")) {
                 FlowPane pane = createWrapNote();
 
@@ -712,6 +749,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                 }
                 content.getChildren().add(pane);
             }
+            // Create and add image if element is image
             else if ((e.is("figure") && e.select("img").size() > 0) || e.is("picture")){
                 try {
                     String imgSrc = e.select("img").attr("data-src");
@@ -727,14 +765,17 @@ public class ArticleController extends SceneHandler implements Initializable {
                 }
                 catch (StringIndexOutOfBoundsException | IllegalArgumentException exception) {}
             }
+            // Create and add label if element is text
             else if (e.is("span") && e.hasText()) {
                 content.getChildren().add(createLabel(e.text()));
             }
+            // Create and add label if element is text
             else if (e.is("div") && e.attr("class").contains("Caption") && e.select("p").size() > 0){
                 Label caption = createLabel(e.selectFirst("p").text());
                 caption.setAlignment(Pos.CENTER);
                 content.getChildren().add(caption);
             }
+            // Recursion to check inside the div element
             else if (e.is("div")) {
                 addSpecialND(e.select("> *"), content, urlAddress);
             }
@@ -742,6 +783,7 @@ public class ArticleController extends SceneHandler implements Initializable {
     }
 
     // Create UI components to add to article view
+    // Default article Label design
     protected Label createLabel(String text){
         Label label = new Label(text);
 
@@ -750,12 +792,13 @@ public class ArticleController extends SceneHandler implements Initializable {
         label.setTextOverrun(OverrunStyle.CLIP);
         label.setWrapText(true);
         label.setAlignment(Pos.CENTER_LEFT);
-        label.prefWidthProperty().bind(content.widthProperty().subtract(400));
+        label.prefWidthProperty().bind(content.widthProperty().subtract(400)); // label prefwidth = content prefwidth - 400
         label.setCursor(Cursor.TEXT);
 
         return label;
     }
 
+    // Header label design
     protected Label createHeader(String text) {
         Label label = createLabel(text);
         label.setFont(Font.font("Roboto", FontWeight.BOLD, WORDSIZE + 2));
@@ -763,6 +806,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         return label;
     }
 
+    // Description label design
     protected Label createDescription(String text){
         Label description = createLabel(text);
         description.setFont(Font.font("Corbel", FontWeight.BOLD, WORDSIZE + 4));
@@ -770,6 +814,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         return description;
     }
 
+    // Image label with caption
     protected Label createImageLabel(Image image, String caption){
         // Create ImageView and Label, and set label graphic to image view
         final double MAX_WIDTH = content.getWidth();
@@ -782,7 +827,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         label.setGraphic(imageView);
         label.setPrefWidth(imageView.getFitWidth());
 
-        // Make label more interactive with mouse event
+        // Make label more interactive with mouse event (zoom in and out on click)
         label.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             if (imageView.getFitWidth() == 600) {
                 imageView.setFitWidth(Math.min(image.getWidth(), MAX_WIDTH));
@@ -796,6 +841,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         return label;
     }
 
+    // Video label with caption
     protected Label createVideoButton(String videoSrc, String caption){
         // Create media player
         Media media = new Media(videoSrc);
@@ -807,7 +853,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         mediaView.setOnMouseEntered(e -> mediaPlayer.play());
         mediaView.setOnMouseExited(e -> mediaPlayer.pause());
 
-        // Adjust label position and size
+        // Add video and help image into stack pane and then set stack pane as label graphic
         Label label = createGraphicLabel(caption);
         StackPane container = new StackPane();
         ImageView imageView = new ImageView(new Image("/image/dragPlay.png", mediaView.getFitWidth(), mediaView.getFitHeight(), true, true));
@@ -816,6 +862,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         container.getChildren().add(imageView);
         label.setGraphic(container);
 
+        // Temporary handler to change graphic to only media viewer after first mouse in event
         EventHandler<MouseEvent> tempHandler = new EventHandler<>() {
             @Override
             public void handle(MouseEvent event) {
@@ -829,6 +876,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         return label;
     }
 
+    // Default label set up for image label and video label
     protected Label createGraphicLabel(String caption) {
         Label label = new Label(caption);
 
@@ -846,6 +894,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         return label;
     }
 
+    // A pane to distinguish between normal and text inside wrapnote
     protected FlowPane createWrapNote() {
         FlowPane pane = new FlowPane();
 

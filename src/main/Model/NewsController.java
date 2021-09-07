@@ -15,15 +15,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class NewsController extends Task<Void> {
     private static NewsController newsController = null;
     private final ArrayList<Item> items = new ArrayList<>(); // List of items that is scraped and sorted to be displayed
-    private ExecutorService es;
+    private ForkJoinPool pool;
 
     // List of URL to scrape from in order: New, Covid, Politics, Business, Technology, Health, Sports, Entertainment, World, Others
     private final ArrayList<String> VNEXPRESS = new ArrayList<>(
@@ -51,7 +50,6 @@ public class NewsController extends Task<Void> {
                 "https://nhandan.vn/khoahoc-congnghe", "https://nhandan.vn/y-te", "https://nhandan.vn/thethao", "https://nhandan.vn/vanhoa",
                 "https://nhandan.vn/thegioi", "https://nhandan.vn/xahoi", "https://nhandan.vn/giaoduc", "https://nhandan.vn/bandoc", "https://nhandan.vn/phapluat"));
 
-    private volatile boolean t1, t2, t3, t4, t5;
     private int categoryIndex, progress = 0, maxProgress; // Index to read from the arrays below
     private String error = ""; // Error message
 
@@ -99,23 +97,18 @@ public class NewsController extends Task<Void> {
     public void start() {
         try {
             long start = System.currentTimeMillis();
-            es = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 4);
-            t1 = t2 = t3 = t4 = t5 = false;
+            pool = ForkJoinPool.commonPool();
             items.clear();
             progress = 0;
             error = "";
             updateProgress(0, 1);
-            scrapeAll(categoryIndex);
+            scrapeAll();
 
-            // Sort items and update progress bar
-            while (!t1 || !t2 || !t3 || !t4 || !t5) {}
-
-            es.shutdown();
-            es.awaitTermination(10, TimeUnit.SECONDS);
-            es = null;
+            pool.awaitQuiescence(10, TimeUnit.SECONDS);
+            pool = null;
 
             // Remove duplicate and then sort
-            Collections.sort(items, Comparator.comparing(Item::getLink));
+            items.sort(Comparator.comparing(Item::getLink));
             for (int i = 1; i < items.size(); i++) {
                 if (items.get(i).equalTo(items.get(i - 1))) {
                     items.remove(i);
@@ -141,9 +134,9 @@ public class NewsController extends Task<Void> {
     // Scrape articles from category
     private void scrapeVE(List<String> links) {
         for (String urlAddress : links) {
-            try {
-                if (urlAddress.contains(".rss")) {
-                    es.submit(() -> {
+            pool.execute(() -> {
+                try {
+                    if (urlAddress.contains(".rss")) {
                         try {
                             // Creating buffered reader to read RSS file and extract items information
                             URL rssURL = new URL(urlAddress);
@@ -195,7 +188,7 @@ public class NewsController extends Task<Void> {
                                 else if (line.contains("</item>") && inItem) {
                                     inItem = false;
                                     Item item = new Item(title, link, date, imgSrc, Item.Source.VE);
-                                    items.add(item);
+                                    addItem(items, item);
                                     loadProgress(); // updateProgress(progress++, maxProgress);
                                 }
                             }
@@ -209,79 +202,79 @@ public class NewsController extends Task<Void> {
                             System.out.println("Can't connect to " + urlAddress);
                             error += urlAddress + ": " + e.getMessage() + "\n";
                         }
-                    });
-                }
-                else {
-                    Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
-                    if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
-
-                    Document doc = response.parse();
-                    Elements article = doc.select("article");
-                    int count = article.size();
-
-                    for (int i = 0; i < count; i++) {
-                        int current = i;
-                        es.execute(() -> {
-                            Element e = article.get(current);
-                            String title = "", pubDate = "", link = "", imgSrc = "";
-                            boolean add = true;
-                            LocalDateTime date = LocalDateTime.MIN;
-
-                            // Get title
-                            title = e.select("h3").text();
-                            if (title.equals("")) {
-                                title = e.select("h2").text();
-                            }
-                            if (title.equals("")) add = false;
-                            if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
-
-                            // Get article link and thumbnail url
-                            link = e.select(" a").attr("href");
-                            imgSrc = e.select("div.thumb-art").select("source").attr("data-srcset");
-                            try {
-                                imgSrc = extract(imgSrc, "1x, ", " 2x");
-                            } catch (StringIndexOutOfBoundsException exception) { }
-
-                            try {
-                                Connection.Response tempResponse = Jsoup.connect(link).timeout(5000).execute();
-                                if (tempResponse.statusCode() >= 400) throw new IOException("Status code: " + tempResponse.statusCode());
-
-                                Document temp = tempResponse.parse();
-                                if (imgSrc.equals("")) // Find first image in article if can't find thumbnail
-                                    imgSrc = temp.select("article.fck_detail").select("img").attr("data-src");
-
-                                // Get published date
-                                pubDate = temp.select("span.date").text();
-                                if (pubDate.equals("")) pubDate = temp.select("span.time").text();
-                                if (pubDate.equals("")) add = false;
-
-                                pubDate = extract(pubDate, ", ", " (GMT+7)");
-                                DateTimeFormatter df = DateTimeFormatter.ofPattern("d/M/yyyy, HH:mm");
-                                date = LocalDateTime.parse(pubDate, df);
-                            } catch (Exception exception) {
-                                add = false;
-                            }
-
-                            // Create and add news item to list
-                            Item item = new Item(title, link, date, imgSrc, Item.Source.VE);
-                            if (add) items.add(item);
-                            loadProgress(); // updateProgress(progress++, maxProgress);
-                        });
                     }
+                    else {
+                        Connection.Response response = Jsoup.connect(urlAddress).timeout(5000).execute();
+                        if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
+
+                        Document doc = response.parse();
+                        Elements article = doc.select("article");
+                        int count = Math.min(article.size(), 30);
+                        System.out.println(count);
+
+                        for (int i = 0; i < count; i++) {
+                            int current = i;
+                            pool.execute(() -> {
+                                Element e = article.get(current);
+                                String title = "", pubDate = "", link = "", imgSrc = "";
+                                boolean add = true;
+                                LocalDateTime date = LocalDateTime.MIN;
+
+                                // Get title
+                                title = e.select("h3").text();
+                                if (title.equals("")) {
+                                    title = e.select("h2").text();
+                                }
+                                if (title.equals("")) add = false;
+                                if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
+
+                                // Get article link and thumbnail url
+                                link = e.select(" a").attr("href");
+                                imgSrc = e.select("div.thumb-art").select("source").attr("data-srcset");
+                                try {
+                                    imgSrc = extract(imgSrc, "1x, ", " 2x");
+                                } catch (StringIndexOutOfBoundsException exception) { }
+
+                                try {
+                                    Connection.Response tempResponse = Jsoup.connect(link).timeout(5000).execute();
+                                    if (tempResponse.statusCode() >= 400) throw new IOException("Status code: " + tempResponse.statusCode());
+
+                                    Document temp = tempResponse.parse();
+                                    if (imgSrc.equals("")) // Find first image in article if can't find thumbnail
+                                        imgSrc = temp.select("article.fck_detail").select("img").attr("data-src");
+
+                                    // Get published date
+                                    pubDate = temp.select("span.date").text();
+                                    if (pubDate.equals("")) pubDate = temp.select("span.time").text();
+                                    if (pubDate.equals("")) add = false;
+
+                                    pubDate = extract(pubDate, ", ", " (GMT+7)");
+                                    DateTimeFormatter df = DateTimeFormatter.ofPattern("d/M/yyyy, HH:mm");
+                                    date = LocalDateTime.parse(pubDate, df);
+                                } catch (Exception exception) {
+                                    add = false;
+                                }
+
+                                // Create and add news item to list
+                                Item item = new Item(title, link, date, imgSrc, Item.Source.VE);
+                                if (add) addItem(items, item);
+                                loadProgress(); // updateProgress(progress++, maxProgress);
+                            });
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println("Can't connect to " + urlAddress);
+                    error += urlAddress + ": " + e.getMessage() + "\n";
                 }
-            } catch (IOException e) {
-                System.out.println("Can't connect to " + urlAddress);
-                error += urlAddress + ": " + e.getMessage() + "\n";
-            }
+            });
         }
-        t1 = true;
     }
 
     private void scrapeTuoiTre(List<String> links) {
         for (String urlAddress : links) {
-            try {
-                if (urlAddress.contains(".rss")) {
-                    es.submit(() -> {
+            pool.execute(() -> {
+                try {
+                    if (urlAddress.contains(".rss")) {
                         try {
                             // Creating buffered reader to read RSS file and extract items information
                             URL rssURL = new URL(urlAddress);
@@ -328,7 +321,7 @@ public class NewsController extends Task<Void> {
                                 else if (line.contains("</item>") && inItem) {
                                     inItem = false;
                                     Item item = new Item(title, link, date, imgSrc, Item.Source.TT);
-                                    items.add(item);
+                                    addItem(items, item);
                                     loadProgress(); // updateProgress(progress++, maxProgress);
                                 }
                             }
@@ -341,71 +334,70 @@ public class NewsController extends Task<Void> {
                             System.out.println("Can't connect to " + urlAddress);
                             error += urlAddress + ": " + e.getMessage() + "\n";
                         }
-                    });
-                }
-                else {
-                    Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
-                    if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
-
-                    Document doc = response.parse();
-                    Elements article = doc.select("li.news-item");
-                    int count = article.size();
-
-                    for (int i = 0; i < count; i++) {
-                        int current = i;
-                        es.execute(() -> {
-                            Element e = article.get(current);
-                            String title = "", pubDate = "", link = "", imgSrc = "";
-                            boolean add = true;
-                            LocalDateTime date = LocalDateTime.MIN;
-
-                            // Get title
-                            title = e.select("h3").text();
-                            if (title.equals("")) add = false;
-                            if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
-
-                            // Get article link and thumbnail url
-                            link = e.select("a").attr("href");
-                            link = "https://tuoitre.vn" + link;
-                            imgSrc = e.select("img").attr("src");
-                            try {
-                                imgSrc = imgSrc.replace("zoom/212_132/", "");
-                            } catch (StringIndexOutOfBoundsException exception) {
-                            }
-
-                            try {
-                                Connection.Response tempResponse = Jsoup.connect(link).timeout(5000).execute();
-                                if (tempResponse.statusCode() >= 400) throw new IOException();
-
-                                Document temp = tempResponse.parse();
-
-                                // Get published date
-                                pubDate = temp.select("div.date-time").text();
-                                pubDate = pubDate.replace(" GMT+7", "");
-                                DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-                                date = LocalDateTime.parse(pubDate, df);
-                            } catch (Exception exception) {
-                                add = false;
-                            }
-
-                            // Create and add news item to list
-                            Item item = new Item(title, link, date, imgSrc, Item.Source.TT);
-                            if (add) items.add(item);
-                            loadProgress(); // updateProgress(progress++, maxProgress);
-                        });
                     }
+                    else {
+                        Connection.Response response = Jsoup.connect(urlAddress).timeout(5000).execute();
+                        if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
+
+                        Document doc = response.parse();
+                        Elements article = doc.select("li.news-item");
+                        int count = article.size();
+
+                        for (int i = 0; i < count; i++) {
+                            int current = i;
+                            pool.execute(() -> {
+                                Element e = article.get(current);
+                                String title = "", pubDate = "", link = "", imgSrc = "";
+                                boolean add = true;
+                                LocalDateTime date = LocalDateTime.MIN;
+
+                                // Get title
+                                title = e.select("h3").text();
+                                if (title.equals("")) add = false;
+                                if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
+
+                                // Get article link and thumbnail url
+                                link = e.select("a").attr("href");
+                                link = "https://tuoitre.vn" + link;
+                                imgSrc = e.select("img").attr("src");
+                                try {
+                                    imgSrc = imgSrc.replace("zoom/212_132/", "");
+                                } catch (StringIndexOutOfBoundsException exception) {
+                                }
+
+                                try {
+                                    Connection.Response tempResponse = Jsoup.connect(link).timeout(5000).execute();
+                                    if (tempResponse.statusCode() >= 400) throw new IOException();
+
+                                    Document temp = tempResponse.parse();
+
+                                    // Get published date
+                                    pubDate = temp.select("div.date-time").text();
+                                    pubDate = pubDate.replace(" GMT+7", "");
+                                    DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+                                    date = LocalDateTime.parse(pubDate, df);
+                                } catch (Exception exception) {
+                                    add = false;
+                                }
+
+                                // Create and add news item to list
+                                Item item = new Item(title, link, date, imgSrc, Item.Source.TT);
+                                if (add) addItem(items, item);
+                                loadProgress(); // updateProgress(progress++, maxProgress);
+                            });
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println("Can't connect to " + urlAddress);
+                    error += urlAddress + ": " + e.getMessage() + "\n";
                 }
-            } catch (IOException e) {
-                System.out.println("Can't connect to " + urlAddress);
-                error += urlAddress + ": " + e.getMessage() + "\n";
-            }
+            });
         }
-        t2 = true;
     }
 
     private void scrapeThanhNien(List<String> links) {
         for (String urlAddress : links) {
-            es.submit(() -> {
+            pool.execute(() -> {
                 try {
                     // Creating buffered reader to read RSS file and extract items information
                     URL rssURL = new URL(urlAddress);
@@ -447,7 +439,7 @@ public class NewsController extends Task<Void> {
 
                                 // Add item into list of items
                                 Item item = new Item(title, link, date, imgSrc, Item.Source.TN);
-                                items.add(item);
+                                addItem(items, item);
                                 inItem = false;
                                 loadProgress(); // updateProgress(progress++, maxProgress);
                             }
@@ -466,183 +458,184 @@ public class NewsController extends Task<Void> {
                 }
             });
         }
-        t3 = true;
     }
 
     private void scrapeZing(List<String> links) {
         for (String urlAddress : links) {
-            try {
-                Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
-                if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
+            pool.execute(() -> {
+                try {
+                    Connection.Response response = Jsoup.connect(urlAddress).timeout(5000).execute();
+                    if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
 
-                // Connect to URL and add all article element into list
-                Document doc = response.parse();
-                Elements body = doc.select("section[id~=.*-latest]");
-                Elements featured = doc.select("section[id~=.*-featured]");
-                body.addAll(featured);
-                Elements article = body.select("article.article-item");
-                int count = article.size();
+                    // Connect to URL and add all article element into list
+                    Document doc = response.parse();
+                    Elements body = doc.select("section[id~=.*-latest]");
+                    Elements featured = doc.select("section[id~=.*-featured]");
+                    body.addAll(featured);
+                    Elements article = body.select("article.article-item");
+                    int count = article.size();
 
-                // Loop through each article-item
-                for (int i = 0; i < count; i++) {
-                    int current = i;
-                    es.execute(() -> {
-                        Element e = article.get(current);
-                        String title = "", pubDate = "", link = "", imgSrc = "";
-                        boolean add = true;
-                        LocalDateTime date = LocalDateTime.MIN;
+                    // Loop through each article-item
+                    for (int i = 0; i < count; i++) {
+                        int current = i;
+                        pool.execute(() -> {
+                            Element e = article.get(current);
+                            String title = "", pubDate = "", link = "", imgSrc = "";
+                            boolean add = true;
+                            LocalDateTime date = LocalDateTime.MIN;
 
-                        // Get image source
-                        imgSrc = e.select("img").attr("src");
-                        if (!imgSrc.contains("https")) imgSrc = e.select("img").attr("data-src");
-                        try {
-                            imgSrc = imgSrc.replace("w{3}/", "");
-                        } catch (StringIndexOutOfBoundsException exception) {}
+                            // Get image source
+                            imgSrc = e.select("img").attr("src");
+                            if (!imgSrc.contains("https")) imgSrc = e.select("img").attr("data-src");
+                            try {
+                                imgSrc = imgSrc.replaceAll("w\\d\\d\\d/", "");
+                            } catch (StringIndexOutOfBoundsException exception) {}
 
-                        // Get title
-                        title = e.getElementsByClass("article-title").text();
-                        if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
+                            // Get title
+                            title = e.getElementsByClass("article-title").text();
+                            if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
 
-                        // Get link
-                        link = e.select("a").attr("href");
-                        link = "https://zingnews.vn" + link;
+                            // Get link
+                            link = e.select("a").attr("href");
+                            link = "https://zingnews.vn" + link;
 
-                        // Get published date
-                        pubDate = e.select("span.time").text();
-                        pubDate += " " + e.select("span.date").text();
-                        pubDate = pubDate.trim();
+                            // Get published date
+                            pubDate = e.select("span.time").text();
+                            pubDate += " " + e.select("span.date").text();
+                            pubDate = pubDate.trim();
 
-                        if (pubDate.equals("")) pubDate = e.select("span.friendly-time").text();
-                        DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm d/M/yyyy");
-                        date = LocalDateTime.parse(pubDate, df);
+                            if (pubDate.equals("")) pubDate = e.select("span.friendly-time").text();
+                            DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm d/M/yyyy");
+                            date = LocalDateTime.parse(pubDate, df);
 
-                        // Create and add news item to list
-                        Item item = new Item(title, link, date, imgSrc, Item.Source.ZING);
-                        if (add) items.add(item);
-                        loadProgress(); // updateProgress(progress++, maxProgress);
-                    });
+                            // Create and add news item to list
+                            Item item = new Item(title, link, date, imgSrc, Item.Source.ZING);
+                            if (add) addItem(items, item);
+                            loadProgress(); // updateProgress(progress++, maxProgress);
+                        });
+                    }
+                } catch (IOException e) {
+                    System.out.println("Can't connect to " + urlAddress);
+                    error += urlAddress + ": " + e.getMessage() + "\n";
                 }
-            } catch (IOException e) {
-                System.out.println("Can't connect to " + urlAddress);
-                error += urlAddress + ": " + e.getMessage() + "\n";
-            }
+            });
         }
-        t4 = true;
     }
 
     private void scrapeNhanDan(List<String> links) {
         for (String urlAddress : links) {
-            try {
-                Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
-                if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
+            pool.execute(() -> {
+                try {
+                    Connection.Response response = Jsoup.connect(urlAddress).timeout(5000).execute();
+                    if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
 
-                // Connect to URL and add all article element into list
-                Document doc = response.parse();
-                Elements body = doc.select("div[class*=uk-width-3-4@m]");
-                Elements article = body.select("article");
-                int count = article.size();
+                    // Connect to URL and add all article element into list
+                    Document doc = response.parse();
+                    Elements body = doc.select("div[class*=uk-width-3-4@m]");
+                    Elements article = body.select("article");
+                    int count = article.size();
 
-                // Loop through article items in list
-                for (int i = 0; i < count; i++) {
-                    int current = i;
-                    es.execute(() -> {
-                        Element e = article.get(current);
-                        String title = "", pubDate = "", link = "", imgSrc = "";
-                        boolean add = true;
-                        LocalDateTime date = LocalDateTime.MIN;
+                    // Loop through article items in list
+                    for (int i = 0; i < count; i++) {
+                        int current = i;
+                        pool.execute(() -> {
+                            Element e = article.get(current);
+                            String title = "", pubDate = "", link = "", imgSrc = "";
+                            boolean add = true;
+                            LocalDateTime date = LocalDateTime.MIN;
 
-                        // Get title
-                        title = e.getElementsByClass("box-title").text();
-                        if (title.equals("")) add = false;
-                        if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
+                            // Get title
+                            title = e.getElementsByClass("box-title").text();
+                            if (title.equals("")) add = false;
+                            if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
 
-                        // Get image source
-                        imgSrc = e.select("img").attr("data-src");
-                        try {
-                            imgSrc = imgSrc.replace("resize/320x-/", "");
-                        } catch (StringIndexOutOfBoundsException exception) {
-                        }
-
-                        // Get link
-                        link = e.select("a").attr("href");
-                        if (!link.contains("https://")) link = "https://nhandan.vn" + link;
-
-                        // Get pubDate
-                        pubDate = e.select("div[class*=box-meta]").text();
-                        if (!pubDate.equals("")) {
-                            DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm dd/M/yyyy");
-                            date = LocalDateTime.parse(pubDate, df);
-                        } else {
+                            // Get image source
+                            imgSrc = e.select("img").attr("data-src");
                             try {
-                                Connection.Response tempResponse = Jsoup.connect(link).timeout(5000).execute();
-                                if (tempResponse.statusCode() >= 400) throw new IOException();
-
-                                Document temp = tempResponse.parse();
-                                pubDate = temp.select("div.box-date").text();
-
-                                if (!pubDate.equals("")) {
-                                    pubDate = pubDate.substring(pubDate.indexOf(", ") + 2);
-                                }
-
-                                try {
-                                    DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy, HH:mm");
-                                    date = LocalDateTime.parse(pubDate, df);
-                                } catch (DateTimeParseException exception) {
-                                    try {
-                                        DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-                                        date = LocalDateTime.parse(pubDate, df);
-                                    } catch (DateTimeParseException ex) {
-                                        add = false;
-                                    }
-                                }
-                            } catch (IOException exception) {
-                                add = false;
+                                imgSrc = imgSrc.replace("resize/320x-/", "");
+                            } catch (StringIndexOutOfBoundsException exception) {
                             }
-                        }
 
-                        // Create and add news item to list
-                        Item item = new Item(title, link, date, imgSrc, Item.Source.ND);
-                        if (add) items.add(item);
-                        loadProgress(); // updateProgress(progress++, maxProgress);
-                    });
+                            // Get link
+                            link = e.select("a").attr("href");
+                            if (!link.contains("https://")) link = "https://nhandan.vn" + link;
+
+                            // Get pubDate
+                            pubDate = e.select("div[class*=box-meta]").text();
+                            if (!pubDate.equals("")) {
+                                DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm dd/M/yyyy");
+                                date = LocalDateTime.parse(pubDate, df);
+                            } else {
+                                try {
+                                    Connection.Response tempResponse = Jsoup.connect(link).timeout(5000).execute();
+                                    if (tempResponse.statusCode() >= 400) throw new IOException();
+
+                                    Document temp = tempResponse.parse();
+                                    pubDate = temp.select("div.box-date").text();
+
+                                    if (!pubDate.equals("")) {
+                                        pubDate = pubDate.substring(pubDate.indexOf(", ") + 2);
+                                    }
+
+                                    try {
+                                        DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy, HH:mm");
+                                        date = LocalDateTime.parse(pubDate, df);
+                                    } catch (DateTimeParseException exception) {
+                                        try {
+                                            DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+                                            date = LocalDateTime.parse(pubDate, df);
+                                        } catch (DateTimeParseException ex) {
+                                            add = false;
+                                        }
+                                    }
+                                } catch (IOException exception) {
+                                    add = false;
+                                }
+                            }
+
+                            // Create and add news item to list
+                            Item item = new Item(title, link, date, imgSrc, Item.Source.ND);
+                            if (add) addItem(items, item);
+                            loadProgress(); // updateProgress(progress++, maxProgress);
+                        });
+                    }
+                } catch (IOException e) {
+                    System.out.println("Can't connect to " + urlAddress);
+                    error += urlAddress + ": " + e.getMessage() + "\n";
                 }
-            } catch (IOException e) {
-                System.out.println("Can't connect to " + urlAddress);
-                error += urlAddress + ": " + e.getMessage() + "\n";
-            }
+            });
         }
-        t5 = true;
     }
 
-    private void scrapeAll(int categoryIndex) {
+    private void scrapeAll() {
         System.gc();
         if (categoryIndex == 0) {
-            es.execute(() -> scrapeVE(VNEXPRESS.stream().filter(link -> link.endsWith(".rss")).collect(Collectors.toList())));
-            es.execute(() -> scrapeTuoiTre(TUOITRE));
-            es.execute(() -> scrapeThanhNien(THANHNIEN));
-            es.execute(() -> scrapeZing(ZING));
-            es.execute(() -> scrapeNhanDan(NHANDAN.subList(categoryIndex + 1, NHANDAN.size())));
+            pool.execute(() -> scrapeVE(VNEXPRESS.stream().filter(link -> link.endsWith(".rss")).collect(Collectors.toList())));
+            pool.execute(() -> scrapeTuoiTre(TUOITRE));
+            pool.execute(() -> scrapeThanhNien(THANHNIEN));
+            pool.execute(() -> scrapeZing(ZING));
+            pool.execute(() -> scrapeNhanDan(NHANDAN.subList(categoryIndex + 1, NHANDAN.size())));
         }
         else if (categoryIndex == 1) {
-            es.execute(() -> scrapeVE(Arrays.asList(VNEXPRESS.get(1), VNEXPRESS.get(5), VNEXPRESS.get(8))));
-            es.execute(() -> scrapeTuoiTre(Arrays.asList(TUOITRE.get(1), TUOITRE.get(5), TUOITRE.get(8))));
-            es.execute(() -> scrapeThanhNien(Arrays.asList(THANHNIEN.get(1), THANHNIEN.get(5), THANHNIEN.get(8))));
-            es.execute(() -> scrapeZing(Arrays.asList(ZING.get(1), ZING.get(5), ZING.get(8))));
-            es.execute(() -> scrapeNhanDan(Arrays.asList(NHANDAN.get(1), NHANDAN.get(5), NHANDAN.get(8))));
+            pool.execute(() -> scrapeVE(Arrays.asList(VNEXPRESS.get(1), VNEXPRESS.get(5), VNEXPRESS.get(8))));
+            pool.execute(() -> scrapeTuoiTre(Arrays.asList(TUOITRE.get(1), TUOITRE.get(5), TUOITRE.get(8))));
+            pool.execute(() -> scrapeThanhNien(Arrays.asList(THANHNIEN.get(1), THANHNIEN.get(5), THANHNIEN.get(8))));
+            pool.execute(() -> scrapeZing(Arrays.asList(ZING.get(1), ZING.get(5), ZING.get(8))));
+            pool.execute(() -> scrapeNhanDan(Arrays.asList(NHANDAN.get(1), NHANDAN.get(5), NHANDAN.get(8))));
         }
         else if (categoryIndex == 9) {
-            es.execute(() -> scrapeVE(VNEXPRESS.subList(categoryIndex, categoryIndex + 4)));
-            es.execute(() -> scrapeTuoiTre(TUOITRE.subList(categoryIndex, categoryIndex + 4)));
-            es.execute(() -> scrapeThanhNien(THANHNIEN.subList(categoryIndex, categoryIndex + 4)));
-            es.execute(() -> scrapeZing(ZING.subList(categoryIndex, categoryIndex + 4)));
-            es.execute(() -> scrapeNhanDan(NHANDAN.subList(categoryIndex, categoryIndex + 4)));
+            pool.execute(() -> scrapeVE(VNEXPRESS.subList(categoryIndex, categoryIndex + 4)));
+            pool.execute(() -> scrapeTuoiTre(TUOITRE.subList(categoryIndex, categoryIndex + 4)));
+            pool.execute(() -> scrapeThanhNien(THANHNIEN.subList(categoryIndex, categoryIndex + 4)));
+            pool.execute(() -> scrapeZing(ZING.subList(categoryIndex, categoryIndex + 4)));
+            pool.execute(() -> scrapeNhanDan(NHANDAN.subList(categoryIndex, categoryIndex + 4)));
         }
         else {
-            es.execute(() -> scrapeVE(VNEXPRESS.subList(categoryIndex, categoryIndex + 1)));
-            es.execute(() -> scrapeTuoiTre(TUOITRE.subList(categoryIndex, categoryIndex + 1)));
-            es.execute(() -> scrapeThanhNien(THANHNIEN.subList(categoryIndex, categoryIndex + 1)));
-            es.execute(() -> scrapeZing(ZING.subList(categoryIndex, categoryIndex + 1)));
-            es.execute(() -> scrapeNhanDan(NHANDAN.subList(categoryIndex, categoryIndex + 1)));
+            pool.execute(() -> scrapeVE(VNEXPRESS.subList(categoryIndex, categoryIndex + 1)));
+            pool.execute(() -> scrapeTuoiTre(TUOITRE.subList(categoryIndex, categoryIndex + 1)));
+            pool.execute(() -> scrapeThanhNien(THANHNIEN.subList(categoryIndex, categoryIndex + 1)));
+            pool.execute(() -> scrapeZing(ZING.subList(categoryIndex, categoryIndex + 1)));
+            pool.execute(() -> scrapeNhanDan(NHANDAN.subList(categoryIndex, categoryIndex + 1)));
         }
     }
 
@@ -659,7 +652,11 @@ public class NewsController extends Task<Void> {
         return false;
     }
 
-    private void loadProgress() {
+    private synchronized void loadProgress() {
         updateProgress(progress++, maxProgress);
+    }
+
+    private synchronized void addItem(ArrayList<Item> items, Item item) {
+        items.add(item);
     }
 }

@@ -25,23 +25,13 @@ public class SceneHandler {
 
     public SceneHandler() {}
 
-    // Keyboard Handler for Main Menu scene
-    static class MenuHandler implements EventHandler<KeyEvent> {
-        private final MenuController controller;
-
-        public MenuHandler(MenuController controller){
-            this.controller = controller;
-        }
-
-        @Override
-        public void handle(KeyEvent keyEvent) {
-            switch (keyEvent.getCode()) {
-                case DIGIT1, NUMPAD1 -> controller.changePage(0);
-                case DIGIT2, NUMPAD2 -> controller.changePage(1);
-                case DIGIT3, NUMPAD3 -> controller.changePage(2);
-                case DIGIT4, NUMPAD4 -> controller.changePage(3);
-                case DIGIT5, NUMPAD5 -> controller.changePage(4);
-            }
+    private void menuHandler(KeyEvent keyEvent, MenuController controller) {
+        switch (keyEvent.getCode()) {
+            case DIGIT1, NUMPAD1 -> controller.changePage(0);
+            case DIGIT2, NUMPAD2 -> controller.changePage(1);
+            case DIGIT3, NUMPAD3 -> controller.changePage(2);
+            case DIGIT4, NUMPAD4 -> controller.changePage(3);
+            case DIGIT5, NUMPAD5 -> controller.changePage(4);
         }
     }
 
@@ -56,7 +46,7 @@ public class SceneHandler {
         height *= 0.85; width = height * ratio;
 
         Scene scene = new Scene(loader.load(), width, height);
-        scene.setOnKeyPressed(new MenuHandler(controller));
+        scene.setOnKeyPressed(keyEvent -> menuHandler(keyEvent, controller));
         scene.setFill(Color.valueOf("#1f1f1f"));
         return scene;
     }
@@ -87,7 +77,7 @@ public class SceneHandler {
             loader.setController(controller);
 
             root = loader.load();
-            root.setOnKeyPressed(new MenuHandler(controller));
+            root.setOnKeyPressed(keyEvent -> menuHandler(keyEvent, controller));
             anchorPane.getScene().setRoot(root);
             root.requestFocus();
         }
