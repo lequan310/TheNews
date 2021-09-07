@@ -210,7 +210,6 @@ public class NewsController extends Task<Void> {
                         Document doc = response.parse();
                         Elements article = doc.select("article");
                         int count = Math.min(article.size(), 30);
-                        System.out.println(count);
 
                         for (int i = 0; i < count; i++) {
                             int current = i;
