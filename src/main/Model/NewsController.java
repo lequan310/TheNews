@@ -56,9 +56,12 @@ public class NewsController extends Task<Void> {
     private NewsController() {}
 
     public static NewsController getInstance() {
-        if (newsController == null)
-            newsController = new NewsController();
-
+        if (newsController == null) {
+            synchronized (NewsController.class) {
+                if (newsController == null)
+                    newsController = new NewsController();
+            }
+        }
         return newsController;
     }
 
@@ -95,35 +98,31 @@ public class NewsController extends Task<Void> {
     }
 
     public void start() {
-        try {
-            long start = System.currentTimeMillis();
-            pool = ForkJoinPool.commonPool();
-            items.clear();
-            progress = 0;
-            error = "";
-            updateProgress(0, 1);
-            scrapeAll();
+        long start = System.currentTimeMillis();
+        pool = ForkJoinPool.commonPool();
+        items.clear();
+        progress = 0;
+        error = "";
+        updateProgress(0, 1);
+        scrapeAll();
 
-            pool.awaitQuiescence(10, TimeUnit.SECONDS);
-            pool = null;
+        pool.awaitQuiescence(10000, TimeUnit.MILLISECONDS);
+        pool = null;
 
-            // Remove duplicate and then sort
-            items.sort(Comparator.comparing(Item::getLink));
-            for (int i = 1; i < items.size(); i++) {
-                if (items.get(i).equalTo(items.get(i - 1))) {
-                    items.remove(i);
-                    i--;
-                }
+        // Remove duplicate and then sort
+        items.sort(Comparator.comparing(Item::getLink));
+        for (int i = 1; i < items.size(); i++) {
+            if (items.get(i).equalTo(items.get(i - 1))) {
+                items.remove(i);
+                i--;
             }
-            Collections.sort(items);
-            updateProgress(1, 1);
-
-            System.gc();
-            System.out.println(Math.round((double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Math.pow(1024, 2)) + " MB");
-            System.out.println("Achieve " + items.size() + " items: " + (System.currentTimeMillis() - start) + " ms\n");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
         }
+        Collections.sort(items);
+        updateProgress(1, 1);
+
+        System.gc();
+        System.out.println(Math.round((double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Math.pow(1024, 2)) + " MB");
+        System.out.println("Achieve " + items.size() + " items: " + (System.currentTimeMillis() - start) + " ms\n");
     }
 
     @Override
@@ -651,11 +650,15 @@ public class NewsController extends Task<Void> {
         return false;
     }
 
-    private synchronized void loadProgress() {
-        updateProgress(progress++, maxProgress);
+    private void loadProgress() {
+        synchronized (this) {
+            updateProgress(progress++, maxProgress);
+        }
     }
 
-    private synchronized void addItem(ArrayList<Item> items, Item item) {
-        items.add(item);
+    private void addItem(ArrayList<Item> items, Item item) {
+        synchronized (this) {
+            items.add(item);
+        }
     }
 }

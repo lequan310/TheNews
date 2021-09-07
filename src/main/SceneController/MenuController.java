@@ -111,7 +111,7 @@ public class MenuController extends SceneHandler implements Initializable {
         categoryButton.setDisable(true);
         categoryLabel.setText(categories[categoryIndex]);
         content.setOnScroll(e -> {
-            double delta = e.getDeltaY() * -5;
+            double delta = e.getDeltaY() * -4;
             scrollPane.setVvalue(scrollPane.getVvalue() + delta / scrollPane.getContent().getBoundsInLocal().getHeight());
         });
         addNodeToList();
