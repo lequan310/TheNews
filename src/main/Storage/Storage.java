@@ -7,12 +7,14 @@ import main.Model.Item;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Storage {
     private static Storage storage = null;
     private final int ICONSIZE = 50;
 
-    private HashMap<String, Item> itemStorage = new HashMap<>();
+    private Map<String, Item> itemStorage = new ConcurrentHashMap<>();
     private ArrayList<Item> items = new ArrayList<>();
     private HashMap<String, Image> images = new HashMap<>();
     private HashMap<String, ObservableList<Node>> articles = new HashMap<>();
@@ -35,7 +37,7 @@ public class Storage {
         return storage;
     }
 
-    public HashMap<String, Item> getItemStorage() {
+    public Map<String, Item> getItemStorage() {
         return itemStorage;
     }
 
