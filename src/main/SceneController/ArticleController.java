@@ -330,7 +330,6 @@ public class ArticleController extends SceneHandler implements Initializable {
         // Normal article
         else{
             // Extract article components
-            Elements body = doc.select("section.main");
             Elements article = doc.select("div.the-article-body > *");
 
             // Creating and adding description label
