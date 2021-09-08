@@ -573,7 +573,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                     content.getChildren().add(createHeader(i.text()));
                 }
                 // Add text label if child is neither image nor video and has text
-                else if ((i.hasText() && i.select("div").size() == 0) || i.is("br")) {
+                else if ((i.hasText() && i.select("div").size() == 0)) {
                     content.getChildren().add(createLabel(div.text()));
                     if (i.nextElementSiblings().select("table,figure").size() == 0) break;
                 }
