@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.image.Image;
@@ -16,6 +17,7 @@ import javafx.scene.media.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 import main.Model.Item;
+import main.Storage.Storage;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -109,12 +111,12 @@ public class ArticleController extends SceneHandler implements Initializable {
 
             // Call read article function depends on which source
             switch (item.getSource()){
-                case VE -> readArticleVE(item.getLink());
-                case TT -> readArticleTT(item.getLink());
-                case TN -> readArticleTN(item.getLink());
-                case ZING -> readArticleZing(item.getLink());
-                case ND -> readArticleND(item.getLink());
-            }
+                    case VE -> readArticleVE(item.getLink());
+                    case TT -> readArticleTT(item.getLink());
+                    case TN -> readArticleTN(item.getLink());
+                    case ZING -> readArticleZing(item.getLink());
+                    case ND -> readArticleND(item.getLink());
+                }
 
             content.getChildren().addAll(createLabel(""));
         });
@@ -152,7 +154,7 @@ public class ArticleController extends SceneHandler implements Initializable {
 
                 // Add video label
                 try {
-                    content.getChildren().add(createVideoButton(videoVE(videoURL), ""));
+                    content.getChildren().add(createVideoLabel(videoVE(videoURL), ""));
                 }
                 catch (IllegalArgumentException e) {}
 
@@ -251,8 +253,8 @@ public class ArticleController extends SceneHandler implements Initializable {
                 try {
                     String videoSrc = doc.select("div.media-player script").toString();
                     videoSrc = extract(videoSrc, "src=\"", "\"");
-                    Label videoButton = createVideoButton(videoSrc, ""); // Create video
-                    content.getChildren().add(videoButton); // Add all created components to article view
+                    Label videoLabel = createVideoLabel(videoSrc, ""); // Create video
+                    content.getChildren().add(videoLabel); // Add all created components to article view
                 }
                 catch (Exception e) {} // Catch exception mostly due to video being a live stream
 
@@ -317,11 +319,11 @@ public class ArticleController extends SceneHandler implements Initializable {
 
                 // Creating and adding video, summary and author to article view
                 try {
-                    Label videoButton = createVideoButton(videos.first().attr("src"), "");
+                    Label videoLabel = createVideoLabel(videos.first().attr("src"), "");
                     Label label = createLabel(articles.select("p.video-summary").text());
                     Label author = createDescription(articles.select("span.video-author").text());
                     author.setAlignment(Pos.TOP_RIGHT);
-                    content.getChildren().addAll(videoButton, label, author);
+                    content.getChildren().addAll(videoLabel, label, author);
                 }
                 catch (Exception e) {}
             }
@@ -457,7 +459,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                 // If element has <video>
                 if (e.select("video").size() > 0) {
                     // Add video label
-                    content.getChildren().add(createVideoButton(videoVE(e.select("video").attr("src")), e.select("figcaption").text()));
+                    content.getChildren().add(createVideoLabel(videoVE(e.select("video").attr("src")), e.select("figcaption").text()));
                 }
                 // If element doesn't have <video> and has <image>
                 else if (e.select("img").size() > 0) {
@@ -478,7 +480,7 @@ public class ArticleController extends SceneHandler implements Initializable {
             else if (e.is("div") && e.select("video").size() > 0 &&
                     (e.attr("class").contains("text-align:center") || e.attr("style").contains("center"))) {
                 // Add video label
-                content.getChildren().add(createVideoButton(videoVE(e.select("video").attr("src")), e.select("p").text()));
+                content.getChildren().add(createVideoLabel(videoVE(e.select("video").attr("src")), e.select("p").text()));
             }
             // If element is wrapnote
             else if (e.is("div") && e.attr("class").equals("box_brief_info")) {
@@ -526,8 +528,8 @@ public class ArticleController extends SceneHandler implements Initializable {
                 }
                 // Add video if child is video
                 else if (i.is("table") && i.attr("class").equals("video")) {
-                    Label videoButton = createVideoButton(i.select("div[class=\"clearfix cms-video\"]").attr("data-video-src"), i.select("p").text());
-                    content.getChildren().add(videoButton);
+                    Label videoLabel = createVideoLabel(i.select("div[class=\"clearfix cms-video\"]").attr("data-video-src"), i.select("p").text());
+                    content.getChildren().add(videoLabel);
                 }
                 // Add image if child is image
                 else if (i.is("figure") && i.attr("class").equals("picture")) {
@@ -601,7 +603,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                         videoSrc = videoSrc.replace("&vid=", "/");
                         videoSrc = "https://" + videoSrc;
 
-                        content.getChildren().add(createVideoButton(videoSrc, e.select("p").text()));
+                        content.getChildren().add(createVideoLabel(videoSrc, e.select("p").text()));
                     }
                     // Add wrapnote if element is wrapnote
                     else if (e.attr("type").equals("wrapnote")) {
@@ -639,7 +641,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                 }
                 // Create and add video if element is video
                 else if (e.is("figure") && e.attr("class").contains("video")) {
-                    content.getChildren().add(createVideoButton(e.attr("data-video-src"), e.select("figcaption").text()));
+                    content.getChildren().add(createVideoLabel(e.attr("data-video-src"), e.select("figcaption").text()));
                 }
                 // Create and add images if element is image/gallery
                 else if (e.is("table") && e.attr("class").contains("picture")) {
@@ -694,7 +696,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                         content.getChildren().add(createLabel(e.text()));
                     }
                     else {
-                        content.getChildren().add(createVideoButton(e.select("source").attr("src"), ""));
+                        content.getChildren().add(createVideoLabel(e.select("source").attr("src"), ""));
                     }
                 }
                 // Create and add image if element is image
@@ -842,7 +844,7 @@ public class ArticleController extends SceneHandler implements Initializable {
     }
 
     // Video label with caption
-    protected Label createVideoButton(String videoSrc, String caption){
+    protected Label createVideoLabel(String videoSrc, String caption){
         // Create media player
         Media media = new Media(videoSrc);
         MediaPlayer mediaPlayer = new MediaPlayer(media);

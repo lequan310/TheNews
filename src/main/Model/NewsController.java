@@ -1,6 +1,7 @@
 package main.Model;
 
 import javafx.concurrent.Task;
+import main.Storage.Storage;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 
 public class NewsController extends Task<Void> {
     private static NewsController newsController = null;
-    private final ArrayList<Item> items = new ArrayList<>(); // List of items that is scraped and sorted to be displayed
+    private ArrayList<Item> items = Storage.getInstance().getItems(); // List of items that is scraped and sorted to be displayed
     private ForkJoinPool pool;
 
     // List of URL to scrape from in order: New, Covid, Politics, Business, Technology, Health, Sports, Entertainment, World, Others
@@ -78,10 +79,6 @@ public class NewsController extends Task<Void> {
     }
 
     // Getters
-    public ArrayList<Item> getItems() {
-        return this.items;
-    }
-
     public String getError() {
         return this.error;
     }
@@ -104,9 +101,9 @@ public class NewsController extends Task<Void> {
         progress = 0;
         error = "";
         updateProgress(0, 1);
-        scrapeAll();
+        scrapeArticles();
 
-        pool.awaitQuiescence(10000, TimeUnit.MILLISECONDS);
+        pool.awaitQuiescence(20000, TimeUnit.MILLISECONDS);
         pool = null;
 
         // Remove duplicate and then sort
@@ -605,7 +602,7 @@ public class NewsController extends Task<Void> {
         }
     }
 
-    private void scrapeAll() {
+    private void scrapeArticles() {
         System.gc();
         if (categoryIndex == 0) {
             pool.execute(() -> scrapeVE(VNEXPRESS.stream().filter(link -> link.endsWith(".rss")).collect(Collectors.toList())));
@@ -640,8 +637,8 @@ public class NewsController extends Task<Void> {
     // Check if title of article is in covid category using keywords
     private static boolean checkCovidKeyword(String title) {
         final String check = title.toLowerCase();
-        final String[] keywords = {"cov", "ca", "f0", "f1", "vaccine", "vắc xin", "xét nghiệm", "phong tỏa", "mũi", "biến thể", "kháng thể",
-                "nhiễm", "dịch", "test", "pcr", "âm tính", "dương tính", "giãn cách", "chỉ thị", "mắc", "tiêm", "delta", "âm tính"};
+        final String[] keywords = {"cov", "f0", "f1", "vaccine", "vắc xin", "xét nghiệm", "phong tỏa", "mũi", "biến thể", "kháng thể",
+                "nhiễm", "dịch", "test", "pcr", "âm tính", "dương tính", "giãn cách", "chỉ thị", "mắc", "tiêm", "delta", "vùng đỏ", "vùng cam"};
 
         for (String s : keywords) {
             if (check.contains(s)) return true;

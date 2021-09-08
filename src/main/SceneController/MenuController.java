@@ -12,6 +12,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import main.Model.Item;
 import main.Model.NewsController;
+import main.Storage.Storage;
+
 import java.net.URL;
 import java.util.*;
 
@@ -92,6 +94,7 @@ public class MenuController extends SceneHandler implements Initializable {
     private final ArrayList<Button> pages = new ArrayList<>();
     private ArrayList<Item> items;
     private NewsController newsController;
+    private Storage storage;
 
     private final String[] categories = {"NEW", "COVID", "POLITICS", "BUSINESS", "TECHNOLOGY", "HEALTH", "SPORTS", "ENTERTAINMENT", "WORLD", "OTHERS"};
     private int categoryIndex, currentPage = 1;
@@ -105,6 +108,7 @@ public class MenuController extends SceneHandler implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Create news controller to scrape news in specific category
+        storage = Storage.getInstance();
         newsController = NewsController.getInstance();
         newsController.setCategoryIndex(categoryIndex);
         pb.progressProperty().bind(newsController.progressProperty()); // Bind loading bar to scraping progress
@@ -138,7 +142,7 @@ public class MenuController extends SceneHandler implements Initializable {
                                 thread.join();
 
                                 // Get articles after sorted by published date and initialize buttons
-                                items = newsController.getItems();
+                                items = storage.getItems();
                                 changePage(0);
                                 Platform.runLater(() -> loadAfterBar());
 
@@ -159,7 +163,7 @@ public class MenuController extends SceneHandler implements Initializable {
             }
         }
         else {
-            items = newsController.getItems();
+            items = storage.getItems();
             changePage(0);
             Platform.runLater(() -> loadAfterBar());
         }
@@ -227,16 +231,24 @@ public class MenuController extends SceneHandler implements Initializable {
                             buttons.get(currentButton).setDisable(false);
 
                             switch (items.get(idx).getSource()) {
-                                case VE -> icons.get(currentButton).setImage(new Image("/image/iconVE.png", icon.getFitWidth(), icon.getFitHeight(), true, true));
-                                case TT -> icons.get(currentButton).setImage(new Image("/image/iconTT.png", icon.getFitWidth(), icon.getFitHeight(), true, true));
-                                case TN -> icons.get(currentButton).setImage(new Image("/image/iconTN.jpeg", icon.getFitWidth(), icon.getFitHeight(), true, true));
-                                case ZING -> icons.get(currentButton).setImage(new Image("/image/iconZING.png", icon.getFitWidth(), icon.getFitHeight(), true, true));
-                                case ND -> icons.get(currentButton).setImage(new Image("/image/iconND.png", icon.getFitWidth(), icon.getFitHeight(), true, true));
+                                case VE -> icons.get(currentButton).setImage(storage.getIcons().get(0));
+                                case TT -> icons.get(currentButton).setImage(storage.getIcons().get(1));
+                                case TN -> icons.get(currentButton).setImage(storage.getIcons().get(2));
+                                case ZING -> icons.get(currentButton).setImage(storage.getIcons().get(3));
+                                case ND -> icons.get(currentButton).setImage(storage.getIcons().get(4));
                             }
 
                             try {
-                                Image background = new Image(items.get(idx).getImgSrc(), image.getFitWidth(), image.getFitHeight(), true, true, true);
-                                images.get(currentButton).setImage(background);
+                                String currentImgSrc = items.get(idx).getImgSrc();
+
+                                if (storage.getImage().containsKey(currentImgSrc)) {
+                                    images.get(currentButton).setImage(storage.getImage().get(currentImgSrc));
+                                }
+                                else {
+                                    Image background = new Image(currentImgSrc, image.getFitWidth(), image.getFitHeight(), true, true, true);
+                                    images.get(currentButton).setImage(background);
+                                    storage.getImage().put(currentImgSrc, background);
+                                }
                             } catch (IllegalArgumentException e) {
                                 images.get(currentButton).setImage(null);
                             }
