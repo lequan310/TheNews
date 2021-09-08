@@ -18,7 +18,6 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class NewsController extends Task<Void> {
     private static NewsController newsController = null;
@@ -499,11 +498,15 @@ public class NewsController extends Task<Void> {
                             boolean add = true;
                             LocalDateTime date = LocalDateTime.MIN;
 
+                            // Get title
+                            title = e.getElementsByClass("article-title").text();
+                            if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
+
                             // Get link
                             link = e.select("a").attr("href");
                             link = "https://zingnews.vn" + link;
                             if (storage.getItemStorage().containsKey(link)) {
-                                items.add(storage.getItemStorage().get(link));
+                                if (add) items.add(storage.getItemStorage().get(link));
                             }
                             else {
                                 // Get image source
@@ -512,10 +515,6 @@ public class NewsController extends Task<Void> {
                                 try {
                                     imgSrc = imgSrc.replaceAll("w\\d\\d\\d/", "");
                                 } catch (StringIndexOutOfBoundsException exception) {}
-
-                                // Get title
-                                title = e.getElementsByClass("article-title").text();
-                                if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
 
                                 // Get published date
                                 pubDate = e.select("span.time").text();
@@ -567,18 +566,18 @@ public class NewsController extends Task<Void> {
                             boolean add = true;
                             LocalDateTime date = LocalDateTime.MIN;
 
+                            // Get title
+                            title = e.getElementsByClass("box-title").text();
+                            if (title.equals("")) add = false;
+                            if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
+
                             // Get link
                             link = e.select("a").attr("href");
                             if (!link.contains("https://")) link = "https://nhandan.vn" + link;
                             if (storage.getItemStorage().containsKey(link)) {
-                                items.add(storage.getItemStorage().get(link));
+                                if (add) items.add(storage.getItemStorage().get(link));
                             }
                             else {
-                                // Get title
-                                title = e.getElementsByClass("box-title").text();
-                                if (title.equals("")) add = false;
-                                if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
-
                                 // Get image source
                                 imgSrc = e.select("img").attr("data-src");
                                 try {

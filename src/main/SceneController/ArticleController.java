@@ -802,7 +802,7 @@ public class ArticleController extends SceneHandler implements Initializable {
     }
 
     // Image label with caption
-    protected Label createImageLabel(Image image, String caption){
+    protected Label createImageLabel(Image image, String caption) {
         // Create ImageView and Label, and set label graphic to image view
         final double MAX_WIDTH = content.getWidth();
         ImageView imageView = new ImageView(image);
