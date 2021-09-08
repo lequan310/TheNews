@@ -104,7 +104,7 @@ public class NewsController extends Task<Void> {
         updateProgress(0, 1);
         scrapeArticles();
 
-        pool.awaitQuiescence(15000, TimeUnit.MILLISECONDS);
+        pool.awaitQuiescence(20000, TimeUnit.MILLISECONDS);
         pool = null;
 
         // Remove duplicate and then sort
