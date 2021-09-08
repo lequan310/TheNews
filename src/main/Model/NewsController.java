@@ -88,7 +88,7 @@ public class NewsController extends Task<Void> {
         this.categoryIndex = categoryIndex;
 
         switch (categoryIndex) {
-            case 0 -> maxProgress = 2100;
+            case 0 -> maxProgress = 2500;
             case 1 -> maxProgress = 400;
             case 9 -> maxProgress = 700;
             default -> maxProgress = 200;
@@ -641,7 +641,7 @@ public class NewsController extends Task<Void> {
     private void scrapeArticles() {
         System.gc();
         if (categoryIndex == 0) {
-            pool.execute(() -> scrapeVE(VNEXPRESS.stream().filter(link -> link.endsWith(".rss")).collect(Collectors.toList())));
+            pool.execute(() -> scrapeVE(VNEXPRESS));
             pool.execute(() -> scrapeTuoiTre(TUOITRE));
             pool.execute(() -> scrapeThanhNien(THANHNIEN));
             pool.execute(() -> scrapeZing(ZING));
