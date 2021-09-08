@@ -31,9 +31,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 public class ArticleController extends SceneHandler implements Initializable {
     private final int WORDSIZE = 18, categoryIndex; // default word size and category index
