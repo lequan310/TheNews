@@ -88,7 +88,7 @@ public class NewsController extends Task<Void> {
         this.categoryIndex = categoryIndex;
 
         switch (categoryIndex) {
-            case 0 -> maxProgress = 2500;
+            case 0 -> maxProgress = 2300;
             case 1 -> maxProgress = 400;
             case 9 -> maxProgress = 700;
             default -> maxProgress = 200;
