@@ -93,8 +93,8 @@ public class MenuController extends SceneHandler implements Initializable {
     private final ArrayList<Button> buttons = new ArrayList<>();
     private final ArrayList<Button> pages = new ArrayList<>();
     private ArrayList<Item> items;
-    private NewsController newsController;
-    private Storage storage;
+    private NewsController newsController = NewsController.getInstance();
+    private Storage storage = Storage.getInstance();
 
     private final String[] categories = {"NEW", "COVID", "POLITICS", "BUSINESS", "TECHNOLOGY", "HEALTH", "SPORTS", "ENTERTAINMENT", "WORLD", "OTHERS"};
     private int categoryIndex, currentPage = 1;
@@ -108,8 +108,6 @@ public class MenuController extends SceneHandler implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Create news controller to scrape news in specific category
-        storage = Storage.getInstance();
-        newsController = NewsController.getInstance();
         newsController.setCategoryIndex(categoryIndex);
         pb.progressProperty().bind(newsController.progressProperty()); // Bind loading bar to scraping progress
         categoryButton.setDisable(true);

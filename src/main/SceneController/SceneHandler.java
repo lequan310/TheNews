@@ -12,6 +12,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import main.Model.Item;
+import main.Storage.Storage;
+
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -141,6 +143,7 @@ public class SceneHandler {
     }
 
     @FXML protected void close(MouseEvent event) {
+        Storage.getInstance().clearAll();
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
         System.exit(0);

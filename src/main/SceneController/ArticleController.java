@@ -1,6 +1,8 @@
 package main.SceneController;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -16,6 +18,7 @@ import javafx.scene.layout.*;
 import javafx.scene.media.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
+import javafx.util.Duration;
 import main.Model.Item;
 import main.Storage.Storage;
 import org.jsoup.Connection;
@@ -28,13 +31,16 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class ArticleController extends SceneHandler implements Initializable {
     private final int WORDSIZE = 18, categoryIndex; // default word size and category index
     private int index; // current item index
     private final ArrayList<Item> items; // list of items
     private Item item; // current item
+    private Storage storage = Storage.getInstance();
 
     @FXML private AnchorPane anchorPane;
     @FXML private FlowPane content;
@@ -104,19 +110,26 @@ public class ArticleController extends SceneHandler implements Initializable {
 
     public void readArticle(){
         System.gc();
-        System.out.println(Math.round((double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Math.pow(1024, 2)) + " MB");
         Platform.runLater(() -> {
             // Clear previous article and read new article
             content.getChildren().clear();
 
-            // Call read article function depends on which source
-            switch (item.getSource()){
+            if (storage.getArticles().containsKey(item.getLink())) {
+                content.getChildren().addAll(storage.getArticles().get(item.getLink()));
+            }
+            else {
+                // Call read article function depends on which source
+                switch (item.getSource()){
                     case VE -> readArticleVE(item.getLink());
                     case TT -> readArticleTT(item.getLink());
                     case TN -> readArticleTN(item.getLink());
                     case ZING -> readArticleZing(item.getLink());
                     case ND -> readArticleND(item.getLink());
                 }
+
+                ObservableList<Node> nodes = FXCollections.observableArrayList(content.getChildren());
+                storage.getArticles().put(item.getLink(), nodes);
+            }
 
             content.getChildren().addAll(createLabel(""));
         });
@@ -130,7 +143,12 @@ public class ArticleController extends SceneHandler implements Initializable {
 
         // Set thumbnail Image
         try {
-            thumbnail.setImage(new Image(item.getImgSrc(), thumbnail.getFitWidth(), thumbnail.getFitHeight(), false, true, true));
+            if (storage.getImage().containsKey(item.getImgSrc())) {
+                thumbnail.setImage(storage.getImage().get(item.getImgSrc()));
+            }
+            else {
+                thumbnail.setImage(new Image(item.getImgSrc(), thumbnail.getFitWidth(), thumbnail.getFitHeight(), false, true, true));
+            }
         }
         catch (IllegalArgumentException e) {
             thumbnail.setImage(null);
@@ -854,6 +872,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         mediaView.setPreserveRatio(true);
         mediaView.setOnMouseEntered(e -> mediaPlayer.play());
         mediaView.setOnMouseExited(e -> mediaPlayer.pause());
+        mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.setStartTime(Duration.ZERO));
 
         // Add video and help image into stack pane and then set stack pane as label graphic
         Label label = createGraphicLabel(caption);
