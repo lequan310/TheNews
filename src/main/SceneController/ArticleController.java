@@ -119,16 +119,24 @@ public class ArticleController extends SceneHandler implements Initializable {
             }
             else {
                 // Call read article function depends on which source
-                switch (item.getSource()){
-                    case VE -> readArticleVE(item.getLink());
-                    case TT -> readArticleTT(item.getLink());
-                    case TN -> readArticleTN(item.getLink());
-                    case ZING -> readArticleZing(item.getLink());
-                    case ND -> readArticleND(item.getLink());
-                }
+                try {
+                    switch (item.getSource()){
+                        case VE -> readArticleVE(item.getLink());
+                        case TT -> readArticleTT(item.getLink());
+                        case TN -> readArticleTN(item.getLink());
+                        case ZING -> readArticleZing(item.getLink());
+                        case ND -> readArticleND(item.getLink());
+                    }
 
-                ObservableList<Node> nodes = FXCollections.observableArrayList(content.getChildren());
-                storage.getArticles().put(item.getLink(), nodes);
+                    ObservableList<Node> nodes = FXCollections.observableArrayList(content.getChildren());
+                    storage.getArticles().put(item.getLink(), nodes);
+                }
+                catch (Exception e) {
+                    System.out.println(e.getMessage());
+
+                    if (e instanceof IOException)
+                        dealException(e, item);
+                }
             }
 
             content.getChildren().addAll(createLabel(""));
@@ -156,275 +164,236 @@ public class ArticleController extends SceneHandler implements Initializable {
     }
 
     // Function to read article from VN Express
-    private void readArticleVE(String urlAddress) {
-        try {
-            // Try to connect to item url
-            Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
-            System.out.println("Status code: " + response.statusCode() + " " + urlAddress);
-            if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
-            Document doc = response.parse();
+    private void readArticleVE(String urlAddress) throws Exception {
+        // Try to connect to item url
+        Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
+        System.out.println("Status code: " + response.statusCode() + " " + urlAddress);
+        if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
+        Document doc = response.parse();
 
-            // Video article
-            if (urlAddress.contains("video.vnexpress.net")) {
-                // Extract video URL
-                String videoURL = doc.select("script").toString();
-                videoURL = extract(videoURL, "\"contentUrl\": \"", "\",");
+        // Video article
+        if (urlAddress.contains("video.vnexpress.net")) {
+            // Extract video URL
+            String videoURL = doc.select("script").toString();
+            videoURL = extract(videoURL, "\"contentUrl\": \"", "\",");
 
-                // Add video label
-                try {
-                    content.getChildren().add(createVideoLabel(videoVE(videoURL), ""));
-                }
-                catch (IllegalArgumentException e) {}
-
-                // Create description, video, and author label and add after video
-                Label description = createDescription(doc.select("div.lead_detail").text());
-                Label author = createDescription(doc.select("p.author").text());
-                content.getChildren().addAll(description, author);
+            // Add video label
+            try {
+                content.getChildren().add(createVideoLabel(videoVE(videoURL), ""));
             }
-            // Normal article
-            else {
-                // Get main article element
-                Element article;
-                if (doc.select("article.fck_detail").size() > 0)
-                    article = doc.select("article.fck_detail").first();
-                else
-                    article = doc.select("div[class*=fck_detail]").first();
+            catch (IllegalArgumentException e) {}
 
-                // Add description to article view
-                Label description = createDescription(doc.select("p.description").text());
-                content.getChildren().add(description);
-
-                // Loop through elements in main article
-                checkDivVE(article, content);
-
-                // Add author label to article view
-                Label author = createDescription(article.select("p[style*=text-align:right]").text());
-                if (author.getText().equals(""))
-                    author.setText(article.select("p[class*=author]").text());
-
-                author.setAlignment(Pos.TOP_RIGHT);
-                content.getChildren().add(author);
-            }
+            // Create description, video, and author label and add after video
+            Label description = createDescription(doc.select("div.lead_detail").text());
+            Label author = createDescription(doc.select("p.author").text());
+            content.getChildren().addAll(description, author);
         }
-        catch (Exception e){
-            System.out.println(e.getMessage());
+        // Normal article
+        else {
+            // Get main article element
+            Element article;
+            if (doc.select("article.fck_detail").size() > 0)
+                article = doc.select("article.fck_detail").first();
+            else
+                article = doc.select("div[class*=fck_detail]").first();
 
-            if (e instanceof IOException)
-                dealException(e, item);
+            // Add description to article view
+            Label description = createDescription(doc.select("p.description").text());
+            content.getChildren().add(description);
+
+            // Loop through elements in main article
+            checkDivVE(article, content);
+
+            // Add author label to article view
+            Label author = createDescription(article.select("p[style*=text-align:right]").text());
+            if (author.getText().equals(""))
+                author.setText(article.select("p[class*=author]").text());
+
+            author.setAlignment(Pos.TOP_RIGHT);
+            content.getChildren().add(author);
         }
     }
 
     // Function to read article from TuoiTre
-    private void readArticleTT(String urlAddress){
-        try {
-            // Connect to article URL
-            Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
-            System.out.println("Status code: " + response.statusCode() + " " + urlAddress);
-            if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
-            Document doc = response.parse();
+    private void readArticleTT(String urlAddress) throws Exception {
+        // Connect to article URL
+        Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
+        System.out.println("Status code: " + response.statusCode() + " " + urlAddress);
+        if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
+        Document doc = response.parse();
 
-            // Extracting article contents
-            Elements body = doc.select("div#mainContentDetail");
-            Elements article = body.select("div#main-detail-body > *");
+        // Extracting article contents
+        Elements body = doc.select("div#mainContentDetail");
+        Elements article = body.select("div#main-detail-body > *");
 
-            // Adding description label
-            Label description = createDescription(body.select("h2").text());
-            content.getChildren().add(description);
+        // Adding description label
+        Label description = createDescription(body.select("h2").text());
+        content.getChildren().add(description);
 
-            // Loop through main article
-            addTT(article, content);
+        // Loop through main article
+        addTT(article, content);
 
-            // Adding author label
-            if (body.select("div.author").size() > 0){
-                Label author = createDescription(body.select("div.author").text());
-                author.setAlignment(Pos.TOP_RIGHT);
-                content.getChildren().add(author);
-            }
+        // Adding author label
+        if (body.select("div.author").size() > 0){
+            Label author = createDescription(body.select("div.author").text());
+            author.setAlignment(Pos.TOP_RIGHT);
+            content.getChildren().add(author);
         }
-        catch (Exception e){
-            System.out.println(e.getMessage());
 
-            if (e instanceof IOException)
-                dealException(e, item);
-        }
     }
 
     // Function to read article from ThanhNien
-    private void readArticleTN(String urlAddress) {
-        try {
-            // Connect to article URL
-            Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
-            System.out.println("Status code: " + response.statusCode() + " " + urlAddress);
-            if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
-            Document doc = response.parse();
+    private void readArticleTN(String urlAddress) throws Exception {
+        // Connect to article URL
+        Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
+        System.out.println("Status code: " + response.statusCode() + " " + urlAddress);
+        if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
+        Document doc = response.parse();
 
-            // Video article
-            if (urlAddress.contains("https://thanhnien.vn/video")){
-                // Extract main article, description and author
-                Elements article = doc.select("div[id=abody]");
-                Label label = createDescription(doc.select("div.sapo").text()); // Create description label
-                Label author = createDescription(doc.select("div.details__author h4").text()); // Create author label
-                author.setAlignment(Pos.TOP_RIGHT);
-                content.getChildren().add(label);
+        // Video article
+        if (urlAddress.contains("https://thanhnien.vn/video")){
+            // Extract main article, description and author
+            Elements article = doc.select("div[id=abody]");
+            Label label = createDescription(doc.select("div.sapo").text()); // Create description label
+            Label author = createDescription(doc.select("div.details__author h4").text()); // Create author label
+            author.setAlignment(Pos.TOP_RIGHT);
+            content.getChildren().add(label);
 
-                // Extract video url and add video label
-                try {
-                    String videoSrc = doc.select("div.media-player script").toString();
-                    videoSrc = extract(videoSrc, "src=\"", "\"");
-                    Label videoLabel = createVideoLabel(videoSrc, ""); // Create video
-                    content.getChildren().add(videoLabel); // Add all created components to article view
-                }
-                catch (Exception e) {} // Catch exception mostly due to video being a live stream
-
-                // Loop through main article and add content, finally add author
-                checkDivTN(article.first(), content);
-                content.getChildren().add(author);
+            // Extract video url and add video label
+            try {
+                String videoSrc = doc.select("div.media-player script").toString();
+                videoSrc = extract(videoSrc, "src=\"", "\"");
+                Label videoLabel = createVideoLabel(videoSrc, ""); // Create video
+                content.getChildren().add(videoLabel); // Add all created components to article view
             }
-            // Normal article
-            else{
-                Elements body = doc.select("div[class~=.*content]");
-                Elements article = doc.select("div[id=abody]");
+            catch (Exception e) {} // Catch exception mostly due to video being a live stream
 
-                // Create Description label
-                if (body.select("div.sapo").size() > 0) {
-                    content.getChildren().add(createDescription(body.select("div.sapo").text()));
-                }
-                else {
-                    content.getChildren().add(createDescription(doc.select("div.summary").text()));
-                }
-
-                // Thumbnail image
-                try {
-                    Image thumbnail = new Image(body.select("div[id=contentAvatar] img").attr("src"), true);
-                    Label tnImage = createImageLabel(thumbnail, body.select("div[id=contentAvatar] div.imgcaption").text());
-                    content.getChildren().add(tnImage);
-                }
-                // If no thumbnail image
-                catch (IllegalArgumentException e) {}
-
-                // Loop through elements in main article
-                checkDivTN(article.first(), content);
-
-                // Create author label
-                Label author = createDescription(doc.select("div.left h4").text());
-                author.setAlignment(Pos.TOP_RIGHT);
-                content.getChildren().add(author);
-            }
+            // Loop through main article and add content, finally add author
+            checkDivTN(article.first(), content);
+            content.getChildren().add(author);
         }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
+        // Normal article
+        else{
+            Elements body = doc.select("div[class~=.*content]");
+            Elements article = doc.select("div[id=abody]");
 
-            if (e instanceof IOException)
-                dealException(e, item);
+            // Create Description label
+            if (body.select("div.sapo").size() > 0) {
+                content.getChildren().add(createDescription(body.select("div.sapo").text()));
+            }
+            else {
+                content.getChildren().add(createDescription(doc.select("div.summary").text()));
+            }
+
+            // Thumbnail image
+            try {
+                Image thumbnail = new Image(body.select("div[id=contentAvatar] img").attr("src"), true);
+                Label tnImage = createImageLabel(thumbnail, body.select("div[id=contentAvatar] div.imgcaption").text());
+                content.getChildren().add(tnImage);
+            }
+            // If no thumbnail image
+            catch (IllegalArgumentException e) {}
+
+            // Loop through elements in main article
+            checkDivTN(article.first(), content);
+
+            // Create author label
+            Label author = createDescription(doc.select("div.left h4").text());
+            author.setAlignment(Pos.TOP_RIGHT);
+            content.getChildren().add(author);
         }
     }
 
     // Function to read article from ZingNews
-    private void readArticleZing(String urlAddress){
-        try{
-            // Connect to article URL
-            Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
-            System.out.println("Status code: " + response.statusCode() + " " + urlAddress);
-            if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
-            Document doc = response.parse();
+    private void readArticleZing(String urlAddress) throws Exception {
+        // Connect to article URL
+        Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
+        System.out.println("Status code: " + response.statusCode() + " " + urlAddress);
+        if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
+        Document doc = response.parse();
 
-            // Video article
-            if (urlAddress.contains("https://zingnews.vn/video")){
-                // Extract video URL and information
-                Elements body = doc.select("div[id=video-featured]");
-                Elements videos = body.select("video");
-                Elements articles = body.select("div.video-info");
+        // Video article
+        if (urlAddress.contains("https://zingnews.vn/video")){
+            // Extract video URL and information
+            Elements body = doc.select("div[id=video-featured]");
+            Elements videos = body.select("video");
+            Elements articles = body.select("div.video-info");
 
-                // Creating and adding video, summary and author to article view
-                try {
-                    Label videoLabel = createVideoLabel(videos.first().attr("src"), "");
-                    Label label = createLabel(articles.select("p.video-summary").text());
-                    Label author = createDescription(articles.select("span.video-author").text());
-                    author.setAlignment(Pos.TOP_RIGHT);
-                    content.getChildren().addAll(videoLabel, label, author);
-                }
-                catch (Exception e) {}
-            }
-            // Normal article
-            else{
-                // Extract article components
-                Elements body = doc.select("section.main");
-                Elements article = doc.select("div.the-article-body > *");
-
-                // Creating and adding description label
-                Label description =createDescription(doc.select("p.the-article-summary").text());
-                content.getChildren().add(description);
-
-                // Loop through article elements
-                addZing(article, content);
-
-                // Create and add author label
-                Label author = createDescription(doc.getElementsByClass("author").text());
+            // Creating and adding video, summary and author to article view
+            try {
+                Label videoLabel = createVideoLabel(videos.first().attr("src"), "");
+                Label label = createLabel(articles.select("p.video-summary").text());
+                Label author = createDescription(articles.select("span.video-author").text());
                 author.setAlignment(Pos.TOP_RIGHT);
-                content.getChildren().add(author);
+                content.getChildren().addAll(videoLabel, label, author);
             }
+            catch (Exception e) {}
         }
-        catch (Exception e){
-            System.out.println(e.getMessage());
+        // Normal article
+        else{
+            // Extract article components
+            Elements body = doc.select("section.main");
+            Elements article = doc.select("div.the-article-body > *");
 
-            if (e instanceof IOException)
-                dealException(e, item);
+            // Creating and adding description label
+            Label description =createDescription(doc.select("p.the-article-summary").text());
+            content.getChildren().add(description);
+
+            // Loop through article elements
+            addZing(article, content);
+
+            // Create and add author label
+            Label author = createDescription(doc.getElementsByClass("author").text());
+            author.setAlignment(Pos.TOP_RIGHT);
+            content.getChildren().add(author);
         }
     }
 
     // Function to read article from Nhan Dan
-    private void readArticleND(String urlAddress) {
-        try {
-            // Connect to article URL
-            Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
-            System.out.println("Status code: " + response.statusCode() + " " + urlAddress);
-            if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
-            Document doc = response.parse();
+    private void readArticleND(String urlAddress) throws Exception {
+        // Connect to article URL
+        Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
+        System.out.println("Status code: " + response.statusCode() + " " + urlAddress);
+        if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
+        Document doc = response.parse();
 
-            // Special Nhan Dan articles
-            if (urlAddress.contains("special.nhandan.vn")) {
-                Elements article = doc.select("article > *");
-                String newURL = urlAddress.replace("index.html", "");
+        // Special Nhan Dan articles
+        if (urlAddress.contains("special.nhandan.vn")) {
+            Elements article = doc.select("article > *");
+            String newURL = urlAddress.replace("index.html", "");
 
-                for (Element e : article) {
-                    // Check div for each div element with id containing "section"
-                    if (e.is("div") && e.attr("id").contains("section")) {
-                        addSpecialND(e.select("> *"), content, newURL);
-                    }
+            for (Element e : article) {
+                // Check div for each div element with id containing "section"
+                if (e.is("div") && e.attr("id").contains("section")) {
+                    addSpecialND(e.select("> *"), content, newURL);
                 }
-            }
-            // Normal Nhan Dan articles
-            else {
-                // Extract elements from main article
-                Elements body = doc.select("div.box-content-detail");
-                Elements article = doc.select("div.detail-content-body > *");
-
-                // Create and add Thumbnail image
-                try {
-                    Image thumb = new Image(body.select("div.box-detail-thumb img").attr("src"), true);
-                    Label thumbnail = createImageLabel(thumb, body.select("div.box-detail-thumb span").text());
-                    content.getChildren().add(thumbnail);
-                }
-                catch (IllegalArgumentException ex) {}
-
-                // Create and add Description label
-                Label description = createDescription(body.select("div.box-des-detail p").text());
-                content.getChildren().add(description);
-
-                // Loop through elements in main article
-                addND(article, content);
-
-                // Create and add author label
-                Label author = createDescription(body.select("div.box-author strong").text());
-                author.setAlignment(Pos.TOP_RIGHT);
-                content.getChildren().add(author);
             }
         }
-        catch (Exception e){
-            System.out.println(e.getMessage());
+        // Normal Nhan Dan articles
+        else {
+            // Extract elements from main article
+            Elements body = doc.select("div.box-content-detail");
+            Elements article = doc.select("div.detail-content-body > *");
 
-            if (e instanceof IOException)
-                dealException(e, item);
+            // Create and add Thumbnail image
+            try {
+                Image thumb = new Image(body.select("div.box-detail-thumb img").attr("src"), true);
+                Label thumbnail = createImageLabel(thumb, body.select("div.box-detail-thumb span").text());
+                content.getChildren().add(thumbnail);
+            }
+            catch (IllegalArgumentException ex) {}
+
+            // Create and add Description label
+            Label description = createDescription(body.select("div.box-des-detail p").text());
+            content.getChildren().add(description);
+
+            // Loop through elements in main article
+            addND(article, content);
+
+            // Create and add author label
+            Label author = createDescription(body.select("div.box-author strong").text());
+            author.setAlignment(Pos.TOP_RIGHT);
+            content.getChildren().add(author);
         }
     }
 
@@ -872,7 +841,10 @@ public class ArticleController extends SceneHandler implements Initializable {
         mediaView.setPreserveRatio(true);
         mediaView.setOnMouseEntered(e -> mediaPlayer.play());
         mediaView.setOnMouseExited(e -> mediaPlayer.pause());
-        mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.setStartTime(Duration.ZERO));
+        mediaPlayer.setOnEndOfMedia(() -> {
+            mediaPlayer.seek(Duration.ZERO);
+            mediaPlayer.play();
+        });
 
         // Add video and help image into stack pane and then set stack pane as label graphic
         Label label = createGraphicLabel(caption);
