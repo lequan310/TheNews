@@ -14,10 +14,10 @@ public class Storage {
     private static Storage storage = null;
     private final int ICONSIZE = 50;
 
-    private Map<String, Item> itemStorage = new ConcurrentHashMap<>();
-    private ArrayList<Item> items = new ArrayList<>();
-    private HashMap<String, Image> images = new HashMap<>();
-    private HashMap<String, ObservableList<Node>> articles = new HashMap<>();
+    private final Map<String, Item> itemStorage = new ConcurrentHashMap<>();
+    private final ArrayList<Item> items = new ArrayList<>();
+    private final HashMap<String, Image> images = new HashMap<>();
+    private final HashMap<String, ObservableList<Node>> articles = new HashMap<>();
     private final ArrayList<Image> icons = new ArrayList<>(
         List.of(new Image("/image/iconVE.png", ICONSIZE, ICONSIZE, true, true),
                 new Image("/image/iconTT.png", ICONSIZE, ICONSIZE, true, true),

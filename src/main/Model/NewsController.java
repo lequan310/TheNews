@@ -21,9 +21,9 @@ import java.util.concurrent.TimeUnit;
 
 public class NewsController extends Task<Void> {
     private static NewsController newsController = null;
-    private ArrayList<Item> items = Storage.getInstance().getItems(); // List of items that is scraped and sorted to be displayed
+    private final ArrayList<Item> items = Storage.getInstance().getItems(); // List of items that is scraped and sorted to be displayed
     private ForkJoinPool pool;
-    private Storage storage = Storage.getInstance();
+    private final Storage storage = Storage.getInstance();
 
     // List of URL to scrape from in order: New, Covid, Politics, Business, Technology, Health, Sports, Entertainment, World, Others
     private final ArrayList<String> VNEXPRESS = new ArrayList<>(
@@ -200,7 +200,7 @@ public class NewsController extends Task<Void> {
                         }
                     }
                     else {
-                        Connection.Response response = Jsoup.connect(urlAddress).timeout(5000).execute();
+                        Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
                         if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
 
                         Document doc = response.parse();
@@ -340,7 +340,7 @@ public class NewsController extends Task<Void> {
                         }
                     }
                     else {
-                        Connection.Response response = Jsoup.connect(urlAddress).timeout(5000).execute();
+                        Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
                         if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
 
                         Document doc = response.parse();
@@ -478,7 +478,7 @@ public class NewsController extends Task<Void> {
         for (String urlAddress : links) {
             pool.execute(() -> {
                 try {
-                    Connection.Response response = Jsoup.connect(urlAddress).timeout(5000).execute();
+                    Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
                     if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
 
                     // Connect to URL and add all article element into list
@@ -548,7 +548,7 @@ public class NewsController extends Task<Void> {
         for (String urlAddress : links) {
             pool.execute(() -> {
                 try {
-                    Connection.Response response = Jsoup.connect(urlAddress).timeout(5000).execute();
+                    Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
                     if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
 
                     // Connect to URL and add all article element into list

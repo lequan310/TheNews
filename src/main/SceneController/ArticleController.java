@@ -775,7 +775,6 @@ public class ArticleController extends SceneHandler implements Initializable {
 
         label.setFont(Font.font("Roboto", WORDSIZE));
         label.setTextFill(Color.valueOf("#ffffff"));
-        label.setTextOverrun(OverrunStyle.CLIP);
         label.setWrapText(true);
         label.setAlignment(Pos.CENTER_LEFT);
         label.prefWidthProperty().bind(content.widthProperty().subtract(400)); // label prefwidth = content prefwidth - 400
@@ -874,7 +873,6 @@ public class ArticleController extends SceneHandler implements Initializable {
         label.setAlignment(Pos.TOP_CENTER);
         label.setTextAlignment(TextAlignment.CENTER);
         label.setFont(Font.font("Arial", FontPosture.ITALIC, 16));
-        label.setTextOverrun(OverrunStyle.CLIP);
         label.setWrapText(true);
         if (!caption.equals(""))
             label.setStyle("-fx-border-color: #404040; -fx-background-color: #bcbcbc");
