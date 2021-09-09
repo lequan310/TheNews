@@ -18,6 +18,7 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class NewsController extends Task<Void> {
     private static NewsController newsController = null;
@@ -640,7 +641,7 @@ public class NewsController extends Task<Void> {
     private void scrapeArticles() {
         System.gc();
         if (categoryIndex == 0) {
-            pool.execute(() -> scrapeVE(VNEXPRESS));
+            pool.execute(() -> scrapeVE(VNEXPRESS.stream().filter(link -> link.endsWith(".rss")).collect(Collectors.toList())));
             pool.execute(() -> scrapeTuoiTre(TUOITRE));
             pool.execute(() -> scrapeThanhNien(THANHNIEN));
             pool.execute(() -> scrapeZing(ZING));
