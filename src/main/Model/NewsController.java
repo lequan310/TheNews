@@ -448,6 +448,8 @@ public class NewsController extends Task<Void> {
                                 title = extract(line, "<title>", "</title>");
                                 if (title.contains("<![CDATA[ "))
                                     title = extract(title, "<![CDATA[ ", "]]>");
+                                if (categoryIndex == 1 && !checkCovidKeyword(title))
+                                    inItem = false;
 
                                 // Extract link
                                 link = extract(line, "<link>", "</link>");
