@@ -153,7 +153,9 @@ public class ArticleController extends SceneHandler implements Initializable {
                 thumbnail.setImage(storage.getImage().get(item.getImgSrc()));
             }
             else {
-                thumbnail.setImage(new Image(item.getImgSrc(), thumbnail.getFitWidth(), thumbnail.getFitHeight(), false, true, true));
+                Image background = new Image(item.getImgSrc(), thumbnail.getFitWidth(), thumbnail.getFitHeight(), false, true, true);
+                thumbnail.setImage(background);
+                storage.getImage().put(item.getImgSrc(), background);
             }
         }
         catch (IllegalArgumentException e) {
