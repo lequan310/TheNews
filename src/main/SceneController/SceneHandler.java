@@ -1,6 +1,5 @@
 package main.SceneController;
 
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
@@ -13,7 +12,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import main.Model.Item;
 import main.Storage.Storage;
-
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
