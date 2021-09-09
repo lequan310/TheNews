@@ -20,7 +20,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" styleClass="grey-background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" styleClass="grey-background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <BorderPane onMouseDragged="#resize" onMouseEntered="#checkBound" onMouseMoved="#checkBound" onMouseReleased="#stopResize" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <center>
@@ -137,6 +137,9 @@
                                  </styleClass>
                               </Button>
                            </children>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
                         </VBox>
                         <ScrollPane fx:id="scrollPane" fitToWidth="true" prefHeight="975.0" prefWidth="1840.0" styleClass="grey-background" stylesheets="@../css/style.css">
                            <content>
@@ -638,6 +641,9 @@
                                  </children>
                               </FlowPane>
                            </content>
+                           <HBox.margin>
+                              <Insets bottom="3.0" right="3.0" />
+                           </HBox.margin>
                         </ScrollPane>
                      </children>
                   </HBox>
