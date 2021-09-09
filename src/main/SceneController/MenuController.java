@@ -13,7 +13,6 @@ import javafx.scene.layout.*;
 import main.Model.Item;
 import main.Model.NewsController;
 import main.Storage.Storage;
-
 import java.net.URL;
 import java.util.*;
 
