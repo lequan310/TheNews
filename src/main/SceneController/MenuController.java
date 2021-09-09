@@ -1,6 +1,8 @@
 package main.SceneController;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -207,12 +209,19 @@ public class MenuController extends SceneHandler implements Initializable {
 
     public void changePage(int page) {
         try {
-            scrollPane.setVvalue(0); // Reset scroll bar
-
             // Change page if selected page is not the current active page
             if (currentPage != page) {
                 final int ITEMCOUNT = 10;
                 currentPage = page;
+
+                scrollPane.setVvalue(0); // Reset scroll bar
+                for (int i = 0; i < pages.size(); i++) {
+                    if (i == page) {
+                        pages.get(i).setStyle("-fx-background-color: #4e4e4e");
+                    } else {
+                        pages.get(i).setStyle("");
+                    }
+                }
 
                 // Initializing article buttons
                 for (int i = 0; i < ITEMCOUNT; i++) {
