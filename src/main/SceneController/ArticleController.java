@@ -921,7 +921,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         // If not last item, increase current item index and load that article
         index++;
         item = items.get(index);
-        readArticle();
+        Platform.runLater(() -> readArticle());
         previousButton.setDisable(false);
 
         // Disable next article button if last item of the list reached
@@ -935,7 +935,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         // If not first item, decrease current item index and load that article
         index--;
         item = items.get(index);
-        readArticle();
+        Platform.runLater(() -> readArticle());
         nextButton.setDisable(false);
 
         // Disable previous article button if first item of the list reached
