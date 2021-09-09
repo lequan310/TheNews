@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMousePressed="#update" prefHeight="1080.0" prefWidth="1920.0" styleClass="dark-background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMousePressed="#update" prefHeight="1080.0" prefWidth="1920.0" styleClass="dark-background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <BorderPane onMouseDragged="#resize" onMouseEntered="#checkBound" onMouseMoved="#checkBound" onMouseReleased="#stopResize" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <center>
@@ -30,7 +30,7 @@
                      <children>
                         <VBox prefHeight="391.0" prefWidth="495.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Button fx:id="home" ellipsisString="" mnemonicParsing="false" onAction="#menuHome" prefHeight="75.0" prefWidth="253.0" styleClass="dark-background" text="Back" textFill="WHITE" VBox.vgrow="ALWAYS">
+                              <Button fx:id="home" ellipsisString="" mnemonicParsing="false" onAction="#menuHome" prefHeight="75.0" prefWidth="253.0" styleClass="dark-background" text="Return" textFill="WHITE" VBox.vgrow="ALWAYS">
                                  <graphic>
                                     <ImageView fitHeight="81.0" fitWidth="55.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
