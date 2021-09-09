@@ -274,6 +274,7 @@ public class NewsController extends Task<Void> {
                 }
             });
         }
+        System.out.println("Done VN Express");
     }
 
     private void scrapeTuoiTre(List<String> links) {
@@ -409,6 +410,7 @@ public class NewsController extends Task<Void> {
                 }
             });
         }
+        System.out.println("Done Tuoi Tre");
     }
 
     private void scrapeThanhNien(List<String> links) {
@@ -418,42 +420,66 @@ public class NewsController extends Task<Void> {
                     // Creating buffered reader to read RSS file and extract items information
                     URL rssURL = new URL(urlAddress);
                     BufferedReader in = new BufferedReader(new InputStreamReader(rssURL.openStream()));
-                    String title = "", pubDate = "", link = "", imgSrc = "", line;
+                    String title = "", pubDate = "", link = "", imgSrc = "", line, previousLine = "";
                     LocalDateTime date = LocalDateTime.MIN;
-                    boolean inItem = false;
+                    boolean inItem = false, concat = false;
 
-                    // Loop through each line in RSS file
                     while ((line = in.readLine()) != null) {
-                        if (line.contains("<item>"))
+                        if (line.contains("<item>")) {
                             inItem = true;
+                        }
 
                         if (inItem) {
                             try {
+                                if (!line.endsWith("</item>")) {
+                                    previousLine += line;
+                                    concat = true;
+                                    continue;
+                                }
+                                else {
+                                    if (concat) {
+                                        line = previousLine + line;
+                                        previousLine = "";
+                                        concat = false;
+                                    }
+                                }
+
                                 // Extract title
                                 title = extract(line, "<title>", "</title>");
                                 if (title.contains("<![CDATA[ "))
                                     title = extract(title, "<![CDATA[ ", "]]>");
-                                if (categoryIndex == 1 && !checkCovidKeyword(title)) continue;
-                                title = title.replaceAll("<label>", "");
-                                title = title.replaceAll("</label>", " -");
 
                                 // Extract link
                                 link = extract(line, "<link>", "</link>");
 
-                                // Extract published date
+                                //Extract pubDate
                                 pubDate = extract(line, "<pubDate>", " GMT");
                                 DateTimeFormatter df = DateTimeFormatter.ofPattern("E, dd MMM yyyy HH:mm:ss");
                                 date = LocalDateTime.parse(pubDate, df);
                                 date = date.plusHours(7);
 
-                                // Extract thumbnail link
-                                imgSrc = extract(line, "<image>", "</image>");
-                                try {
-                                    imgSrc = imgSrc.replace("400x300/", "");
-                                } catch (StringIndexOutOfBoundsException exception) {
+                                // Extract image
+                                imgSrc = extract(line, "<image>", "/>");
+                                if (imgSrc.contains(".gif")) {
+                                    imgSrc = extract(imgSrc, "https://image.thanhnien.vn", ".gif");
+                                    imgSrc = "https://image.thanhnien.vn" + imgSrc + ".gif";
                                 }
+                                else if (imgSrc.contains(".png")) {
+                                    imgSrc = extract(imgSrc, "https://image.thanhnien.vn", ".png");
+                                    imgSrc = "https://image.thanhnien.vn" + imgSrc + ".png";
+                                }
+                                else if (imgSrc.contains("jpg")) {
+                                    imgSrc = extract(imgSrc, "https://image.thanhnien.vn", ".jpg");
+                                    imgSrc = "https://image.thanhnien.vn" + imgSrc + ".jpg";
+                                }
+                                else if (imgSrc.contains("jpeg")) {
+                                    imgSrc = extract(imgSrc, "https://image.thanhnien.vn", ".jpeg");
+                                    imgSrc = "https://image.thanhnien.vn" + imgSrc + ".jpeg";
+                                }
+                                try {
+                                    imgSrc = imgSrc.replaceAll(".vn/.*/uploaded", ".vn/uploaded");
+                                } catch (StringIndexOutOfBoundsException e) { continue;}
 
-                                // Add item into list of items
                                 Item item = new Item(title, link, date, imgSrc, Item.Source.TN);
                                 addItem(item);
                                 inItem = false;
@@ -461,6 +487,7 @@ public class NewsController extends Task<Void> {
                             }
                             // Catch error lines which sometimes existed in ThanhNien RSS
                             catch (StringIndexOutOfBoundsException e) {
+                                System.out.println(line);
                             }
                         }
                     }
@@ -474,6 +501,7 @@ public class NewsController extends Task<Void> {
                 }
             });
         }
+        System.out.println("Done Thanh Nien");
     }
 
     private void scrapeZing(List<String> links) {
@@ -544,6 +572,7 @@ public class NewsController extends Task<Void> {
                 }
             });
         }
+        System.out.println("Done Zing");
     }
 
     private void scrapeNhanDan(List<String> links) {
@@ -637,6 +666,7 @@ public class NewsController extends Task<Void> {
                 }
             });
         }
+        System.out.println("Done Nhan Dan");
     }
 
     private void scrapeArticles() {
