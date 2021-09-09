@@ -108,7 +108,6 @@ public class NewsController extends Task<Void> {
             pool.awaitQuiescence(20000, TimeUnit.MILLISECONDS);
         else
             pool.awaitQuiescence(15000, TimeUnit.MILLISECONDS);
-        pool = null;
 
         // Remove duplicate and then sort
         items.sort(Comparator.comparing(Item::getLink));
@@ -120,6 +119,7 @@ public class NewsController extends Task<Void> {
         }
         Collections.sort(items);
         updateProgress(1, 1);
+        pool = null;
 
         System.gc();
         System.out.println(Math.round((double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Math.pow(1024, 2)) + " MB");
