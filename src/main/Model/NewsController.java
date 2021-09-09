@@ -222,7 +222,7 @@ public class NewsController extends Task<Void> {
                                 // Get article link and thumbnail url
                                 link = e.select(" a").attr("href");
                                 if (storage.getItemStorage().containsKey(link)) {
-                                    items.add(storage.getItemStorage().get(link));
+                                    addItem(storage.getItemStorage().get(link));
                                 }
                                 else {
                                     // Get title
@@ -364,7 +364,7 @@ public class NewsController extends Task<Void> {
                                 link = "https://tuoitre.vn" + link;
 
                                 if (storage.getItemStorage().containsKey(link)) {
-                                    items.add(storage.getItemStorage().get(link));
+                                    addItem(storage.getItemStorage().get(link));
                                 }
                                 else {
                                     // Get title
@@ -510,7 +510,7 @@ public class NewsController extends Task<Void> {
                             link = e.select("a").attr("href");
                             link = "https://zingnews.vn" + link;
                             if (storage.getItemStorage().containsKey(link)) {
-                                if (add) items.add(storage.getItemStorage().get(link));
+                                if (add) addItem(storage.getItemStorage().get(link));
                             }
                             else {
                                 // Get image source
@@ -579,7 +579,7 @@ public class NewsController extends Task<Void> {
                             link = e.select("a").attr("href");
                             if (!link.contains("https://")) link = "https://nhandan.vn" + link;
                             if (storage.getItemStorage().containsKey(link)) {
-                                if (add) items.add(storage.getItemStorage().get(link));
+                                if (add) addItem(storage.getItemStorage().get(link));
                             }
                             else {
                                 // Get image source
