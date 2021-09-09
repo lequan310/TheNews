@@ -15,7 +15,11 @@ public class Main extends Application {
 
         // Adding css styles, setting app icons and titles
         scene.getStylesheets().add("css/style.css");
+        
+        //Setting stage title
         stage.setTitle("News Application");
+        
+        //Setting stage icon
         stage.getIcons().add(new Image("image/icon.png"));
         stage.setScene(scene);
         stage.initStyle(StageStyle.UNDECORATED);
