@@ -92,9 +92,9 @@ public class MenuController extends SceneHandler implements Initializable {
     private final ArrayList<Label> labels = new ArrayList<>();
     private final ArrayList<Button> buttons = new ArrayList<>();
     private final ArrayList<Button> pages = new ArrayList<>();
+    private final NewsController newsController = NewsController.getInstance();
+    private final Storage storage = Storage.getInstance();
     private ArrayList<Item> items;
-    private NewsController newsController = NewsController.getInstance();
-    private Storage storage = Storage.getInstance();
 
     private final String[] categories = {"NEW", "COVID", "POLITICS", "BUSINESS", "TECHNOLOGY", "HEALTH", "SPORTS", "ENTERTAINMENT", "WORLD", "OTHERS"};
     private int categoryIndex, currentPage = 1;
