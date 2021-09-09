@@ -82,6 +82,7 @@ public class SceneHandler {
             root.setOnKeyPressed(keyEvent -> menuHandler(keyEvent, controller));
             anchorPane.getScene().setRoot(root);
             root.requestFocus();
+            Storage.getInstance().getArticles().clear();
         }
         catch (Exception e){
             System.out.println(e.getMessage());

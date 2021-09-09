@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class NewsController extends Task<Void> {
     private static NewsController newsController = null;
     private final ArrayList<Item> items = Storage.getInstance().getItems(); // List of items that is scraped and sorted to be displayed
-    private ForkJoinPool pool;
+    private final ForkJoinPool pool = ForkJoinPool.commonPool();
     private final Storage storage = Storage.getInstance();
 
     // List of URL to scrape from in order: New, Covid, Politics, Business, Technology, Health, Sports, Entertainment, World, Others
@@ -97,7 +97,6 @@ public class NewsController extends Task<Void> {
 
     public void start() {
         long start = System.currentTimeMillis();
-        pool = ForkJoinPool.commonPool();
         items.clear();
         progress = 0;
         error = "";
@@ -119,7 +118,6 @@ public class NewsController extends Task<Void> {
         }
         Collections.sort(items);
         updateProgress(1, 1);
-        pool = null;
 
         System.gc();
         System.out.println(Math.round((double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Math.pow(1024, 2)) + " MB");
