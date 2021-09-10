@@ -41,7 +41,8 @@ public class NewsController extends Task<Void> {
         List.of("https://thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/thoi-su.rss", "https://thanhnien.vn/rss/thoi-su/chinh-tri.rss",
                 "https://thanhnien.vn/rss/tai-chinh-kinh-doanh.rss", "https://thanhnien.vn/rss/cong-nghe.rss", "https://thanhnien.vn/rss/suc-khoe.rss",
                 "https://thethao.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giai-tri.rss", "https://thanhnien.vn/rss/the-gioi.rss",
-                "https://game.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giao-duc.rss", "https://thanhnien.vn/rss/ban-can-biet.rss", "https://thanhnien.vn/rss/gioi-tre.rss"));
+                "https://game.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giao-duc.rss", "https://thanhnien.vn/rss/ban-can-biet.rss",
+                "https://thanhnien.vn/rss/gioi-tre.rss", "https://thanhnien.vn/covid-19/"));
     private final ArrayList<String> ZING = new ArrayList<>(
         List.of("https://zingnews.vn/", "https://zingnews.vn/suc-khoe.html", "https://zingnews.vn/chinh-tri.html",
                 "https://zingnews.vn/kinh-doanh-tai-chinh.html", "https://zingnews.vn/cong-nghe.html", "https://zingnews.vn/suc-khoe.html",
@@ -417,86 +418,131 @@ public class NewsController extends Task<Void> {
         for (String urlAddress : links) {
             pool.execute(() -> {
                 try {
-                    // Creating buffered reader to read RSS file and extract items information
-                    URL rssURL = new URL(urlAddress);
-                    BufferedReader in = new BufferedReader(new InputStreamReader(rssURL.openStream()));
-                    String title = "", pubDate = "", link = "", imgSrc = "", line, previousLine = "";
-                    LocalDateTime date = LocalDateTime.MIN;
-                    boolean inItem = false, concat = false;
+                    if (urlAddress.contains(".rss")) {
+                        // Creating buffered reader to read RSS file and extract items information
+                        URL rssURL = new URL(urlAddress);
+                        BufferedReader in = new BufferedReader(new InputStreamReader(rssURL.openStream()));
+                        String title = "", pubDate = "", link = "", imgSrc = "", line, previousLine = "";
+                        LocalDateTime date = LocalDateTime.MIN;
+                        boolean inItem = false, concat = false;
 
-                    while ((line = in.readLine()) != null) {
-                        if (line.contains("<item>")) {
-                            inItem = true;
+                        while ((line = in.readLine()) != null) {
+                            if (line.contains("<item>")) {
+                                inItem = true;
+                            }
+
+                            if (inItem) {
+                                try {
+                                    if (!line.endsWith("</item>")) {
+                                        previousLine += line;
+                                        concat = true;
+                                        continue;
+                                    }
+                                    else {
+                                        if (concat) {
+                                            line = previousLine + line;
+                                            previousLine = "";
+                                            concat = false;
+                                        }
+                                    }
+
+                                    // Extract title
+                                    title = extract(line, "<title>", "</title>");
+                                    if (title.contains("<![CDATA[ "))
+                                        title = extract(title, "<![CDATA[ ", "]]>");
+                                    if (categoryIndex == 1 && !checkCovidKeyword(title)) {
+                                        inItem = false;
+                                        continue;
+                                    }
+
+                                    // Extract link
+                                    link = extract(line, "<link>", "</link>");
+
+                                    //Extract pubDate
+                                    pubDate = extract(line, "<pubDate>", " GMT");
+                                    DateTimeFormatter df = DateTimeFormatter.ofPattern("E, dd MMM yyyy HH:mm:ss");
+                                    date = LocalDateTime.parse(pubDate, df);
+                                    date = date.plusHours(7);
+
+                                    // Extract image
+                                    imgSrc = extract(line, "<image>", "/>");
+                                    if (imgSrc.contains(".gif")) {
+                                        imgSrc = extract(imgSrc, "https://image.thanhnien.vn", ".gif");
+                                        imgSrc = "https://image.thanhnien.vn" + imgSrc + ".gif";
+                                    }
+                                    else if (imgSrc.contains(".png")) {
+                                        imgSrc = extract(imgSrc, "https://image.thanhnien.vn", ".png");
+                                        imgSrc = "https://image.thanhnien.vn" + imgSrc + ".png";
+                                    }
+                                    else if (imgSrc.contains("jpg")) {
+                                        imgSrc = extract(imgSrc, "https://image.thanhnien.vn", ".jpg");
+                                        imgSrc = "https://image.thanhnien.vn" + imgSrc + ".jpg";
+                                    }
+                                    else if (imgSrc.contains("jpeg")) {
+                                        imgSrc = extract(imgSrc, "https://image.thanhnien.vn", ".jpeg");
+                                        imgSrc = "https://image.thanhnien.vn" + imgSrc + ".jpeg";
+                                    }
+                                    try {
+                                        imgSrc = imgSrc.replaceAll(".vn/.*/uploaded", ".vn/uploaded");
+                                    } catch (StringIndexOutOfBoundsException e) { continue;}
+
+                                    Item item = new Item(title, link, date, imgSrc, Item.Source.TN);
+                                    addItem(item);
+                                    inItem = false;
+                                    loadProgress(); // updateProgress(progress++, maxProgress);
+                                }
+                                // Catch error lines which sometimes existed in ThanhNien RSS
+                                catch (StringIndexOutOfBoundsException e) {
+                                    System.out.println(line);
+                                }
+                            }
                         }
 
-                        if (inItem) {
-                            try {
-                                if (!line.endsWith("</item>")) {
-                                    previousLine += line;
-                                    concat = true;
-                                    continue;
-                                }
-                                else {
-                                    if (concat) {
-                                        line = previousLine + line;
-                                        previousLine = "";
-                                        concat = false;
-                                    }
-                                }
+                        in.close();
+                    }
+                    else {
+                        Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
+                        if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
 
-                                // Extract title
-                                title = extract(line, "<title>", "</title>");
-                                if (title.contains("<![CDATA[ "))
-                                    title = extract(title, "<![CDATA[ ", "]]>");
-                                if (categoryIndex == 1 && !checkCovidKeyword(title)) {
-                                    inItem = false;
-                                    continue;
-                                }
+                        // Connect to URL and add all article element into list
+                        Document doc = response.parse();
+                        Elements article = doc.select("article");
+                        int count = article.size();
 
-                                // Extract link
-                                link = extract(line, "<link>", "</link>");
+                        for (int i = 0; i < count; i++) {
+                            int current = i;
+                            pool.execute(() -> {
+                                Element e = article.get(current);
+                                String title = "", pubDate = "", link = "", imgSrc = "";
+                                LocalDateTime date = LocalDateTime.MIN;
 
-                                //Extract pubDate
-                                pubDate = extract(line, "<pubDate>", " GMT");
-                                DateTimeFormatter df = DateTimeFormatter.ofPattern("E, dd MMM yyyy HH:mm:ss");
-                                date = LocalDateTime.parse(pubDate, df);
-                                date = date.plusHours(7);
-
-                                // Extract image
-                                imgSrc = extract(line, "<image>", "/>");
-                                if (imgSrc.contains(".gif")) {
-                                    imgSrc = extract(imgSrc, "https://image.thanhnien.vn", ".gif");
-                                    imgSrc = "https://image.thanhnien.vn" + imgSrc + ".gif";
-                                }
-                                else if (imgSrc.contains(".png")) {
-                                    imgSrc = extract(imgSrc, "https://image.thanhnien.vn", ".png");
-                                    imgSrc = "https://image.thanhnien.vn" + imgSrc + ".png";
-                                }
-                                else if (imgSrc.contains("jpg")) {
-                                    imgSrc = extract(imgSrc, "https://image.thanhnien.vn", ".jpg");
-                                    imgSrc = "https://image.thanhnien.vn" + imgSrc + ".jpg";
-                                }
-                                else if (imgSrc.contains("jpeg")) {
-                                    imgSrc = extract(imgSrc, "https://image.thanhnien.vn", ".jpeg");
-                                    imgSrc = "https://image.thanhnien.vn" + imgSrc + ".jpeg";
-                                }
                                 try {
-                                    imgSrc = imgSrc.replaceAll(".vn/.*/uploaded", ".vn/uploaded");
-                                } catch (StringIndexOutOfBoundsException e) { continue;}
+                                    // Get title
+                                    title = e.select("a").attr("title");
 
-                                Item item = new Item(title, link, date, imgSrc, Item.Source.TN);
-                                addItem(item);
-                                inItem = false;
-                                loadProgress(); // updateProgress(progress++, maxProgress);
-                            }
-                            // Catch error lines which sometimes existed in ThanhNien RSS
-                            catch (StringIndexOutOfBoundsException e) {
-                                System.out.println(line);
-                            }
+                                    // Get link
+                                    link = e.select("a").attr("href");
+                                    if (!link.contains("https://thanhnien.vn"))
+                                        link = "https://thanhnien.vn" + link;
+
+                                    // Get published date
+                                    pubDate = e.select("time.timebox").text();
+                                    DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm, dd/MM/yyyy");
+                                    date = LocalDateTime.parse(pubDate, df);
+
+                                    // Get image src
+                                    imgSrc = e.select("img").attr("src");
+                                    if (imgSrc.equals("")) imgSrc = e.select("img").attr("data-src");
+                                    imgSrc = imgSrc.replaceAll(".vn/.*/uploaded", ".vn/uploaded");
+
+                                    Item item = new Item(title, link, date, imgSrc, Item.Source.TN);
+                                    addItem(item);
+                                    loadProgress();
+                                }
+                                catch (Exception exception) {}
+                            });
                         }
                     }
-
-                    in.close();
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -532,40 +578,43 @@ public class NewsController extends Task<Void> {
                             boolean add = true;
                             LocalDateTime date = LocalDateTime.MIN;
 
-                            // Get title
-                            title = e.getElementsByClass("article-title").text();
-                            if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
+                            try {
+                                // Get title
+                                title = e.getElementsByClass("article-title").text();
+                                if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
 
-                            // Get link
-                            link = e.select("a").attr("href");
-                            link = "https://zingnews.vn" + link;
-                            if (storage.getItemStorage().containsKey(link)) {
-                                if (add) addItem(storage.getItemStorage().get(link));
-                            }
-                            else {
-                                // Get image source
-                                imgSrc = e.select("img").attr("src");
-                                if (!imgSrc.contains("https")) imgSrc = e.select("img").attr("data-src");
-                                try {
-                                    imgSrc = imgSrc.replaceAll("w\\d\\d\\d/", "");
-                                } catch (StringIndexOutOfBoundsException exception) {}
+                                // Get link
+                                link = e.select("a").attr("href");
+                                link = "https://zingnews.vn" + link;
+                                if (storage.getItemStorage().containsKey(link)) {
+                                    if (add) addItem(storage.getItemStorage().get(link));
+                                }
+                                else {
+                                    // Get image source
+                                    imgSrc = e.select("img").attr("src");
+                                    if (!imgSrc.contains("https")) imgSrc = e.select("img").attr("data-src");
+                                    try {
+                                        imgSrc = imgSrc.replaceAll("w\\d\\d\\d/", "");
+                                    } catch (StringIndexOutOfBoundsException exception) {}
 
-                                // Get published date
-                                pubDate = e.select("span.time").text();
-                                pubDate += " " + e.select("span.date").text();
-                                pubDate = pubDate.trim();
+                                    // Get published date
+                                    pubDate = e.select("span.time").text();
+                                    pubDate += " " + e.select("span.date").text();
+                                    pubDate = pubDate.trim();
 
-                                if (pubDate.equals("")) pubDate = e.select("span.friendly-time").text();
-                                DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm d/M/yyyy");
-                                date = LocalDateTime.parse(pubDate, df);
+                                    if (pubDate.equals("")) pubDate = e.select("span.friendly-time").text();
+                                    DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm d/M/yyyy");
+                                    date = LocalDateTime.parse(pubDate, df);
 
-                                // Create and add news item to list
-                                Item item = new Item(title, link, date, imgSrc, Item.Source.ZING);
-                                if (add) {
-                                    addItem(item);
-                                    storage.getItemStorage().put(link, item);
+                                    // Create and add news item to list
+                                    Item item = new Item(title, link, date, imgSrc, Item.Source.ZING);
+                                    if (add) {
+                                        addItem(item);
+                                        storage.getItemStorage().put(link, item);
+                                    }
                                 }
                             }
+                            catch (Exception exception) {}
 
                             loadProgress(); // updateProgress(progress++, maxProgress);
                         });
@@ -685,7 +734,7 @@ public class NewsController extends Task<Void> {
         else if (categoryIndex == 1) {
             pool.execute(() -> scrapeVE(Arrays.asList(VNEXPRESS.get(1), VNEXPRESS.get(5), VNEXPRESS.get(8))));
             pool.execute(() -> scrapeTuoiTre(Arrays.asList(TUOITRE.get(1), TUOITRE.get(5), TUOITRE.get(8))));
-            pool.execute(() -> scrapeThanhNien(Arrays.asList(THANHNIEN.get(1), THANHNIEN.get(5), THANHNIEN.get(8))));
+            pool.execute(() -> scrapeThanhNien(Arrays.asList(THANHNIEN.get(1), THANHNIEN.get(5), THANHNIEN.get(8), THANHNIEN.get(THANHNIEN.size() - 1))));
             pool.execute(() -> scrapeZing(Arrays.asList(ZING.get(1), ZING.get(5), ZING.get(8))));
             pool.execute(() -> scrapeNhanDan(Arrays.asList(NHANDAN.get(1), NHANDAN.get(5), NHANDAN.get(8))));
         }
