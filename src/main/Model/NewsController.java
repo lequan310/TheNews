@@ -448,8 +448,10 @@ public class NewsController extends Task<Void> {
                                 title = extract(line, "<title>", "</title>");
                                 if (title.contains("<![CDATA[ "))
                                     title = extract(title, "<![CDATA[ ", "]]>");
-                                if (categoryIndex == 1 && !checkCovidKeyword(title))
+                                if (categoryIndex == 1 && !checkCovidKeyword(title)) {
                                     inItem = false;
+                                    continue;
+                                }
 
                                 // Extract link
                                 link = extract(line, "<link>", "</link>");
@@ -710,7 +712,10 @@ public class NewsController extends Task<Void> {
                 "nhiễm", "dịch", "test", "pcr", "âm tính", "dương tính", "giãn cách", "chỉ thị", "mắc", "tiêm", "delta", "vùng đỏ", "vùng cam"};
 
         for (String s : keywords) {
-            if (check.contains(s)) return true;
+            if (check.contains(s)) {
+                System.out.println(s + " " + title);
+                return true;
+            }
         }
 
         return false;
