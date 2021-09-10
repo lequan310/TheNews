@@ -713,7 +713,6 @@ public class NewsController extends Task<Void> {
 
         for (String s : keywords) {
             if (check.contains(s)) {
-                System.out.println(s + " " + title);
                 return true;
             }
         }
