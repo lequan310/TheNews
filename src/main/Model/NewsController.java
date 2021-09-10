@@ -31,27 +31,32 @@ public class NewsController extends Task<Void> {
         List.of("https://vnexpress.net/rss/tin-moi-nhat.rss", "https://vnexpress.net/rss/tin-noi-bat.rss", "https://vnexpress.net/thoi-su/chinh-tri",
                 "https://vnexpress.net/kinh-doanh", "https://vnexpress.net/so-hoa", "https://vnexpress.net/rss/suc-khoe.rss", "https://vnexpress.net/the-thao",
                 "https://vnexpress.net/giai-tri", "https://vnexpress.net/rss/the-gioi.rss", "https://vnexpress.net/rss/cuoi.rss",
-                "https://vnexpress.net/rss/giao-duc.rss", "https://vnexpress.net/rss/khoa-hoc.rss", "https://vnexpress.net/rss/y-kien.rss"));
+                "https://vnexpress.net/rss/giao-duc.rss", "https://vnexpress.net/rss/khoa-hoc.rss", "https://vnexpress.net/rss/y-kien.rss",
+                "https://vnexpress.net/rss/phap-luat.rss", "https://vnexpress.net/rss/tam-su.rss"));
     private final ArrayList<String> TUOITRE = new ArrayList<>(
         List.of("https://tuoitre.vn/rss/tin-moi-nhat.rss", "https://tuoitre.vn/rss/thoi-su.rss", "https://tuoitre.vn/tim-kiem.htm?keywords=ch%C3%ADnh%20tr%E1%BB%8B",
                 "https://tuoitre.vn/rss/kinh-doanh.rss", "https://tuoitre.vn/rss/cong-nghe.rss", "https://tuoitre.vn/rss/suc-khoe.rss",
                 "https://tuoitre.vn/rss/the-thao.rss", "https://tuoitre.vn/rss/giai-tri.rss", "https://tuoitre.vn/rss/the-gioi.rss", "https://tuoitre.vn/rss/xe.rss",
-                "https://tuoitre.vn/rss/giao-duc.rss", "https://tuoitre.vn/rss/nhip-song-tre.rss", "https://tuoitre.vn/rss/ban-doc-lam-bao.rss"));
+                "https://tuoitre.vn/rss/giao-duc.rss", "https://tuoitre.vn/rss/nhip-song-tre.rss", "https://tuoitre.vn/rss/ban-doc-lam-bao.rss",
+                "https://tuoitre.vn/rss/van-hoa.rss", "https://tuoitre.vn/rss/phap-luat.rss", "https://tuoitre.vn/rss/du-lich.rss"));
     private final ArrayList<String> THANHNIEN = new ArrayList<>(
         List.of("https://thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/thoi-su.rss", "https://thanhnien.vn/rss/thoi-su/chinh-tri.rss",
                 "https://thanhnien.vn/rss/tai-chinh-kinh-doanh.rss", "https://thanhnien.vn/rss/cong-nghe.rss", "https://thanhnien.vn/rss/suc-khoe.rss",
                 "https://thethao.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giai-tri.rss", "https://thanhnien.vn/rss/the-gioi.rss",
                 "https://game.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giao-duc.rss", "https://thanhnien.vn/rss/ban-can-biet.rss",
-                "https://thanhnien.vn/rss/gioi-tre.rss", "https://thanhnien.vn/covid-19/"));
+                "https://thanhnien.vn/rss/gioi-tre.rss", "https://thanhnien.vn/rss/van-hoa.rss", "https://thanhnien.vn/rss/doi-song.rss",
+                "https://xe.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/covid-19/"));
     private final ArrayList<String> ZING = new ArrayList<>(
         List.of("https://zingnews.vn/", "https://zingnews.vn/suc-khoe.html", "https://zingnews.vn/chinh-tri.html",
                 "https://zingnews.vn/kinh-doanh-tai-chinh.html", "https://zingnews.vn/cong-nghe.html", "https://zingnews.vn/suc-khoe.html",
                 "https://zingnews.vn/the-thao.html", "https://zingnews.vn/giai-tri.html", "https://zingnews.vn/the-gioi.html",
-                "https://zingnews.vn/doi-song.html", "https://zingnews.vn/giao-duc.html", "https://zingnews.vn/du-lich.html", "https://zingnews.vn/oto-xe-may.html"));
+                "https://zingnews.vn/doi-song.html", "https://zingnews.vn/giao-duc.html", "https://zingnews.vn/du-lich.html",
+                "https://zingnews.vn/oto-xe-may.html", "https://zingnews.vn/phap-luat.html"));
     private final ArrayList<String> NHANDAN = new ArrayList<>(
         List.of("https://nhandan.vn/", "https://nhandan.vn/y-te", "https://nhandan.vn/chinhtri", "https://nhandan.vn/kinhte",
                 "https://nhandan.vn/khoahoc-congnghe", "https://nhandan.vn/y-te", "https://nhandan.vn/thethao", "https://nhandan.vn/vanhoa",
-                "https://nhandan.vn/thegioi", "https://nhandan.vn/xahoi", "https://nhandan.vn/giaoduc", "https://nhandan.vn/bandoc", "https://nhandan.vn/phapluat"));
+                "https://nhandan.vn/thegioi", "https://nhandan.vn/xahoi", "https://nhandan.vn/giaoduc", "https://nhandan.vn/bandoc",
+                "https://nhandan.vn/phapluat", "https://nhandan.vn/moi-truong", "https://nhandan.vn/phapluat"));
 
     private int categoryIndex, progress = 0, maxProgress; // Index to read from the arrays below
     private String error = ""; // Error message
@@ -89,9 +94,9 @@ public class NewsController extends Task<Void> {
         this.categoryIndex = categoryIndex;
 
         switch (categoryIndex) {
-            case 0 -> maxProgress = 2300;
-            case 1 -> maxProgress = 400;
-            case 9 -> maxProgress = 700;
+            case 0 -> maxProgress = 2750;
+            case 1 -> maxProgress = 500;
+            case 9 -> maxProgress = 1500;
             default -> maxProgress = 200;
         }
     }
@@ -539,7 +544,8 @@ public class NewsController extends Task<Void> {
                                     addItem(item);
                                     loadProgress();
                                 }
-                                catch (Exception exception) {}
+                                catch (Exception exception) {
+                                }
                             });
                         }
                     }
@@ -739,11 +745,11 @@ public class NewsController extends Task<Void> {
             pool.execute(() -> scrapeNhanDan(Arrays.asList(NHANDAN.get(1), NHANDAN.get(5), NHANDAN.get(8))));
         }
         else if (categoryIndex == 9) {
-            pool.execute(() -> scrapeVE(VNEXPRESS.subList(categoryIndex, categoryIndex + 4)));
-            pool.execute(() -> scrapeTuoiTre(TUOITRE.subList(categoryIndex, categoryIndex + 4)));
-            pool.execute(() -> scrapeThanhNien(THANHNIEN.subList(categoryIndex, categoryIndex + 4)));
-            pool.execute(() -> scrapeZing(ZING.subList(categoryIndex, categoryIndex + 4)));
-            pool.execute(() -> scrapeNhanDan(NHANDAN.subList(categoryIndex, categoryIndex + 4)));
+            pool.execute(() -> scrapeVE(VNEXPRESS.subList(categoryIndex, VNEXPRESS.size())));
+            pool.execute(() -> scrapeTuoiTre(TUOITRE.subList(categoryIndex, TUOITRE.size())));
+            pool.execute(() -> scrapeThanhNien(THANHNIEN.subList(categoryIndex, THANHNIEN.size() - 1)));
+            pool.execute(() -> scrapeZing(ZING.subList(categoryIndex, ZING.size())));
+            pool.execute(() -> scrapeNhanDan(NHANDAN.subList(categoryIndex, NHANDAN.size())));
         }
         else {
             pool.execute(() -> scrapeVE(VNEXPRESS.subList(categoryIndex, categoryIndex + 1)));
