@@ -132,7 +132,7 @@
             </VBox>
          </center>
          <top>
-            <HBox alignment="CENTER_RIGHT" onMouseDragged="#dragged" prefHeight="30.0" prefWidth="1920.0" styleClass="black-background" BorderPane.alignment="CENTER_RIGHT">
+            <HBox alignment="CENTER_RIGHT" onMouseDragged="#dragged" prefHeight="30.0" prefWidth="1920.0" styleClass="black-background">
                <children>
                   <FlowPane prefHeight="30.0" prefWidth="106.0" HBox.hgrow="ALWAYS">
                      <children>

@@ -40,6 +40,7 @@ public class ArticleController extends SceneHandler implements Initializable {
     private Item item; // current item
     private final Storage storage = Storage.getInstance();
 
+    // UI components in Article scene
     @FXML private AnchorPane anchorPane;
     @FXML private FlowPane content;
     @FXML private ImageView thumbnail;

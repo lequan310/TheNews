@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class CategoryController extends SceneHandler implements Initializable {
+    // UI components in Category scene
     @FXML private AnchorPane anchorPane;
     @FXML private Button mainMenu;
     @FXML private Button button1;
