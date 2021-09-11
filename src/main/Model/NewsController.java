@@ -701,7 +701,7 @@ public class NewsController extends Task<Void> {
         else if (categoryIndex == 9) {
             pool.execute(() -> scrapeVE(VNEXPRESS.subList(categoryIndex, VNEXPRESS.size())));
             pool.execute(() -> scrapeTuoiTre(TUOITRE.subList(categoryIndex, TUOITRE.size())));
-            pool.execute(() -> scrapeThanhNien(THANHNIEN.subList(categoryIndex, THANHNIEN.size() - 1)));
+            pool.execute(() -> scrapeThanhNien(THANHNIEN.subList(categoryIndex, THANHNIEN.size())));
             pool.execute(() -> scrapeZing(ZING.subList(categoryIndex, ZING.size())));
             pool.execute(() -> scrapeNhanDan(NHANDAN.subList(categoryIndex, NHANDAN.size())));
         }
