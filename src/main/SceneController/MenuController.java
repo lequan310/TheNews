@@ -145,7 +145,7 @@ public class MenuController extends SceneHandler implements Initializable {
 
                                 // Display error if there is error message
                                 if (newsController.getError().compareTo("") != 0) {
-                                    throwAlert("Read Error", "Please check your Internet connection", newsController.getError());
+                                    throwAlert("Read Error", "Please check your Internet connection and then reload the category.", newsController.getError());
                                 }
 
                                 return null;
