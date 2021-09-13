@@ -116,19 +116,21 @@ public class NewsController extends Task<Void> {
         }
         catch (InterruptedException e) {}
         finally {
-            // Remove duplicate and then sort
-            items.sort(Comparator.comparing(Item::getLink));
-            for (int i = 1; i < items.size(); i++) {
-                if (items.get(i).equalTo(items.get(i - 1))) {
-                    items.remove(i);
-                    i--;
+            if (items.size() > 1) {
+                // Remove duplicate and then sort
+                items.sort(Comparator.comparing(Item::getLink));
+                for (int i = 1; i < items.size(); i++) {
+                    if (items.get(i).equalTo(items.get(i - 1))) {
+                        items.remove(i);
+                        i--;
+                    }
                 }
+                Collections.sort(items);
+                updateProgress(1, 1);
+                timeout = 12000;
             }
-            Collections.sort(items);
-            updateProgress(1, 1);
 
             System.gc();
-            timeout = 12000;
         }
     }
 
