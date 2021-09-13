@@ -58,7 +58,7 @@ public class NewsController extends Task<Void> {
                 "https://nhandan.vn/thegioi", "https://nhandan.vn/xahoi", "https://nhandan.vn/giaoduc", "https://nhandan.vn/bandoc",
                 "https://nhandan.vn/phapluat", "https://nhandan.vn/moi-truong", "https://nhandan.vn/phapluat"));
 
-    private int categoryIndex, progress = 0, maxProgress; // Index to read from the arrays below
+    private int categoryIndex, timeout = 20000, progress = 0, maxProgress; // Index to read from the arrays below
     private String error = ""; // Error message
 
     private NewsController() {}
@@ -102,32 +102,34 @@ public class NewsController extends Task<Void> {
     }
 
     public void start() {
-        long start = System.currentTimeMillis();
-        items.clear();
-        progress = 0;
-        error = "";
-        updateProgress(0, 1);
-        scrapeArticles();
+        try {
+            long start = System.currentTimeMillis();
+            items.clear();
+            progress = 0;
+            error = "";
+            updateProgress(0, 1);
+            scrapeArticles();
 
-        if (categoryIndex == 0)
-            pool.awaitQuiescence(20000, TimeUnit.MILLISECONDS);
-        else
-            pool.awaitQuiescence(15000, TimeUnit.MILLISECONDS);
-
-        // Remove duplicate and then sort
-        items.sort(Comparator.comparing(Item::getLink));
-        for (int i = 1; i < items.size(); i++) {
-            if (items.get(i).equalTo(items.get(i - 1))) {
-                items.remove(i);
-                i--;
-            }
+            pool.awaitTermination(timeout, TimeUnit.MILLISECONDS);
+            System.out.println(Math.round((double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Math.pow(1024, 2)) + " MB");
+            System.out.println("Achieve " + items.size() + " items: " + (System.currentTimeMillis() - start) + " ms\n");
         }
-        Collections.sort(items);
-        updateProgress(1, 1);
+        catch (InterruptedException e) {}
+        finally {
+            // Remove duplicate and then sort
+            items.sort(Comparator.comparing(Item::getLink));
+            for (int i = 1; i < items.size(); i++) {
+                if (items.get(i).equalTo(items.get(i - 1))) {
+                    items.remove(i);
+                    i--;
+                }
+            }
+            Collections.sort(items);
+            updateProgress(1, 1);
 
-        System.gc();
-        System.out.println(Math.round((double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Math.pow(1024, 2)) + " MB");
-        System.out.println("Achieve " + items.size() + " items: " + (System.currentTimeMillis() - start) + " ms\n");
+            System.gc();
+            timeout = 12000;
+        }
     }
 
     @Override
@@ -182,7 +184,7 @@ public class NewsController extends Task<Void> {
                                             if (tempResponse.statusCode() >= 400) throw new IOException();
 
                                             Document temp = tempResponse.parse();
-                                            imgSrc = temp.select("article.fck_detail img").first().attr("data-src");
+                                            imgSrc = temp.select("article.fck_detail").select("img").attr("data-src");
                                         } catch (Exception exception) {
                                             inItem = false;
                                         }
@@ -218,7 +220,7 @@ public class NewsController extends Task<Void> {
                         if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
 
                         Document doc = response.parse();
-                        Elements article = doc.select("article");
+                        Elements article = doc.select("h3.title-news,h2.title-news");
                         int count = Math.min(article.size(), 30);
 
                         for (int i = 0; i < count; i++) {
@@ -231,32 +233,24 @@ public class NewsController extends Task<Void> {
                                     LocalDateTime date = LocalDateTime.MIN;
 
                                     // Get article link and thumbnail url
-                                    link = e.select(" a").attr("href");
+                                    link = e.select("a").attr("href");
                                     if (storage.getItemStorage().containsKey(link)) {
                                         addItem(storage.getItemStorage().get(link));
                                     }
                                     else {
                                         // Get title
-                                        title = e.select("h3").text();
+                                        title = e.text();
                                         if (title.equals("")) {
                                             title = e.select("h2").text();
                                         }
                                         if (title.equals("")) add = false;
                                         if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
 
-                                        // Get thumbnail URL
-                                        imgSrc = e.select("div.thumb-art").select("source").attr("data-srcset");
-                                        try {
-                                            imgSrc = extract(imgSrc, "1x, ", " 2x");
-                                        } catch (StringIndexOutOfBoundsException exception) { }
-
                                         try {
                                             Connection.Response tempResponse = Jsoup.connect(link).timeout(5000).execute();
                                             if (tempResponse.statusCode() >= 400) throw new IOException("Status code: " + tempResponse.statusCode());
 
                                             Document temp = tempResponse.parse();
-                                            if (imgSrc.equals("")) // Find first image in article if can't find thumbnail
-                                                imgSrc = temp.select("article.fck_detail").select("img").attr("data-src");
 
                                             // Get published date
                                             pubDate = temp.select("span.date").text();
@@ -266,6 +260,20 @@ public class NewsController extends Task<Void> {
                                             pubDate = extract(pubDate, ", ", " (GMT+7)");
                                             DateTimeFormatter df = DateTimeFormatter.ofPattern("d/M/yyyy, HH:mm");
                                             date = LocalDateTime.parse(pubDate, df);
+
+                                            // Get thumbnail URL
+                                            Elements siblings = e.siblingElements();
+
+                                            if (siblings.select("div.thumb-art").size() > 0) {
+                                                try {
+                                                    imgSrc = siblings.select("div.thumb-art").select("source").attr("data-srcset");
+                                                    if (imgSrc.equals("")) imgSrc = siblings.select("div.thumb-art").select("source").attr("srcset");
+                                                    imgSrc = extract(imgSrc, "1x, ", " 2x");
+                                                } catch (StringIndexOutOfBoundsException exception) {}
+                                            }
+                                            else {
+                                                imgSrc = temp.select("article.fck_detail").select("img").attr("data-src");
+                                            }
                                         } catch (Exception exception) {
                                             add = false;
                                         }
@@ -275,7 +283,8 @@ public class NewsController extends Task<Void> {
                                         if (add) {
                                             addItem(item);
                                             storage.getItemStorage().put(link, item);
-                                        }                                }
+                                        }
+                                    }
 
                                     loadProgress(); // updateProgress(progress++, maxProgress);
                                 }
