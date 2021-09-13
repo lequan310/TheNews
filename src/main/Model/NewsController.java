@@ -150,49 +150,55 @@ public class NewsController extends Task<Void> {
 
                         // Loop through lines in RSS
                         while ((line = in.readLine()) != null) {
-                            // If line contains <item> then it's start of an item
-                            if (line.contains("<item>")) {
-                                inItem = true;
-                            }
-                            // Get item title
-                            else if (line.contains("<title>") && inItem) {
-                                title = extract(line, "<title>", "</title>");
+                            try {
+                                // If line contains <item> then it's start of an item
+                                if (line.contains("<item>")) {
+                                    inItem = true;
+                                }
+                                // Get item title
+                                else if (line.contains("<title>") && inItem) {
+                                    title = extract(line, "<title>", "</title>");
 
-                                if (categoryIndex == 1 && !checkCovidKeyword(title)) inItem = false;
-                            }
-                            // Get item published date
-                            else if (line.contains("<pubDate>") && inItem) {
-                                pubDate = extract(line, "<pubDate>", "</pubDate>");
-                                DateTimeFormatter df = DateTimeFormatter.ofPattern("E, dd MMM yyyy HH:mm:ss +0700");
-                                date = LocalDateTime.parse(pubDate, df);
-                            }
-                            // Get item source link
-                            else if (line.contains("<link>") && inItem) {
-                                link = extract(line, "<link>", "</link>");
-                            }
-                            // Get item thumbnail link in description
-                            else if (line.contains("<description>") && inItem) {
-                                try {
-                                    imgSrc = extract(line, "<description>", "</description>");
-                                    imgSrc = extract(imgSrc, "<img src=\"", "\"");
-                                } catch (StringIndexOutOfBoundsException e) {
+                                    if (categoryIndex == 1 && !checkCovidKeyword(title)) inItem = false;
+                                }
+                                // Get item published date
+                                else if (line.contains("<pubDate>") && inItem) {
+                                    pubDate = extract(line, "<pubDate>", "</pubDate>");
+                                    DateTimeFormatter df = DateTimeFormatter.ofPattern("E, dd MMM yyyy HH:mm:ss +0700");
+                                    date = LocalDateTime.parse(pubDate, df);
+                                }
+                                // Get item source link
+                                else if (line.contains("<link>") && inItem) {
+                                    link = extract(line, "<link>", "</link>");
+                                }
+                                // Get item thumbnail link in description
+                                else if (line.contains("<description>") && inItem) {
                                     try {
-                                        Connection.Response tempResponse = Jsoup.connect(link).timeout(5000).response();
-                                        if (tempResponse.statusCode() >= 400) throw new IOException();
+                                        imgSrc = extract(line, "<description>", "</description>");
+                                        imgSrc = extract(imgSrc, "<img src=\"", "\"");
+                                    } catch (StringIndexOutOfBoundsException e) {
+                                        try {
+                                            Connection.Response tempResponse = Jsoup.connect(link).timeout(5000).response();
+                                            if (tempResponse.statusCode() >= 400) throw new IOException();
 
-                                        Document temp = tempResponse.parse();
-                                        imgSrc = temp.select("article.fck_detail img").first().attr("data-src");
-                                    } catch (Exception exception) {
-                                        inItem = false;
+                                            Document temp = tempResponse.parse();
+                                            imgSrc = temp.select("article.fck_detail img").first().attr("data-src");
+                                        } catch (Exception exception) {
+                                            inItem = false;
+                                        }
                                     }
                                 }
+                                // Add item to list at the end of item (when all information of an item object is gathered)
+                                else if (line.contains("</item>") && inItem) {
+                                    inItem = false;
+                                    Item item = new Item(title, link, date, imgSrc, Item.Source.VE);
+                                    addItem(item);
+                                    loadProgress(); // updateProgress(progress++, maxProgress);
+                                }
                             }
-                            // Add item to list at the end of item (when all information of an item object is gathered)
-                            else if (line.contains("</item>") && inItem) {
+                            catch (Exception exception) {
                                 inItem = false;
-                                Item item = new Item(title, link, date, imgSrc, Item.Source.VE);
-                                addItem(item);
-                                loadProgress(); // updateProgress(progress++, maxProgress);
+                                System.out.println(exception.getMessage());
                             }
                         }
 
@@ -304,44 +310,50 @@ public class NewsController extends Task<Void> {
 
                         // Loop through lines in RSS
                         while ((line = in.readLine()) != null) {
-                            if (line.contains("<item>")) {
-                                inItem = true;
-                            }
-                            // Extract item title
-                            else if (line.contains("<title>") && inItem) {
-                                title = extract(line, "<title>", "</title>");
-                                title = extract(title, "<![CDATA[", "]]>");
+                            try {
+                                if (line.contains("<item>")) {
+                                    inItem = true;
+                                }
+                                // Extract item title
+                                else if (line.contains("<title>") && inItem) {
+                                    title = extract(line, "<title>", "</title>");
+                                    title = extract(title, "<![CDATA[", "]]>");
 
-                                if (categoryIndex == 1 && !checkCovidKeyword(title)) inItem = false;
-                            }
-                            // Extract item published date
-                            else if (line.contains("<pubDate>") && inItem) {
-                                pubDate = extract(line, "<pubDate>", "</pubDate>");
-                                pubDate = extract(pubDate, "<![CDATA[", " GMT+7");
-                                DateTimeFormatter df = DateTimeFormatter.ofPattern("E, dd MMM yyyy HH:mm:ss");
-                                date = LocalDateTime.parse(pubDate, df);
-                            }
-                            // Extract item source link
-                            else if (line.contains("<link>") && inItem) {
-                                link = extract(line, "<link>", "</link>");
-                                link = extract(link, "<![CDATA[", "]]>");
-                            }
-                            // Extract item thumbnail link in description
-                            else if (line.contains("<description>") && inItem) {
-                                try {
-                                    imgSrc = extract(line, "<description>", "</description>");
-                                    imgSrc = extract(imgSrc, "<img src=\"", "\"");
-                                    imgSrc = imgSrc.replace("zoom/80_50/", "");
-                                } catch (StringIndexOutOfBoundsException e) {
-                                    imgSrc = "";
+                                    if (categoryIndex == 1 && !checkCovidKeyword(title)) inItem = false;
+                                }
+                                // Extract item published date
+                                else if (line.contains("<pubDate>") && inItem) {
+                                    pubDate = extract(line, "<pubDate>", "</pubDate>");
+                                    pubDate = extract(pubDate, "<![CDATA[", " GMT+7");
+                                    DateTimeFormatter df = DateTimeFormatter.ofPattern("E, dd MMM yyyy HH:mm:ss");
+                                    date = LocalDateTime.parse(pubDate, df);
+                                }
+                                // Extract item source link
+                                else if (line.contains("<link>") && inItem) {
+                                    link = extract(line, "<link>", "</link>");
+                                    link = extract(link, "<![CDATA[", "]]>");
+                                }
+                                // Extract item thumbnail link in description
+                                else if (line.contains("<description>") && inItem) {
+                                    try {
+                                        imgSrc = extract(line, "<description>", "</description>");
+                                        imgSrc = extract(imgSrc, "<img src=\"", "\"");
+                                        imgSrc = imgSrc.replace("zoom/80_50/", "");
+                                    } catch (StringIndexOutOfBoundsException e) {
+                                        imgSrc = "";
+                                    }
+                                }
+                                // Add item to list of items
+                                else if (line.contains("</item>") && inItem) {
+                                    inItem = false;
+                                    Item item = new Item(title, link, date, imgSrc, Item.Source.TT);
+                                    addItem(item);
+                                    loadProgress(); // updateProgress(progress++, maxProgress);
                                 }
                             }
-                            // Add item to list of items
-                            else if (line.contains("</item>") && inItem) {
+                            catch (Exception exception) {
                                 inItem = false;
-                                Item item = new Item(title, link, date, imgSrc, Item.Source.TT);
-                                addItem(item);
-                                loadProgress(); // updateProgress(progress++, maxProgress);
+                                System.out.println(exception.getMessage());
                             }
                         }
 
@@ -444,12 +456,12 @@ public class NewsController extends Task<Void> {
                     boolean inItem = false, concat = false;
 
                     while ((line = in.readLine()) != null) {
-                        if (line.contains("<item>")) {
-                            inItem = true;
-                        }
+                        try {
+                            if (line.contains("<item>")) {
+                                inItem = true;
+                            }
 
-                        if (inItem) {
-                            try {
+                            if (inItem) {
                                 if (!line.endsWith("</item>")) {
                                     previousLine += line;
                                     concat = true;
@@ -506,12 +518,12 @@ public class NewsController extends Task<Void> {
                                 Item item = new Item(title, link, date, imgSrc, Item.Source.TN);
                                 addItem(item);
                                 inItem = false;
-                                loadProgress(); // updateProgress(progress++, maxProgress);
+                                loadProgress();
                             }
-                            // Catch error lines which sometimes existed in ThanhNien RSS
-                            catch (StringIndexOutOfBoundsException e) {
-                                System.out.println(line);
-                            }
+                        }
+                        catch (Exception exception) {
+                            inItem = false;
+                            System.out.println(exception.getMessage());
                         }
                     }
 
