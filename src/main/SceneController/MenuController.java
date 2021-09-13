@@ -85,6 +85,7 @@ public class MenuController extends SceneHandler implements Initializable {
     @FXML private FlowPane content;
     @FXML private ProgressBar pb;
 
+    //Initialize Array List for component
     private final ArrayList<ImageView> images = new ArrayList<>();
     private final ArrayList<ImageView> icons = new ArrayList<>();
     private final ArrayList<Label> timeLabels = new ArrayList<>();
@@ -95,7 +96,8 @@ public class MenuController extends SceneHandler implements Initializable {
     private final Storage storage = Storage.getInstance();
     private ArrayList<Item> items;
 
-    private final String[] categories = {"NEW", "COVID", "POLITICS", "BUSINESS", "TECHNOLOGY", "HEALTH", "SPORTS", "ENTERTAINMENT", "WORLD", "OTHERS"};
+
+    private final String[] categories = {"NEW", "COVID", "POLITICS", "BUSINESS", "TECHNOLOGY", "HEALTH", "SPORTS", "ENTERTAINMENT", "WORLD", "OTHERS"}; //Menu Categories type
     private int categoryIndex, currentPage = 1;
     private final boolean reload;
 
@@ -196,6 +198,7 @@ public class MenuController extends SceneHandler implements Initializable {
         }
     }
 
+    //Adding node to List
     private void addNodeToList() {
         labels.addAll(Arrays.asList(header, header1, header2, header3, header4, header5, header6, header7, header8, header9));
         buttons.addAll(Arrays.asList(button, button1, button2, button3, button4, button5, button6, button7, button8, button9));
@@ -257,6 +260,8 @@ public class MenuController extends SceneHandler implements Initializable {
                                 images.get(currentButton).setImage(null);
                             }
                         }
+
+                        //Error Handling
                         catch (IndexOutOfBoundsException e) {
                             buttons.get(currentButton).setDisable(true);
                             labels.get(currentButton).setText("Empty");

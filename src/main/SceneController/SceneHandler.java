@@ -25,6 +25,7 @@ public class SceneHandler {
 
     public SceneHandler() {}
 
+    //Changing page in main scene
     private void menuHandler(KeyEvent keyEvent, MenuController controller) {
         switch (keyEvent.getCode()) {
             case DIGIT1, NUMPAD1 -> controller.changePage(0);
@@ -148,7 +149,7 @@ public class SceneHandler {
         System.exit(0);
     }
 
-    // Function for resizing windows
+    //Function for checking Windows Bound
     @FXML protected void checkBound(MouseEvent event) {
         if (!resizing && !moving) {
             final int LIMIT = 3;
@@ -185,6 +186,7 @@ public class SceneHandler {
         }
     }
 
+    // Function for resizing windows
     @FXML protected void resize(MouseEvent event) {
         double deltaX = 0, deltaY = 0;
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -217,6 +219,7 @@ public class SceneHandler {
         }
     }
 
+    // Function to stop resizing windows
     @FXML protected void stopResize() {
         resizing = false; moving = false;
         anchorPane.setCursor(Cursor.DEFAULT);
