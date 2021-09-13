@@ -49,6 +49,7 @@ public class SceneHandler {
         Scene scene = new Scene(loader.load(), width, height);
         scene.setOnKeyPressed(keyEvent -> menuHandler(keyEvent, controller));
         scene.setFill(Color.valueOf("#1f1f1f"));
+        System.gc();
         return scene;
     }
 
@@ -65,6 +66,7 @@ public class SceneHandler {
             });
             anchorPane.getScene().setRoot(root);
             root.requestFocus();
+            System.gc();
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
@@ -109,6 +111,7 @@ public class SceneHandler {
             });
             anchorPane.getScene().setRoot(root);
             root.requestFocus();
+            System.gc();
         }
         catch (Exception e){
             e.printStackTrace();

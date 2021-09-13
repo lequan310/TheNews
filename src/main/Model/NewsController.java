@@ -111,7 +111,6 @@ public class NewsController extends Task<Void> {
             scrapeArticles();
 
             pool.awaitTermination(timeout, TimeUnit.MILLISECONDS);
-            System.out.println(Math.round((double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Math.pow(1024, 2)) + " MB");
             System.out.println("Achieve " + items.size() + " items: " + (System.currentTimeMillis() - start) + " ms\n");
         }
         catch (InterruptedException e) {}
@@ -131,6 +130,7 @@ public class NewsController extends Task<Void> {
             }
 
             System.gc();
+            System.out.println(Math.round((double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Math.pow(1024, 2)) + " MB");
         }
     }
 
@@ -222,10 +222,10 @@ public class NewsController extends Task<Void> {
                         if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
 
                         Document doc = response.parse();
-                        Elements article = doc.select("h3.title-news,h2.title-news");
+                        Elements article = doc.select("h3.title_news,h3.title-news,h2.title-news");
                         int count = Math.min(article.size(), 30);
 
-                        for (int i = 0; i < count; i++) {
+                        for (int i = 0; i < article.size(); i++) {
                             int current = i;
                             pool.execute(() -> {
                                 try {
@@ -242,9 +242,6 @@ public class NewsController extends Task<Void> {
                                     else {
                                         // Get title
                                         title = e.text();
-                                        if (title.equals("")) {
-                                            title = e.select("h2").text();
-                                        }
                                         if (title.equals("")) add = false;
                                         if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
 

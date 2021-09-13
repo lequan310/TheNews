@@ -96,9 +96,9 @@ public class MenuController extends SceneHandler implements Initializable {
     private final Storage storage = Storage.getInstance();
     private ArrayList<Item> items;
 
-
     private final String[] categories = {"NEW", "COVID", "POLITICS", "BUSINESS", "TECHNOLOGY", "HEALTH", "SPORTS", "ENTERTAINMENT", "WORLD", "OTHERS"}; //Menu Categories type
-    private int categoryIndex, currentPage = 1;
+    private int currentPage = 1;
+    private final int categoryIndex;
     private final boolean reload;
 
     public MenuController(int categoryIndex, boolean reload) {
@@ -142,8 +142,10 @@ public class MenuController extends SceneHandler implements Initializable {
 
                                 // Get articles after sorted by published date and initialize buttons
                                 items = storage.getItems();
-                                changePage(0);
-                                Platform.runLater(() -> loadAfterBar());
+                                Platform.runLater(() -> {
+                                    changePage(0);
+                                    loadAfterBar();
+                                });
 
                                 // Display error if there is error message
                                 if (newsController.getError().compareTo("") != 0) {
@@ -163,8 +165,10 @@ public class MenuController extends SceneHandler implements Initializable {
         }
         else {
             items = storage.getItems();
-            changePage(0);
-            Platform.runLater(() -> loadAfterBar());
+            Platform.runLater(() -> {
+                changePage(0);
+                loadAfterBar();
+            });
         }
     }
 
