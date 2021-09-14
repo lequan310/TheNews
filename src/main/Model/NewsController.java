@@ -111,7 +111,7 @@ public class NewsController extends Task<Void> {
             scrapeArticles();
 
             pool.awaitTermination(timeout, TimeUnit.MILLISECONDS);
-            System.out.println("Achieve " + items.size() + " items: " + (System.currentTimeMillis() - start) + " ms\n");
+            System.out.println("Achieve " + items.size() + " items: " + (System.currentTimeMillis() - start) + " ms");
         }
         catch (InterruptedException e) {}
         finally {
@@ -130,7 +130,7 @@ public class NewsController extends Task<Void> {
             }
 
             System.gc();
-            System.out.println(Math.round((double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Math.pow(1024, 2)) + " MB");
+            System.out.println(Math.round((double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Math.pow(1024, 2)) + " MB\n");
         }
     }
 
