@@ -130,7 +130,6 @@ public class NewsController extends Task<Void> {
             }
 
             System.gc();
-            System.out.println(Math.round((double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Math.pow(1024, 2)) + " MB\n");
         }
     }
 
@@ -225,7 +224,7 @@ public class NewsController extends Task<Void> {
                         Elements article = doc.select("h3.title_news,h3.title-news,h2.title-news");
                         int count = Math.min(article.size(), 30);
 
-                        for (int i = 0; i < article.size(); i++) {
+                        for (int i = 0; i < count; i++) {
                             int current = i;
                             pool.execute(() -> {
                                 try {
