@@ -111,7 +111,7 @@ public class NewsController extends Task<Void> {
             scrapeArticles();
 
             pool.awaitTermination(timeout, TimeUnit.MILLISECONDS);
-            System.out.println("Achieve " + items.size() + " items: " + (System.currentTimeMillis() - start) + " ms");
+            System.out.println("Achieve " + items.size() + " items: " + (System.currentTimeMillis() - start) + " ms\n");
         }
         catch (InterruptedException e) {}
         finally {
