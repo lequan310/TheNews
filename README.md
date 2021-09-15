@@ -13,4 +13,5 @@ Project team members and contribution:
   1. Le Minh Quan: ArticleController (label functions), MenuController, CategoriesController, Storage.
   2. Pham Thanh Nam: ArticleController (scraping functions), Item, NewsController.
   3. Thai Manh Phy: fxml files, SceneHandler.
+
 Main Programming language used: Java
