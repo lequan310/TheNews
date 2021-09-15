@@ -124,10 +124,10 @@ public class NewsController extends Task<Void> {
                         i--;
                     }
                 }
-                Collections.sort(items);
-                updateProgress(1, 1);
-                timeout = 12000;
             }
+            Collections.sort(items);
+            updateProgress(1, 1);
+            timeout = 12000;
 
             System.gc();
         }
