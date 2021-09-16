@@ -187,6 +187,12 @@ public class NewsController extends Task<Void> {
                                 // Get item source link
                                 else if (line.contains("<link>") && inItem) {
                                     link = extract(line, "<link>", "</link>");
+
+                                    if (storage.getItemStorage().containsKey(link)) {
+                                        addItem(storage.getItemStorage().get(link));
+                                        loadProgress();
+                                        inItem = false;
+                                    }
                                 }
                                 // Get item thumbnail link in description
                                 else if (line.contains("<description>") && inItem) {
@@ -207,10 +213,12 @@ public class NewsController extends Task<Void> {
                                 }
                                 // Add item to list at the end of item (when all information of an item object is gathered)
                                 else if (line.contains("</item>") && inItem) {
-                                    inItem = false;
-                                    Item item = new Item(title, link, date, imgSrc, Item.Source.VE);
+                                    Item item = new Item(title, link, date, imgSrc, Item.Source.TT);
+
                                     addItem(item);
-                                    loadProgress(); // updateProgress(progress++, maxProgress);
+                                    storage.getItemStorage().put(link, item);
+                                    inItem = false;
+                                    loadProgress();
                                 }
                             }
                             catch (Exception exception) {
@@ -225,7 +233,7 @@ public class NewsController extends Task<Void> {
                         e.printStackTrace();
                     }
                     catch (IOException e) {
-                        System.out.println("Can't connect to " + urlAddress);
+                        System.out.println("Read timeout: " + urlAddress);
                         error += urlAddress + ": " + e.getMessage() + "\n";
                     }
                 }
@@ -307,7 +315,7 @@ public class NewsController extends Task<Void> {
                         }
                     }
                     catch (IOException e) {
-                        System.out.println("Can't connect to " + urlAddress);
+                        System.out.println("Read timeout: " + urlAddress);
                         error += urlAddress + ": " + e.getMessage() + "\n";
                     }
 
@@ -352,6 +360,12 @@ public class NewsController extends Task<Void> {
                             else if (line.contains("<link>") && inItem) {
                                 link = extract(line, "<link>", "</link>");
                                 link = extract(link, "<![CDATA[", "]]>");
+
+                                if (storage.getItemStorage().containsKey(link)) {
+                                    addItem(storage.getItemStorage().get(link));
+                                    loadProgress();
+                                    inItem = false;
+                                }
                             }
                             // Extract item thumbnail link in description
                             else if (line.contains("<description>") && inItem) {
@@ -365,10 +379,12 @@ public class NewsController extends Task<Void> {
                             }
                             // Add item to list of items
                             else if (line.contains("</item>") && inItem) {
-                                inItem = false;
                                 Item item = new Item(title, link, date, imgSrc, Item.Source.TT);
+
                                 addItem(item);
-                                loadProgress(); // updateProgress(progress++, maxProgress);
+                                storage.getItemStorage().put(link, item);
+                                inItem = false;
+                                loadProgress();
                             }
                         }
                         catch (Exception exception) {
@@ -382,7 +398,7 @@ public class NewsController extends Task<Void> {
                 catch (MalformedURLException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
-                    System.out.println("Can't connect to " + urlAddress);
+                    System.out.println("Read timeout: " + urlAddress);
                     error += urlAddress + ": " + e.getMessage() + "\n";
                 }
             });
@@ -432,6 +448,12 @@ public class NewsController extends Task<Void> {
 
                                 // Extract link
                                 link = extract(line, "<link>", "</link>");
+                                if (storage.getItemStorage().containsKey(link)) {
+                                    addItem(storage.getItemStorage().get(link));
+                                    loadProgress();
+                                    inItem = false;
+                                    continue;
+                                }
 
                                 //Extract pubDate
                                 pubDate = extract(line, "<pubDate>", " GMT");
@@ -477,7 +499,7 @@ public class NewsController extends Task<Void> {
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
-                    System.out.println("Can't connect to " + urlAddress);
+                    System.out.println("Read timeout: " + urlAddress);
                     error += urlAddress + ": " + e.getMessage() + "\n";
                 }
             });
@@ -553,7 +575,7 @@ public class NewsController extends Task<Void> {
                         });
                     }
                 } catch (IOException e) {
-                    System.out.println("Can't connect to " + urlAddress);
+                    System.out.println("Read timeout: " + urlAddress);
                     error += urlAddress + ": " + e.getMessage() + "\n";
                 }
             });
@@ -652,7 +674,7 @@ public class NewsController extends Task<Void> {
                         });
                     }
                 } catch (IOException e) {
-                    System.out.println("Can't connect to " + urlAddress);
+                    System.out.println("Read timeout: " + urlAddress);
                     error += urlAddress + ": " + e.getMessage() + "\n";
                 }
             });
