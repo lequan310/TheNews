@@ -14,10 +14,10 @@ public class Storage {
     private static Storage storage = null;
     private final int ICONSIZE = 50;
 
-    private final Map<String, Item> itemStorage = new ConcurrentHashMap<>();
-    private final ArrayList<Item> items = new ArrayList<>();
-    private final HashMap<String, Image> images = new HashMap<>();
-    private final HashMap<String, ObservableList<Node>> articles = new HashMap<>();
+    private final Map<String, Item> itemStorage = new ConcurrentHashMap<>(); // Storage to store items for reuse
+    private final ArrayList<Item> items = new ArrayList<>(); // Current list of items in used
+    private final HashMap<String, Image> images = new HashMap<>(); // Store entry image with key imgSrc for reuse
+    private final HashMap<String, ObservableList<Node>> articles = new HashMap<>(); // Store entry article with key link for reuse
     private final ArrayList<Image> icons = new ArrayList<>(
         List.of(new Image("/image/iconVE.png", ICONSIZE, ICONSIZE, true, true),
                 new Image("/image/iconTT.png", ICONSIZE, ICONSIZE, true, true),
@@ -27,6 +27,7 @@ public class Storage {
 
     private Storage() {}
 
+    // Get current instance of storage. Create a new storage if not existed
     public static Storage getInstance() {
         if (storage == null) {
             synchronized (Storage.class) {
@@ -37,6 +38,7 @@ public class Storage {
         return storage;
     }
 
+    // Getters
     public Map<String, Item> getItemStorage() {
         return itemStorage;
     }
@@ -57,6 +59,7 @@ public class Storage {
         return this.icons;
     }
 
+    // Clear all data stored in storage
     public void clearAll() {
         itemStorage.clear();
         items.clear();
