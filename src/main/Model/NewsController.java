@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -29,8 +30,8 @@ public class NewsController extends Task<Void> {
     // List of URL to scrape from in order: New, Covid, Politics, Business, Technology, Health, Sports, Entertainment, World, Others
     private final ArrayList<String> VNEXPRESS = new ArrayList<>(
         List.of("https://vnexpress.net/rss/tin-moi-nhat.rss", "https://vnexpress.net/rss/tin-noi-bat.rss", "https://vnexpress.net/thoi-su/chinh-tri",
-                "https://vnexpress.net/kinh-doanh", "https://vnexpress.net/so-hoa", "https://vnexpress.net/rss/suc-khoe.rss", "https://vnexpress.net/the-thao",
-                "https://vnexpress.net/giai-tri", "https://vnexpress.net/rss/the-gioi.rss", "https://vnexpress.net/rss/cuoi.rss",
+                "https://vnexpress.net/rss/kinh-doanh.rss", "https://vnexpress.net/rss/so-hoa.rss", "https://vnexpress.net/suc-khoe", "https://vnexpress.net/rss/the-thao.rss",
+                "https://vnexpress.net/rss/giai-tri.rss", "https://vnexpress.net/rss/the-gioi.rss", "https://vnexpress.net/rss/cuoi.rss",
                 "https://vnexpress.net/rss/giao-duc.rss", "https://vnexpress.net/rss/khoa-hoc.rss", "https://vnexpress.net/rss/y-kien.rss",
                 "https://vnexpress.net/rss/phap-luat.rss", "https://vnexpress.net/rss/tam-su.rss"));
     private final ArrayList<String> TUOITRE = new ArrayList<>(
@@ -146,7 +147,11 @@ public class NewsController extends Task<Void> {
                     try {
                         // Creating buffered reader to read RSS file and extract items information
                         URL rssURL = new URL(urlAddress);
-                        BufferedReader in = new BufferedReader(new InputStreamReader(rssURL.openStream()));
+                        URLConnection connection = rssURL.openConnection();
+                        connection.setConnectTimeout(5000);
+                        connection.setReadTimeout(5000);
+                        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
                         String title = "", pubDate = "", link = "", imgSrc = "", line;
                         LocalDateTime date = LocalDateTime.MIN;
                         boolean inItem = false;
@@ -309,7 +314,11 @@ public class NewsController extends Task<Void> {
                 try {
                     // Creating buffered reader to read RSS file and extract items information
                     URL rssURL = new URL(urlAddress);
-                    BufferedReader in = new BufferedReader(new InputStreamReader(rssURL.openStream()));
+                    URLConnection connection = rssURL.openConnection();
+                    connection.setConnectTimeout(5000);
+                    connection.setReadTimeout(5000);
+                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
                     String title = "", pubDate = "", link = "", imgSrc = "", line;
                     LocalDateTime date = LocalDateTime.MIN;
                     boolean inItem = false;
@@ -382,7 +391,11 @@ public class NewsController extends Task<Void> {
                 try {
                     // Creating buffered reader to read RSS file and extract items information
                     URL rssURL = new URL(urlAddress);
-                    BufferedReader in = new BufferedReader(new InputStreamReader(rssURL.openStream()));
+                    URLConnection connection = rssURL.openConnection();
+                    connection.setConnectTimeout(5000);
+                    connection.setReadTimeout(5000);
+                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
                     String title = "", pubDate = "", link = "", imgSrc = "", line, previousLine = "";
                     LocalDateTime date = LocalDateTime.MIN;
                     boolean inItem = false, concat = false;
