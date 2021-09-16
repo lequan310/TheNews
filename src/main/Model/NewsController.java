@@ -213,7 +213,7 @@ public class NewsController extends Task<Void> {
                                 }
                                 // Add item to list at the end of item (when all information of an item object is gathered)
                                 else if (line.contains("</item>") && inItem) {
-                                    Item item = new Item(title, link, date, imgSrc, Item.Source.TT);
+                                    Item item = new Item(title, link, date, imgSrc, Item.Source.VE);
 
                                     addItem(item);
                                     storage.getItemStorage().put(link, item);
@@ -485,6 +485,7 @@ public class NewsController extends Task<Void> {
 
                                 Item item = new Item(title, link, date, imgSrc, Item.Source.TN);
                                 addItem(item);
+                                storage.getItemStorage().put(link, item);
                                 inItem = false;
                                 loadProgress();
                             }
