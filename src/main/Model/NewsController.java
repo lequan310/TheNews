@@ -22,6 +22,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class NewsController extends Task<Void> {
+    private final int TIMEOUT = 10000;
+
     private static NewsController newsController = null;
     private final ArrayList<Item> items = Storage.getInstance().getItems(); // List of items that is scraped and sorted to be displayed
     private final ForkJoinPool pool = ForkJoinPool.commonPool();
@@ -29,7 +31,7 @@ public class NewsController extends Task<Void> {
 
     // List of URL to scrape from in order: New, Covid, Politics, Business, Technology, Health, Sports, Entertainment, World, Others
     private final ArrayList<String> VNEXPRESS = new ArrayList<>(
-        List.of("https://vnexpress.net/rss/tin-moi-nhat.rss", "https://vnexpress.net/rss/tin-noi-bat.rss", "https://vnexpress.net/thoi-su/chinh-tri",
+        List.of("https://vnexpress.net/rss/tin-moi-nhat.rss", "https://vnexpress.net/rss/tin-noi-bat.rss", "https://vnexpress.net/rss/chinh-tri.rss",
                 "https://vnexpress.net/rss/kinh-doanh.rss", "https://vnexpress.net/rss/so-hoa.rss", "https://vnexpress.net/suc-khoe", "https://vnexpress.net/rss/the-thao.rss",
                 "https://vnexpress.net/rss/giai-tri.rss", "https://vnexpress.net/rss/the-gioi.rss", "https://vnexpress.net/rss/cuoi.rss",
                 "https://vnexpress.net/rss/giao-duc.rss", "https://vnexpress.net/rss/khoa-hoc.rss", "https://vnexpress.net/rss/y-kien.rss",
@@ -43,10 +45,10 @@ public class NewsController extends Task<Void> {
     private final ArrayList<String> THANHNIEN = new ArrayList<>(
         List.of("https://thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/thoi-su.rss", "https://thanhnien.vn/rss/thoi-su/chinh-tri.rss",
                 "https://thanhnien.vn/rss/tai-chinh-kinh-doanh.rss", "https://thanhnien.vn/rss/cong-nghe.rss", "https://thanhnien.vn/rss/suc-khoe.rss",
-                "https://thethao.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giai-tri.rss", "https://thanhnien.vn/rss/the-gioi.rss",
-                "https://game.thanhnien.vn/rss/home.rss", "https://thanhnien.vn/rss/giao-duc.rss", "https://thanhnien.vn/rss/ban-can-biet.rss",
+                "https://thanhnien.vn/rss/the-thao.rss", "https://thanhnien.vn/rss/giai-tri.rss", "https://thanhnien.vn/rss/the-gioi.rss",
+                "https://thanhnien.vn/rss/game.rss", "https://thanhnien.vn/rss/giao-duc.rss", "https://thanhnien.vn/rss/ban-can-biet.rss",
                 "https://thanhnien.vn/rss/gioi-tre.rss", "https://thanhnien.vn/rss/van-hoa.rss", "https://thanhnien.vn/rss/doi-song.rss",
-                "https://xe.thanhnien.vn/rss/home.rss"));
+                "https://thanhnien.vn/xe/xe.rss"));
     private final ArrayList<String> ZING = new ArrayList<>(
         List.of("https://zingnews.vn/", "https://zingnews.vn/suc-khoe.html", "https://zingnews.vn/chinh-tri.html",
                 "https://zingnews.vn/kinh-doanh-tai-chinh.html", "https://zingnews.vn/cong-nghe.html", "https://zingnews.vn/suc-khoe.html",
@@ -111,10 +113,12 @@ public class NewsController extends Task<Void> {
             updateProgress(0, 1);
             scrapeArticles();
 
-            pool.awaitTermination(timeout, TimeUnit.MILLISECONDS);
+            pool.awaitQuiescence(timeout, TimeUnit.MILLISECONDS);
             System.out.println("Achieve " + items.size() + " items: " + (System.currentTimeMillis() - start) + " ms\n");
         }
-        catch (InterruptedException e) {}
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         finally {
             if (items.size() > 1) {
                 // Remove duplicate and then sort
@@ -139,6 +143,15 @@ public class NewsController extends Task<Void> {
         return null;
     }
 
+    private BufferedReader readRSS(String urlAddress) throws IOException {
+        URL rssURL = new URL(urlAddress);
+        URLConnection connection = rssURL.openConnection();
+        connection.setReadTimeout(TIMEOUT);
+        connection.setReadTimeout(TIMEOUT);
+
+        return new BufferedReader(new InputStreamReader(connection.getInputStream()));
+    }
+
     // Scrape articles from category
     private void scrapeVE(List<String> links) {
         for (String urlAddress : links) {
@@ -146,11 +159,7 @@ public class NewsController extends Task<Void> {
                 if (urlAddress.contains(".rss")) {
                     try {
                         // Creating buffered reader to read RSS file and extract items information
-                        URL rssURL = new URL(urlAddress);
-                        URLConnection connection = rssURL.openConnection();
-                        connection.setConnectTimeout(5000);
-                        connection.setReadTimeout(5000);
-                        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        BufferedReader in = readRSS(urlAddress);
 
                         String title = "", pubDate = "", link = "", imgSrc = "", line;
                         LocalDateTime date = LocalDateTime.MIN;
@@ -222,7 +231,7 @@ public class NewsController extends Task<Void> {
                 }
                 else {
                     try {
-                        Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
+                        Connection.Response response = Jsoup.connect(urlAddress).timeout(TIMEOUT).execute();
                         if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
 
                         Document doc = response.parse();
@@ -313,11 +322,7 @@ public class NewsController extends Task<Void> {
             pool.execute(() -> {
                 try {
                     // Creating buffered reader to read RSS file and extract items information
-                    URL rssURL = new URL(urlAddress);
-                    URLConnection connection = rssURL.openConnection();
-                    connection.setConnectTimeout(5000);
-                    connection.setReadTimeout(5000);
-                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    BufferedReader in = readRSS(urlAddress);
 
                     String title = "", pubDate = "", link = "", imgSrc = "", line;
                     LocalDateTime date = LocalDateTime.MIN;
@@ -390,11 +395,7 @@ public class NewsController extends Task<Void> {
             pool.execute(() -> {
                 try {
                     // Creating buffered reader to read RSS file and extract items information
-                    URL rssURL = new URL(urlAddress);
-                    URLConnection connection = rssURL.openConnection();
-                    connection.setConnectTimeout(5000);
-                    connection.setReadTimeout(5000);
-                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    BufferedReader in = readRSS(urlAddress);
 
                     String title = "", pubDate = "", link = "", imgSrc = "", line, previousLine = "";
                     LocalDateTime date = LocalDateTime.MIN;
@@ -488,7 +489,7 @@ public class NewsController extends Task<Void> {
         for (String urlAddress : links) {
             pool.execute(() -> {
                 try {
-                    Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
+                    Connection.Response response = Jsoup.connect(urlAddress).timeout(TIMEOUT).execute();
                     if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
 
                     // Connect to URL and add all article element into list
@@ -564,7 +565,7 @@ public class NewsController extends Task<Void> {
         for (String urlAddress : links) {
             pool.execute(() -> {
                 try {
-                    Connection.Response response = Jsoup.connect(urlAddress).timeout(10000).execute();
+                    Connection.Response response = Jsoup.connect(urlAddress).timeout(TIMEOUT).execute();
                     if (response.statusCode() >= 400) throw new IOException("Status code: " + response.statusCode());
 
                     // Connect to URL and add all article element into list
