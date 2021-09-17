@@ -25,24 +25,26 @@ public class Item implements Comparable<Item> {
         this.imgSrc = imgSrc;
         this.source = source;
     }
-
+    // Obtaining Title
     public String getTitle() {
         return title;
     }
-
+    // Obtaining link
     public String getLink() {
         return link;
     }
-
+    // Obtaining published date
     public String getPubDate() {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm a");
         return dtf.format(pubDate);
     }
 
+    // Obtaining Image Source
     public String getImgSrc() {
         return imgSrc;
     }
 
+    // Obtaining article source
     public Source getSource() {
         return source;
     }
@@ -68,6 +70,7 @@ public class Item implements Comparable<Item> {
         return day + hour + min + sec + "ago.";
     }
 
+    // Turns output to string
     public String toString(){
         String res = "";
         res += title + "\t" + link + "\t" + durationToString() + "\t" + imgSrc;
