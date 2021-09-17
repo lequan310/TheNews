@@ -21,7 +21,7 @@ public class Storage {
     private final ArrayList<Image> icons = new ArrayList<>(
         List.of(new Image("/image/iconVE.png", ICONSIZE, ICONSIZE, true, true),
                 new Image("/image/iconTT.png", ICONSIZE, ICONSIZE, true, true),
-                new Image("/image/iconTN.jpeg", ICONSIZE, ICONSIZE, true, true),
+                new Image("/image/iconTN.png", ICONSIZE, ICONSIZE, true, true),
                 new Image("/image/iconZING.png", ICONSIZE, ICONSIZE, true, true),
                 new Image("/image/iconND.png", ICONSIZE, ICONSIZE, true, true)));
 
