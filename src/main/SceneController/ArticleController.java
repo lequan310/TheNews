@@ -1,3 +1,19 @@
+/*
+  RMIT University Vietnam
+  Course: INTE2512 Object-Oriented Programming
+  Semester: 2021B
+  Assessment: Final Project
+  Created date: 01/08/2021
+  Author: Thai Manh Phi, s3878070
+  Last modified date: 17/09/2021
+  Author: Pham Thanh Nam, s3878413
+  Acknowledgement:
+  https://jsoup.org/
+  https://rmit.instructure.com/courses/88207/pages/w5-whats-happening-this-week?module_item_id=3237094
+  https://rmit.instructure.com/courses/88207/pages/w6-whats-happening-this-week?module_item_id=3237097
+  https://rmit.instructure.com/courses/88207/pages/w8-whats-happening-this-week?module_item_id=3237104
+  https://rmit.instructure.com/courses/88207/pages/w9-whats-happening-this-week?module_item_id=3237110
+*/
 package main.SceneController;
 
 import javafx.application.Platform;
@@ -97,13 +113,15 @@ public class ArticleController extends SceneHandler implements Initializable {
         readArticle();
         previousButton.setOnAction(e -> previousArticle());
         nextButton.setOnAction(e -> nextArticle());
-        blackPane.prefHeightProperty().bind(anchorPane.heightProperty().divide(3));
-        thumbnail.fitHeightProperty().bind(blackPane.heightProperty().subtract(10));
-        title.prefHeightProperty().bind(blackPane.heightProperty());
         content.setOnScroll(e -> {
             double delta = e.getDeltaY() * -4;
             scrollPane.setVvalue(scrollPane.getVvalue() + delta / scrollPane.getContent().getBoundsInLocal().getHeight());
         });
+
+        // Binding height property
+        blackPane.prefHeightProperty().bind(anchorPane.heightProperty().divide(3));
+        thumbnail.fitHeightProperty().bind(blackPane.heightProperty().subtract(10));
+        title.prefHeightProperty().bind(blackPane.heightProperty());
         if (index == 0) previousButton.setDisable(true);
     }
 
@@ -113,9 +131,11 @@ public class ArticleController extends SceneHandler implements Initializable {
             // Clear previous article and read new article
             content.getChildren().clear();
 
+            // If article components existed in storage (read already)
             if (storage.getArticles().containsKey(item.getLink())) {
                 content.getChildren().addAll(storage.getArticles().get(item.getLink()));
             }
+            // New article being read
             else {
                 // Call read article function depends on which source
                 try {
@@ -397,6 +417,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         }
     }
 
+    // Utilities function to read VNExpress article
     private void checkDivVE(Element div, FlowPane content) {
         // If element is <p>, add text label
         if (div.is("p")) {
