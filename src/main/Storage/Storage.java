@@ -1,3 +1,16 @@
+/*
+  RMIT University Vietnam
+  Course: INTE2512 Object-Oriented Programming
+  Semester: 2021B
+  Assessment: Final Project
+  Created date: 01/09/2021
+  Author: Le Minh Quan, s3877969
+  Last modified date: 17/09/2021
+  Author: Le Minh Quan, s3877969
+  Acknowledgement:
+  https://www.geeksforgeeks.org/singleton-design-pattern/
+  https://rmit.instructure.com/courses/88207/pages/w2-whats-happening-this-week?module_item_id=3237085
+*/
 package main.Storage;
 
 import javafx.collections.ObservableList;

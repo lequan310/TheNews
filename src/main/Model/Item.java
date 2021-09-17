@@ -1,3 +1,16 @@
+/*
+  RMIT University Vietnam
+  Course: INTE2512 Object-Oriented Programming
+  Semester: 2021B
+  Assessment: Final Project
+  Created date: 01/08/2021
+  Author: Pham Thanh Nam, s3878413
+  Last modified date: 17/09/2021
+  Author: Le Minh Quan, s3877969
+  Acknowledgement:
+  https://rmit.instructure.com/courses/88207/pages/w3-whats-happening-this-week?module_item_id=3237088
+  https://rmit.instructure.com/courses/88207/pages/w4-whats-happening-this-week?module_item_id=3237090
+*/
 package main.Model;
 
 import java.time.Duration;
