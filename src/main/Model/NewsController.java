@@ -326,6 +326,7 @@ public class NewsController extends Task<Void> {
         System.out.println("Done VN Express");
     }
 
+    // Article scrapper for TuoiTre
     private void scrapeTuoiTre(List<String> links) {
         for (String urlAddress : links) {
             pool.execute(() -> {
@@ -407,6 +408,7 @@ public class NewsController extends Task<Void> {
         System.out.println("Done Tuoi Tre");
     }
 
+    // Article scrapper for Thanh Nien
     private void scrapeThanhNien(List<String> links) {
         for (String urlAddress : links) {
             pool.execute(() -> {
@@ -509,6 +511,7 @@ public class NewsController extends Task<Void> {
         System.out.println("Done Thanh Nien");
     }
 
+    // Article scrapper for ZingNews
     private void scrapeZing(List<String> links) {
         for (String urlAddress : links) {
             pool.execute(() -> {
@@ -588,6 +591,7 @@ public class NewsController extends Task<Void> {
         System.out.println("Done Zing");
     }
 
+    // Article scrapper for NhanDan
     private void scrapeNhanDan(List<String> links) {
         for (String urlAddress : links) {
             pool.execute(() -> {
@@ -690,6 +694,7 @@ public class NewsController extends Task<Void> {
         System.out.println("Done Nhan Dan");
     }
 
+    // Obtain article list
     private void scrapeArticles() {
         System.gc();
         if (categoryIndex == 0) {
