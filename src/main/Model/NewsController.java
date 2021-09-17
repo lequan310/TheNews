@@ -255,17 +255,18 @@ public class NewsController extends Task<Void> {
                                     boolean add = true;
                                     LocalDateTime date = LocalDateTime.MIN;
 
+                                    // Get title
+                                    title = e.text();
+                                    if (title.equals("")) add = false;
+                                    if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
+
                                     // Get article link and thumbnail url
                                     link = e.select("a").attr("href");
-                                    if (storage.getItemStorage().containsKey(link)) {
+                                    if (storage.getItemStorage().containsKey(link) && add) {
                                         addItem(storage.getItemStorage().get(link));
+                                        loadProgress();
                                     }
                                     else {
-                                        // Get title
-                                        title = e.text();
-                                        if (title.equals("")) add = false;
-                                        if (categoryIndex == 1 && !checkCovidKeyword(title)) add = false;
-
                                         try {
                                             Connection.Response tempResponse = Jsoup.connect(link).timeout(5000).execute();
                                             if (tempResponse.statusCode() >= 400) throw new IOException("Status code: " + tempResponse.statusCode());
@@ -541,7 +542,10 @@ public class NewsController extends Task<Void> {
                                 link = e.select("a").attr("href");
                                 link = "https://zingnews.vn" + link;
                                 if (storage.getItemStorage().containsKey(link)) {
-                                    if (add) addItem(storage.getItemStorage().get(link));
+                                    if (add) {
+                                        addItem(storage.getItemStorage().get(link));
+                                        loadProgress();
+                                    }
                                 }
                                 else {
                                     // Get image source
@@ -616,7 +620,10 @@ public class NewsController extends Task<Void> {
                                 link = e.select("a").attr("href");
                                 if (!link.contains("https://")) link = "https://nhandan.vn" + link;
                                 if (storage.getItemStorage().containsKey(link)) {
-                                    if (add) addItem(storage.getItemStorage().get(link));
+                                    if (add) {
+                                        addItem(storage.getItemStorage().get(link));
+                                        loadProgress();
+                                    }
                                 }
                                 else {
                                     // Get image source
@@ -719,7 +726,7 @@ public class NewsController extends Task<Void> {
     private static boolean checkCovidKeyword(String title) {
         final String check = title.toLowerCase();
         final String[] keywords = {"cov", "f0", "f1", "vaccine", "vắc xin", "xét nghiệm", "phong tỏa", "mũi", "biến thể", "kháng thể",
-                "nhiễm", "dịch", "test", "pcr", "âm tính", "dương tính", "giãn cách", "chỉ thị", "mắc", "tiêm", "delta", "vùng đỏ", "vùng cam"};
+                "nhiễm", "dịch", "test", "pcr", "âm tính", "dương tính", "giãn cách", "chỉ thị", "delta", "vùng đỏ", "vùng cam", "thẻ xanh"};
 
         for (String s : keywords) {
             if (check.contains(s)) {
