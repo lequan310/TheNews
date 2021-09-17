@@ -1,3 +1,20 @@
+/*
+  RMIT University Vietnam
+  Course: INTE2512 Object-Oriented Programming
+  Semester: 2021B
+  Assessment: Final Project
+  Created date: 01/08/2021
+  Author: Thai Manh Phi, s3878070
+  Last modified date: 17/09/2021
+  Author: Le Minh Quan, s3877969
+  Acknowledgement:
+  https://rmit.instructure.com/courses/88207/pages/w5-whats-happening-this-week?module_item_id=3237094
+  https://rmit.instructure.com/courses/88207/pages/w6-whats-happening-this-week?module_item_id=3237097
+  https://rmit.instructure.com/courses/88207/pages/w8-whats-happening-this-week?module_item_id=3237104
+  https://rmit.instructure.com/courses/88207/pages/w9-whats-happening-this-week?module_item_id=3237110
+  https://rmit.instructure.com/courses/88207/pages/w10-whats-happening-this-week?module_item_id=3237113
+  https://docs.oracle.com/javase/8/docs/api/javax/xml/ws/Service.html
+*/
 package main.SceneController;
 
 import javafx.application.Platform;
