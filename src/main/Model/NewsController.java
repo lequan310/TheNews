@@ -61,7 +61,7 @@ public class NewsController extends Task<Void> {
                 "https://nhandan.vn/thegioi", "https://nhandan.vn/xahoi", "https://nhandan.vn/giaoduc", "https://nhandan.vn/bandoc",
                 "https://nhandan.vn/phapluat", "https://nhandan.vn/moi-truong", "https://nhandan.vn/phapluat"));
 
-    private int categoryIndex, timeout = 20000, progress = 0, maxProgress; // Index to read from the arrays below
+    private int categoryIndex, waitTime = 20000, progress = 0, maxProgress; // Index to read from the arrays below
     private String error = ""; // Error message
 
     private NewsController() {}
@@ -113,7 +113,7 @@ public class NewsController extends Task<Void> {
             updateProgress(0, 1);
             scrapeArticles();
 
-            pool.awaitQuiescence(timeout, TimeUnit.MILLISECONDS);
+            pool.awaitQuiescence(waitTime, TimeUnit.MILLISECONDS);
             System.out.println("Achieve " + items.size() + " items: " + (System.currentTimeMillis() - start) + " ms\n");
         }
         catch (Exception e) {
@@ -132,7 +132,7 @@ public class NewsController extends Task<Void> {
             }
             Collections.sort(items);
             updateProgress(1, 1);
-            timeout = 12000;
+            waitTime = 12000;
 
             System.gc();
         }
