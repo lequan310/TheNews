@@ -1,3 +1,17 @@
+/*
+  RMIT University Vietnam
+  Course: INTE2512 Object-Oriented Programming
+  Semester: 2021B
+  Assessment: Final Project
+  Created date: 01/08/2021
+  Author: Le Minh Quan, s3877969
+  Last modified date: 17/09/2021
+  Author: Thai Manh Phi, s3878070
+  Acknowledgement:
+  https://rmit.instructure.com/courses/88207/pages/w6-whats-happening-this-week?module_item_id=3237097
+  https://rmit.instructure.com/courses/88207/pages/w8-whats-happening-this-week?module_item_id=3237104
+  https://rmit.instructure.com/courses/88207/pages/w9-whats-happening-this-week?module_item_id=3237110
+*/
 package main;
 
 import javafx.application.Application;
@@ -16,10 +30,10 @@ public class Main extends Application {
 
         // Adding css styles
         scene.getStylesheets().add("css/style.css");
-        
+
         // Setting stage title
         stage.setTitle("News Application");
-        
+
         // Setting stage icon
         stage.getIcons().add(new Image("image/icon.png"));
         stage.setScene(scene);
