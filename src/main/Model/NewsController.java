@@ -35,7 +35,8 @@ public class NewsController extends Task<Void> {
                 "https://vnexpress.net/rss/kinh-doanh.rss", "https://vnexpress.net/rss/so-hoa.rss", "https://vnexpress.net/suc-khoe",
                 "https://vnexpress.net/rss/the-thao.rss", "https://vnexpress.net/rss/giai-tri.rss", "https://vnexpress.net/rss/the-gioi.rss",
                 "https://vnexpress.net/rss/cuoi.rss", "https://vnexpress.net/rss/giao-duc.rss", "https://vnexpress.net/rss/khoa-hoc.rss",
-                "https://vnexpress.net/rss/y-kien.rss", "https://vnexpress.net/rss/phap-luat.rss", "https://vnexpress.net/rss/tam-su.rss"));
+                "https://vnexpress.net/rss/y-kien.rss", "https://vnexpress.net/rss/phap-luat.rss", "https://vnexpress.net/rss/tam-su.rss",
+                "https://vnexpress.net/rss/du-lich.rss", "https://vnexpress.net/rss/gia-dinh.rss"));
     private final ArrayList<String> TUOITRE = new ArrayList<>(
         List.of("https://tuoitre.vn/rss/tin-moi-nhat.rss", "https://tuoitre.vn/rss/thoi-su.rss", "https://tuoitre.vn/rss/phap-luat.rss",
                 "https://tuoitre.vn/rss/kinh-doanh.rss", "https://tuoitre.vn/rss/cong-nghe.rss", "https://tuoitre.vn/rss/suc-khoe.rss",
