@@ -20,7 +20,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" styleClass="grey-background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" styleClass="grey-background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <BorderPane onMouseDragged="#resize" onMouseEntered="#checkBound" onMouseMoved="#checkBound" onMouseReleased="#stopResize" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <center>
@@ -157,11 +157,7 @@
                                                    <children>
                                                       <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
                                                          <children>
-                                                            <ImageView fx:id="icon" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../image/icon.png" />
-                                                               </image>
-                                                            </ImageView>
+                                                            <ImageView fx:id="icon" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
                                                             <Label prefHeight="43.0" prefWidth="270.0" textFill="WHITE">
                                                                <font>
                                                                   <Font size="20.0" />
@@ -206,11 +202,7 @@
                                                    <children>
                                                       <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
                                                          <children>
-                                                            <ImageView fx:id="icon1" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../image/icon.png" />
-                                                               </image>
-                                                            </ImageView>
+                                                            <ImageView fx:id="icon1" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
                                                             <Label prefHeight="43.0" prefWidth="270.0" textFill="WHITE">
                                                                <font>
                                                                   <Font size="20.0" />
@@ -255,11 +247,7 @@
                                                    <children>
                                                       <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
                                                          <children>
-                                                            <ImageView fx:id="icon2" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../image/icon.png" />
-                                                               </image>
-                                                            </ImageView>
+                                                            <ImageView fx:id="icon2" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
                                                             <Label prefHeight="43.0" prefWidth="270.0" textFill="WHITE">
                                                                <font>
                                                                   <Font size="20.0" />
@@ -304,11 +292,7 @@
                                                    <children>
                                                       <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
                                                          <children>
-                                                            <ImageView fx:id="icon3" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../image/icon.png" />
-                                                               </image>
-                                                            </ImageView>
+                                                            <ImageView fx:id="icon3" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
                                                             <Label prefHeight="43.0" prefWidth="270.0" textFill="WHITE">
                                                                <font>
                                                                   <Font size="20.0" />
@@ -353,11 +337,7 @@
                                                    <children>
                                                       <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
                                                          <children>
-                                                            <ImageView fx:id="icon4" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../image/icon.png" />
-                                                               </image>
-                                                            </ImageView>
+                                                            <ImageView fx:id="icon4" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
                                                             <Label prefHeight="43.0" prefWidth="270.0" textFill="WHITE">
                                                                <font>
                                                                   <Font size="20.0" />
@@ -402,11 +382,7 @@
                                                    <children>
                                                       <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
                                                          <children>
-                                                            <ImageView fx:id="icon5" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../image/icon.png" />
-                                                               </image>
-                                                            </ImageView>
+                                                            <ImageView fx:id="icon5" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
                                                             <Label prefHeight="43.0" prefWidth="270.0" textFill="WHITE">
                                                                <font>
                                                                   <Font size="20.0" />
@@ -451,11 +427,7 @@
                                                    <children>
                                                       <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
                                                          <children>
-                                                            <ImageView fx:id="icon6" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../image/icon.png" />
-                                                               </image>
-                                                            </ImageView>
+                                                            <ImageView fx:id="icon6" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
                                                             <Label prefHeight="43.0" prefWidth="270.0" textFill="WHITE">
                                                                <font>
                                                                   <Font size="20.0" />
@@ -500,11 +472,7 @@
                                                    <children>
                                                       <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
                                                          <children>
-                                                            <ImageView fx:id="icon7" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../image/icon.png" />
-                                                               </image>
-                                                            </ImageView>
+                                                            <ImageView fx:id="icon7" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
                                                             <Label prefHeight="43.0" prefWidth="270.0" textFill="WHITE">
                                                                <font>
                                                                   <Font size="20.0" />
@@ -549,11 +517,7 @@
                                                    <children>
                                                       <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
                                                          <children>
-                                                            <ImageView fx:id="icon8" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../image/icon.png" />
-                                                               </image>
-                                                            </ImageView>
+                                                            <ImageView fx:id="icon8" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
                                                             <Label prefHeight="43.0" prefWidth="270.0" textFill="WHITE">
                                                                <font>
                                                                   <Font size="20.0" />
@@ -598,11 +562,7 @@
                                                    <children>
                                                       <HBox alignment="CENTER" prefHeight="50.0" prefWidth="460.0">
                                                          <children>
-                                                            <ImageView fx:id="icon9" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../image/icon.png" />
-                                                               </image>
-                                                            </ImageView>
+                                                            <ImageView fx:id="icon9" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
                                                             <Label prefHeight="43.0" prefWidth="270.0" textFill="WHITE">
                                                                <font>
                                                                   <Font size="20.0" />
