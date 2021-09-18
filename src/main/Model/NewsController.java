@@ -230,7 +230,6 @@ public class NewsController extends Task<Void> {
                                 addItem(item);
                                 itemStorage.put(link, item);
                                 inItem = false;
-                                loadProgress();
                             }
                         }
                         catch (Exception exception) {
@@ -313,7 +312,6 @@ public class NewsController extends Task<Void> {
                                 addItem(item);
                                 itemStorage.put(link, item);
                                 inItem = false;
-                                loadProgress();
                             }
                         }
                         catch (Exception exception) {
@@ -417,7 +415,6 @@ public class NewsController extends Task<Void> {
                                 addItem(item);
                                 itemStorage.put(link, item);
                                 inItem = false;
-                                loadProgress();
                             }
                         }
                         catch (Exception exception) {
@@ -476,7 +473,6 @@ public class NewsController extends Task<Void> {
                                 if (itemStorage.containsKey(link)) {
                                     if (add) {
                                         addItem(itemStorage.get(link));
-                                        loadProgress();
                                     }
                                 }
                                 else {
@@ -507,8 +503,6 @@ public class NewsController extends Task<Void> {
                             catch (Exception exception) {
                                 System.out.println(exception.getMessage());
                             }
-
-                            loadProgress(); // updateProgress(progress++, maxProgress);
                         });
                     }
                 } catch (IOException e) {
@@ -557,7 +551,6 @@ public class NewsController extends Task<Void> {
                                 if (itemStorage.containsKey(link)) {
                                     if (add) {
                                         addItem(itemStorage.get(link));
-                                        loadProgress();
                                     }
                                 }
                                 else {
@@ -608,8 +601,6 @@ public class NewsController extends Task<Void> {
                                         itemStorage.put(link, item);
                                     }
                                 }
-
-                                loadProgress();
                             }
                             catch (Exception exception) {
                                 System.out.println(exception.getMessage());
@@ -631,7 +622,7 @@ public class NewsController extends Task<Void> {
 
         // Scrape which URL depends on category
         if (categoryIndex == 0) {
-            maxProgress = 1500;
+            maxProgress = 1000;
             pool.execute(() -> scrapeVE(Collections.singletonList(VNEXPRESS.get(0))));
             pool.execute(() -> scrapeTuoiTre(Collections.singletonList(TUOITRE.get(0))));
             pool.execute(() -> scrapeThanhNien(Collections.singletonList(THANHNIEN.get(0))));
@@ -679,15 +670,12 @@ public class NewsController extends Task<Void> {
         return false;
     }
 
-    private void loadProgress() {
-        synchronized (this) {
-            updateProgress(progress++, maxProgress);
-        }
-    }
-
     private void addItem(Item item) {
         synchronized (this) {
-            items.add(item);
+            if (!items.contains(item)) {
+                items.add(item);
+                updateProgress(progress++, maxProgress);
+            }
         }
     }
 }
