@@ -203,7 +203,6 @@ public class NewsController extends Task<Void> {
                                 // Use existed item if exists
                                 if (itemStorage.containsKey(link)) {
                                     addItem(itemStorage.get(link));
-                                    loadProgress();
                                     inItem = false;
                                 }
                             }
@@ -294,7 +293,6 @@ public class NewsController extends Task<Void> {
                                 // Use existed item if exists
                                 if (itemStorage.containsKey(link)) {
                                     addItem(itemStorage.get(link));
-                                    loadProgress();
                                     inItem = false;
                                 }
                             }
@@ -383,7 +381,6 @@ public class NewsController extends Task<Void> {
                                 // Use existed item if exists
                                 if (itemStorage.containsKey(link)) {
                                     addItem(itemStorage.get(link));
-                                    loadProgress();
                                     inItem = false;
                                     continue;
                                 }
