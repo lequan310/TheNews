@@ -31,9 +31,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class SceneHandler {
-    private Parent root;
+    // Root and Controller for reuse
+    private static Parent categoryRoot = null, articleRoot = null, menuRoot = null;
+    private static MenuController menuController = null;
+    private static CategoryController categoryController = null;
+    private static ArticleController articleController = null;
     @FXML private AnchorPane anchorPane;
 
+    // Resizing and position variables
     protected boolean moving, resizeLeft, resizeRight, resizeUp, resizeDown, resizing = false;
     protected double x, y;
 
@@ -53,15 +58,16 @@ public class SceneHandler {
     // Creating Main Menu scene and assigning controller
     public Scene loadMenuScene() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Home.fxml"));
-        MenuController controller = new MenuController(0, true);
-        loader.setController(controller);
+        menuController = new MenuController();
+        loader.setController(menuController);
+        menuRoot = loader.load();
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         double height = ge.getMaximumWindowBounds().height, width = ge.getMaximumWindowBounds().width, ratio = width / height;
         height *= 0.85; width = height * ratio;
 
-        Scene scene = new Scene(loader.load(), width, height);
-        scene.setOnKeyPressed(keyEvent -> menuHandler(keyEvent, controller));
+        Scene scene = new Scene(menuRoot, width, height);
+        scene.setOnKeyPressed(keyEvent -> menuHandler(keyEvent, menuController));
         scene.setFill(Color.valueOf("#1f1f1f"));
         System.gc();
         return scene;
@@ -70,16 +76,19 @@ public class SceneHandler {
     // Loading Categories scene and assigning controller
     @FXML protected void menuCategories(int categoryIndex) {
         try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Categories.fxml"));
-            CategoryController controller = new CategoryController(categoryIndex);
-            loader.setController(controller);
+            if (categoryRoot == null) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Categories.fxml"));
+                categoryController = new CategoryController(categoryIndex);
+                loader.setController(categoryController);
 
-            root = loader.load();
-            root.setOnKeyPressed(e -> {
-                if (e.getCode() == KeyCode.ESCAPE) controller.menuHome(categoryIndex, false);
-            });
-            anchorPane.getScene().setRoot(root);
-            root.requestFocus();
+                categoryRoot = loader.load();
+                categoryRoot.setOnKeyPressed(e -> {
+                    if (e.getCode() == KeyCode.ESCAPE) categoryController.menuHome(categoryIndex, false);
+                });
+            }
+
+            anchorPane.getScene().setRoot(categoryRoot);
+            categoryRoot.requestFocus();
             System.gc();
         }catch (Exception e){
             System.out.println(e.getMessage());
@@ -89,16 +98,22 @@ public class SceneHandler {
     // Loading Main Menu scene and assigning controller
     @FXML protected void menuHome(int categoryIndex, boolean reload) {
         try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Home.fxml"));
-            MenuController controller = new MenuController(categoryIndex, reload);
-            loader.setController(controller);
+            if (menuRoot == null) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Home.fxml"));
+                menuController = new MenuController();
+                loader.setController(menuController);
 
-            root = loader.load();
-            root.setOnKeyPressed(keyEvent -> menuHandler(keyEvent, controller));
-            anchorPane.getScene().setRoot(root);
-            root.requestFocus();
+                menuRoot = loader.load();
+                menuRoot.setOnKeyPressed(keyEvent -> menuHandler(keyEvent, menuController));
+            }
+
+            anchorPane.getScene().setRoot(menuRoot);
+            menuController.passDataMenu(categoryIndex, reload);
+            menuController.reloadScene();
+            menuRoot.requestFocus();
             if (Storage.getInstance().getArticles().size() > 10)
                 Storage.getInstance().getArticles().clear();
+            System.gc();
         }
         catch (Exception e){
             System.out.println(e.getMessage());
@@ -108,24 +123,30 @@ public class SceneHandler {
     // Loading article scene and assigning controller
     @FXML protected void article(ArrayList<Item> items, int index, int categoryIndex){
         try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/NewsTemplate.fxml"));
-            ArticleController controller = new ArticleController(items, index, categoryIndex);
-            KeyCombination reload = new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN);
-            loader.setController(controller);
+            if (articleRoot == null) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/NewsTemplate.fxml"));
+                articleController = new ArticleController();
+                articleController.passDataArticle(items, index, categoryIndex);
+                KeyCombination reload = new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN);
+                loader.setController(articleController);
 
-            root = loader.load();
-            root.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-                if (event.getCode() == KeyCode.LEFT)
-                    controller.previousArticle(); // Left Arrow = previous article
-                else if (event.getCode() == KeyCode.RIGHT)
-                    controller.nextArticle(); // Right Arrow = next article
-                else if (event.getCode() == KeyCode.F5 || reload.match(event))
-                    controller.readArticle(); // F5 or Ctrl + R
-                else if (event.getCode() == KeyCode.ESCAPE)  // Escape to return to Menu
-                    controller.menuHome(categoryIndex, false);
-            });
-            anchorPane.getScene().setRoot(root);
-            root.requestFocus();
+                articleRoot = loader.load();
+                articleRoot.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.LEFT)
+                        articleController.previousArticle(); // Left Arrow = previous article
+                    else if (event.getCode() == KeyCode.RIGHT)
+                        articleController.nextArticle(); // Right Arrow = next article
+                    else if (event.getCode() == KeyCode.F5 || reload.match(event))
+                        articleController.readArticle(); // F5 or Ctrl + R
+                    else if (event.getCode() == KeyCode.ESCAPE)  // Escape to return to Menu
+                        articleController.menuHome(categoryIndex, false);
+                });
+            }
+
+            anchorPane.getScene().setRoot(articleRoot);
+            articleController.passDataArticle(items, index, categoryIndex);
+            articleController.readArticle();
+            articleRoot.requestFocus();
             System.gc();
         }
         catch (Exception e){

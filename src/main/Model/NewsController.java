@@ -130,18 +130,20 @@ public class NewsController extends Task<Void> {
             System.out.println(e.getMessage());
         }
         finally {
-            if (items.size() > 1) {
-                // Remove duplicate and then sort
-                items.sort(Comparator.comparing(Item::getLink));
-                for (int i = 1; i < items.size(); i++) {
-                    if (items.get(i).equalTo(items.get(i - 1))) {
-                        items.remove(i);
-                        i--;
+            synchronized (this) {
+                if (items.size() > 1) {
+                    // Remove duplicate and then sort
+                    items.sort(Comparator.comparing(Item::getLink));
+                    for (int i = 1; i < items.size(); i++) {
+                        if (items.get(i).equalTo(items.get(i - 1))) {
+                            items.remove(i);
+                            i--;
+                        }
                     }
                 }
+                Collections.sort(items); // Sort item by published date and time
+                updateProgress(1, 1); // Set progress to full
             }
-            Collections.sort(items); // Sort item by published date and time
-            updateProgress(1, 1); // Set progress to full
 
             System.gc(); // Call garbage collector
         }
@@ -632,10 +634,10 @@ public class NewsController extends Task<Void> {
 
         // Scrape which URL depends on category
         if (categoryIndex == 0) {
-            maxProgress = 3100;
-            pool.execute(() -> scrapeVE(VNEXPRESS));
-            pool.execute(() -> scrapeTuoiTre(TUOITRE));
-            pool.execute(() -> scrapeThanhNien(THANHNIEN));
+            maxProgress = 1000;
+            pool.execute(() -> scrapeVE(Collections.singletonList(VNEXPRESS.get(0))));
+            pool.execute(() -> scrapeTuoiTre(Collections.singletonList(TUOITRE.get(0))));
+            pool.execute(() -> scrapeThanhNien(Collections.singletonList(THANHNIEN.get(0))));
             pool.execute(() -> scrapeZing(ZING));
             pool.execute(() -> scrapeNhanDan(NHANDAN.subList(categoryIndex + 1, NHANDAN.size())));
         }
@@ -657,11 +659,11 @@ public class NewsController extends Task<Void> {
         }
         else {
             maxProgress = 250;
-            pool.execute(() -> scrapeVE(VNEXPRESS.subList(categoryIndex, categoryIndex + 1)));
-            pool.execute(() -> scrapeTuoiTre(TUOITRE.subList(categoryIndex, categoryIndex + 1)));
-            pool.execute(() -> scrapeThanhNien(THANHNIEN.subList(categoryIndex, categoryIndex + 1)));
-            pool.execute(() -> scrapeZing(ZING.subList(categoryIndex, categoryIndex + 1)));
-            pool.execute(() -> scrapeNhanDan(NHANDAN.subList(categoryIndex, categoryIndex + 1)));
+            pool.execute(() -> scrapeVE(Collections.singletonList(VNEXPRESS.get(categoryIndex))));
+            pool.execute(() -> scrapeTuoiTre(Collections.singletonList(TUOITRE.get(categoryIndex))));
+            pool.execute(() -> scrapeThanhNien(Collections.singletonList(THANHNIEN.get(categoryIndex))));
+            pool.execute(() -> scrapeZing(Collections.singletonList(ZING.get(categoryIndex))));
+            pool.execute(() -> scrapeNhanDan(Collections.singletonList(NHANDAN.get(categoryIndex))));
         }
     }
 

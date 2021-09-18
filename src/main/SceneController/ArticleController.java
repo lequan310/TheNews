@@ -50,9 +50,9 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class ArticleController extends SceneHandler implements Initializable {
-    private final int WORDSIZE = 18, categoryIndex; // default word size and category index
-    private int index; // current item index
-    private final ArrayList<Item> items; // list of items
+    private final int WORDSIZE = 18; // default word size and category index
+    private int index, categoryIndex; // current item index
+    private ArrayList<Item> items; // list of items
     private Item item; // current item
     private final Storage storage = Storage.getInstance();
 
@@ -69,7 +69,7 @@ public class ArticleController extends SceneHandler implements Initializable {
     @FXML private Pane blackPane;
 
     // Constructor with parameters to receive data from main menu scene
-    public ArticleController(ArrayList<Item> items, int index, int categoryIndex){
+    public void passDataArticle(ArrayList<Item> items, int index, int categoryIndex){
         this.items = items;
         this.index = index;
         this.categoryIndex = categoryIndex;
@@ -110,7 +110,6 @@ public class ArticleController extends SceneHandler implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Read current article and assigning buttons functions
-        readArticle();
         previousButton.setOnAction(e -> previousArticle());
         nextButton.setOnAction(e -> nextArticle());
         content.setOnScroll(e -> {

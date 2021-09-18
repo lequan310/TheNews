@@ -113,12 +113,12 @@ public class MenuController extends SceneHandler implements Initializable {
     private final Storage storage = Storage.getInstance();
     private ArrayList<Item> items;
 
-    private final String[] categories = {"NEW", "COVID", "POLITICS", "BUSINESS", "TECHNOLOGY", "HEALTH", "SPORTS", "ENTERTAINMENT", "WORLD", "OTHERS"}; //Menu Categories type
-    private int currentPage = 1;
-    private final int categoryIndex;
-    private final boolean reload;
+    //Menu Categories type
+    private final String[] categories = {"NEW", "COVID", "POLITICS", "BUSINESS", "TECHNOLOGY", "HEALTH", "SPORTS", "ENTERTAINMENT", "WORLD", "OTHERS"};
+    private int categoryIndex = 0;
+    private boolean reload = true;
 
-    public MenuController(int categoryIndex, boolean reload) {
+    public void passDataMenu(int categoryIndex, boolean reload) {
         this.categoryIndex = categoryIndex;
         this.reload = reload;
     }
@@ -126,25 +126,30 @@ public class MenuController extends SceneHandler implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Create news controller to scrape news in specific category
-        newsController.setCategoryIndex(categoryIndex);
         pb.progressProperty().bind(newsController.progressProperty()); // Bind loading bar to scraping progress
-        categoryButton.setDisable(true);
-        categoryLabel.setText(categories[categoryIndex]);
         content.setOnScroll(e -> {
             double delta = e.getDeltaY() * -4;
             scrollPane.setVvalue(scrollPane.getVvalue() + delta / scrollPane.getContent().getBoundsInLocal().getHeight());
         });
+
         addNodeToList();
+        reloadScene();
+    }
 
-        for (Button b : pages) {
-            b.setDisable(true);
-        }
-        for (Button b : buttons) {
-            b.setDisable(true);
-        }
-
+    public void reloadScene() {
         if (reload) {
             try {
+                newsController.setCategoryIndex(categoryIndex);
+                categoryLabel.setText(categories[categoryIndex]);
+                categoryButton.setDisable(true);
+
+                for (Button b : pages) {
+                    b.setDisable(true);
+                }
+                for (Button b : buttons) {
+                    b.setDisable(true);
+                }
+
                 // Create a news controller for menu scene to use
                 Service<Void> service = new Service<>() {
                     @Override
@@ -178,6 +183,9 @@ public class MenuController extends SceneHandler implements Initializable {
             }
             catch (Exception e) {
                 throwAlert(e.getClass().getCanonicalName(), e.getMessage(), e.toString());
+            }
+            finally {
+                System.gc();
             }
         }
         else {
@@ -232,21 +240,19 @@ public class MenuController extends SceneHandler implements Initializable {
     public void changePage(int page) {
         try {
             // Change page if selected page is not the current active page
-            if (currentPage != page) {
-                final int ITEMCOUNT = 10;
-                currentPage = page;
+            final int ITEMCOUNT = 10;
 
-                scrollPane.setVvalue(0); // Reset scroll bar
-                for (int i = 0; i < pages.size(); i++) {
-                    if (i == page) {
-                        pages.get(i).setStyle("-fx-background-color: #4e4e4e");
-                    } else {
-                        pages.get(i).setStyle("");
-                    }
+            scrollPane.setVvalue(0); // Reset scroll bar
+            for (int i = 0; i < pages.size(); i++) {
+                if (i == page) {
+                    pages.get(i).setStyle("-fx-background-color: #4e4e4e");
+                } else {
+                    pages.get(i).setStyle("");
                 }
+            }
 
-                // Initializing article buttons
-                for (int i = 0; i < ITEMCOUNT; i++) {
+            // Initializing article buttons
+            for (int i = 0; i < ITEMCOUNT; i++) {
                     int idx = i + (page * ITEMCOUNT);
                     int currentButton = i;
 
@@ -292,7 +298,6 @@ public class MenuController extends SceneHandler implements Initializable {
                         }
                     });
                 }
-            }
         }
         catch (Exception e) {
             throwAlert(e.getClass().getCanonicalName(), e.getMessage(), e.toString());
