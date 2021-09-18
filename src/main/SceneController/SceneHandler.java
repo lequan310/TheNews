@@ -111,8 +111,8 @@ public class SceneHandler {
             menuController.passDataMenu(categoryIndex, reload);
             menuController.reloadScene();
             menuRoot.requestFocus();
-            if (Storage.getInstance().getArticles().size() > 10)
-                Storage.getInstance().getArticles().clear();
+
+            Storage.getInstance().getArticles().clear();
             System.gc();
         }
         catch (Exception e){
