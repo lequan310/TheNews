@@ -69,7 +69,7 @@ public class ArticleController extends SceneHandler implements Initializable {
     @FXML private ScrollPane scrollPane;
     @FXML private Pane blackPane;
 
-    // Constructor with parameters to receive data from main menu scene
+    // Setter with parameters to receive data from main menu scene
     public void passDataArticle(ArrayList<Item> items, int index, int categoryIndex){
         this.items = items;
         this.index = index;
