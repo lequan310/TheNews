@@ -9,6 +9,7 @@
   Author: Pham Thanh Nam, s3878413
   Acknowledgement:
   https://jsoup.org/
+  https://tranquocdai.com/lam-the-nao-de-tai-duoc-video-tren-trang-vnexpress.html
   https://rmit.instructure.com/courses/88207/pages/w5-whats-happening-this-week?module_item_id=3237094
   https://rmit.instructure.com/courses/88207/pages/w6-whats-happening-this-week?module_item_id=3237097
   https://rmit.instructure.com/courses/88207/pages/w8-whats-happening-this-week?module_item_id=3237104
