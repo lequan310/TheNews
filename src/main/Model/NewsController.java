@@ -634,7 +634,7 @@ public class NewsController extends Task<Void> {
 
         // Scrape which URL depends on category
         if (categoryIndex == 0) {
-            maxProgress = 1000;
+            maxProgress = 1500;
             pool.execute(() -> scrapeVE(Collections.singletonList(VNEXPRESS.get(0))));
             pool.execute(() -> scrapeTuoiTre(Collections.singletonList(TUOITRE.get(0))));
             pool.execute(() -> scrapeThanhNien(Collections.singletonList(THANHNIEN.get(0))));
