@@ -46,7 +46,7 @@ public class NewsController extends Task<Void> {
 
     // List of URL to scrape from in order: New, Covid, Politics, Business, Technology, Health, Sports, Entertainment, World, Others
     private final ArrayList<String> VNEXPRESS = new ArrayList<>(
-        List.of("https://vnexpress.net/rss/tin-moi-nhat.rss", "https://vnexpress.net/rss/tin-noi-bat.rss", "https://vnexpress.net/rss/chinh-tri.rss",
+        List.of("https://vnexpress.net/rss/tin-moi-nhat.rss", "https://vnexpress.net/rss/covid-19.rss", "https://vnexpress.net/rss/chinh-tri.rss",
                 "https://vnexpress.net/rss/kinh-doanh.rss", "https://vnexpress.net/rss/so-hoa.rss", "https://vnexpress.net/rss/suc-khoe.rss",
                 "https://vnexpress.net/rss/the-thao.rss", "https://vnexpress.net/rss/giai-tri.rss", "https://vnexpress.net/rss/the-gioi.rss",
                 "https://vnexpress.net/rss/cuoi.rss", "https://vnexpress.net/rss/giao-duc.rss", "https://vnexpress.net/rss/khoa-hoc.rss",
@@ -212,15 +212,7 @@ public class NewsController extends Task<Void> {
                                     imgSrc = extract(line, "<description>", "</description>");
                                     imgSrc = extract(imgSrc, "<img src=\"", "\"");
                                 } catch (StringIndexOutOfBoundsException e) {
-                                    try {
-                                        Connection.Response tempResponse = Jsoup.connect(link).timeout(5000).response();
-                                        if (tempResponse.statusCode() >= 400) throw new IOException();
-
-                                        Document temp = tempResponse.parse();
-                                        imgSrc = temp.select("article.fck_detail").select("img").attr("data-src");
-                                    } catch (Exception exception) {
-                                        inItem = false;
-                                    }
+                                    imgSrc = "";
                                 }
                             }
                             // Add item to list at the end of item (when all information of an item object is gathered)

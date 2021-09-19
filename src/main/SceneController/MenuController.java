@@ -259,51 +259,51 @@ public class MenuController extends SceneHandler implements Initializable {
 
             // Initializing article buttons
             for (int i = 0; i < ITEMCOUNT; i++) {
-                    int idx = i + (page * ITEMCOUNT);
-                    int currentButton = i;
+                int idx = i + (page * ITEMCOUNT);
+                int currentButton = i;
 
-                    // If item exists
-                    Platform.runLater(() -> {
+                // If item exists
+                Platform.runLater(() -> {
+                    try {
+                        buttons.get(currentButton).setOnAction(e -> article(idx, categoryIndex));
+                        labels.get(currentButton).setText(items.get(idx).getTitle());
+                        timeLabels.get(currentButton).setText(items.get(idx).durationToString());
+                        buttons.get(currentButton).setDisable(false);
+
+                        switch (items.get(idx).getSource()) {
+                            case VE -> icons.get(currentButton).setImage(storage.getIcons().get(0));
+                            case TT -> icons.get(currentButton).setImage(storage.getIcons().get(1));
+                            case TN -> icons.get(currentButton).setImage(storage.getIcons().get(2));
+                            case ZING -> icons.get(currentButton).setImage(storage.getIcons().get(3));
+                            case ND -> icons.get(currentButton).setImage(storage.getIcons().get(4));
+                        }
+
                         try {
-                            buttons.get(currentButton).setOnAction(e -> article(idx, categoryIndex));
-                            labels.get(currentButton).setText(items.get(idx).getTitle());
-                            timeLabels.get(currentButton).setText(items.get(idx).durationToString());
-                            buttons.get(currentButton).setDisable(false);
+                            String currentImgSrc = items.get(idx).getImgSrc();
 
-                            switch (items.get(idx).getSource()) {
-                                case VE -> icons.get(currentButton).setImage(storage.getIcons().get(0));
-                                case TT -> icons.get(currentButton).setImage(storage.getIcons().get(1));
-                                case TN -> icons.get(currentButton).setImage(storage.getIcons().get(2));
-                                case ZING -> icons.get(currentButton).setImage(storage.getIcons().get(3));
-                                case ND -> icons.get(currentButton).setImage(storage.getIcons().get(4));
+                            if (storage.getImage().containsKey(currentImgSrc)) {
+                                images.get(currentButton).setImage(storage.getImage().get(currentImgSrc));
                             }
-
-                            try {
-                                String currentImgSrc = items.get(idx).getImgSrc();
-
-                                if (storage.getImage().containsKey(currentImgSrc)) {
-                                    images.get(currentButton).setImage(storage.getImage().get(currentImgSrc));
-                                }
-                                else {
-                                    Image background = new Image(currentImgSrc, image.getFitWidth(), image.getFitHeight(), true, true, true);
-                                    images.get(currentButton).setImage(background);
-                                    storage.getImage().put(currentImgSrc, background);
-                                }
-                            } catch (IllegalArgumentException e) {
-                                images.get(currentButton).setImage(null);
+                            else {
+                                Image background = new Image(currentImgSrc, image.getFitWidth(), image.getFitHeight(), true, true, true);
+                                images.get(currentButton).setImage(background);
+                                storage.getImage().put(currentImgSrc, background);
                             }
-                        }
-
-                        //Error Handling
-                        catch (IndexOutOfBoundsException e) {
-                            buttons.get(currentButton).setDisable(true);
-                            labels.get(currentButton).setText("Empty");
+                        } catch (IllegalArgumentException e) {
                             images.get(currentButton).setImage(null);
-                            timeLabels.get(currentButton).setText("Not available");
-                            icons.get(currentButton).setImage(null);
                         }
-                    });
-                }
+                    }
+
+                    //Error Handling
+                    catch (IndexOutOfBoundsException e) {
+                        buttons.get(currentButton).setDisable(true);
+                        labels.get(currentButton).setText("Empty");
+                        images.get(currentButton).setImage(null);
+                        timeLabels.get(currentButton).setText("Not available");
+                        icons.get(currentButton).setImage(null);
+                    }
+                });
+            }
         }
         catch (Exception e) {
             throwAlert(e.getClass().getCanonicalName(), e.getMessage(), e.toString());
