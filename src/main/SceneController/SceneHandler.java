@@ -26,6 +26,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import main.Model.Item;
 import main.Storage.Storage;
+
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,13 +37,15 @@ public class SceneHandler {
     private static MenuController menuController = null;
     private static CategoryController categoryController = null;
     private static ArticleController articleController = null;
-    @FXML private AnchorPane anchorPane;
+    @FXML
+    private AnchorPane anchorPane;
 
     // Resizing and position variables
     protected boolean moving, resizeLeft, resizeRight, resizeUp, resizeDown, resizing = false;
     protected double x, y;
 
-    public SceneHandler() {}
+    public SceneHandler() {
+    }
 
     //Changing page in main scene
     private void menuHandler(KeyEvent keyEvent, MenuController controller) {
@@ -64,7 +67,8 @@ public class SceneHandler {
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         double height = ge.getMaximumWindowBounds().height, width = ge.getMaximumWindowBounds().width, ratio = width / height;
-        height *= 0.85; width = height * ratio;
+        height *= 0.85;
+        width = height * ratio;
 
         Scene scene = new Scene(menuRoot, width, height);
         scene.setOnKeyPressed(keyEvent -> menuHandler(keyEvent, menuController));
@@ -74,8 +78,9 @@ public class SceneHandler {
     }
 
     // Loading Categories scene and assigning controller
-    @FXML protected void menuCategories(int categoryIndex) {
-        try{
+    @FXML
+    protected void menuCategories(int categoryIndex) {
+        try {
             if (categoryRoot == null) {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Categories.fxml"));
                 categoryController = new CategoryController(categoryIndex);
@@ -90,14 +95,15 @@ public class SceneHandler {
             anchorPane.getScene().setRoot(categoryRoot);
             categoryRoot.requestFocus();
             System.gc();
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
     // Loading Main Menu scene and assigning controller
-    @FXML protected void menuHome(int categoryIndex, boolean reload) {
-        try{
+    @FXML
+    protected void menuHome(int categoryIndex, boolean reload) {
+        try {
             if (menuRoot == null) {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Home.fxml"));
                 menuController = new MenuController();
@@ -114,15 +120,15 @@ public class SceneHandler {
 
             Storage.getInstance().getArticles().clear();
             System.gc();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
     // Loading article scene and assigning controller
-    @FXML protected void article(ArrayList<Item> items, int index, int categoryIndex){
-        try{
+    @FXML
+    protected void article(ArrayList<Item> items, int index, int categoryIndex) {
+        try {
             if (articleRoot == null) {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/NewsTemplate.fxml"));
                 articleController = new ArticleController();
@@ -148,14 +154,14 @@ public class SceneHandler {
             articleController.readArticle();
             articleRoot.requestFocus();
             System.gc();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     // Title bar functions
-    @FXML protected void dragged(MouseEvent event) {
+    @FXML
+    protected void dragged(MouseEvent event) {
         if (!resizing) {
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setFullScreen(false);
@@ -165,23 +171,27 @@ public class SceneHandler {
         }
     }
 
-    @FXML protected void update(MouseEvent event) {
+    @FXML
+    protected void update(MouseEvent event) {
         x = event.getSceneX();
         y = event.getSceneY();
     }
 
-    @FXML protected void min(MouseEvent event) {
+    @FXML
+    protected void min(MouseEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setIconified(true);
     }
 
-    @FXML protected void max(MouseEvent event) {
+    @FXML
+    protected void max(MouseEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setFullScreenExitHint("");
         stage.setFullScreen(!stage.isFullScreen());
     }
 
-    @FXML protected void close(MouseEvent event) {
+    @FXML
+    protected void close(MouseEvent event) {
         Storage.getInstance().clearAll();
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
@@ -189,7 +199,8 @@ public class SceneHandler {
     }
 
     //Function for checking Windows Bound
-    @FXML protected void checkBound(MouseEvent event) {
+    @FXML
+    protected void checkBound(MouseEvent event) {
         if (!resizing && !moving) {
             final int LIMIT = 3;
             x = event.getSceneX();
@@ -199,26 +210,40 @@ public class SceneHandler {
             if (!stage.isFullScreen()) {
                 // Resize left
                 if (x <= LIMIT) {
-                    resizeLeft = true; resizeRight = false; resizeUp = false; resizeDown = false;
+                    resizeLeft = true;
+                    resizeRight = false;
+                    resizeUp = false;
+                    resizeDown = false;
                     anchorPane.setCursor(javafx.scene.Cursor.H_RESIZE);
                 }
                 // Resize up
-                else if (y <= LIMIT && x < anchorPane.getWidth() - 50){
-                    resizeLeft = false; resizeRight = false; resizeUp = true; resizeDown = false;
+                else if (y <= LIMIT && x < anchorPane.getWidth() - 50) {
+                    resizeLeft = false;
+                    resizeRight = false;
+                    resizeUp = true;
+                    resizeDown = false;
                     anchorPane.setCursor(javafx.scene.Cursor.V_RESIZE);
                 }
                 // Resize right
                 else if (x >= anchorPane.getWidth() - LIMIT && y > 30) {
-                    resizeLeft = false; resizeRight = true; resizeUp = false; resizeDown = false;
+                    resizeLeft = false;
+                    resizeRight = true;
+                    resizeUp = false;
+                    resizeDown = false;
                     anchorPane.setCursor(javafx.scene.Cursor.H_RESIZE);
                 }
                 // Resize down
                 else if (y >= anchorPane.getHeight() - LIMIT) {
-                    resizeLeft = false; resizeRight = false; resizeUp = false; resizeDown = true;
+                    resizeLeft = false;
+                    resizeRight = false;
+                    resizeUp = false;
+                    resizeDown = true;
                     anchorPane.setCursor(javafx.scene.Cursor.V_RESIZE);
-                }
-                else {
-                    resizeLeft = false; resizeRight = false; resizeUp = false; resizeDown = false;
+                } else {
+                    resizeLeft = false;
+                    resizeRight = false;
+                    resizeUp = false;
+                    resizeDown = false;
                     anchorPane.setCursor(Cursor.DEFAULT);
                 }
             }
@@ -226,7 +251,8 @@ public class SceneHandler {
     }
 
     // Function for resizing windows
-    @FXML protected void resize(MouseEvent event) {
+    @FXML
+    protected void resize(MouseEvent event) {
         double deltaX = 0, deltaY = 0;
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
@@ -242,8 +268,7 @@ public class SceneHandler {
                 anchorPane.relocate(x, 0);
                 stage.setX(event.getScreenX());
             }
-        }
-        else if (resizeUp || resizeDown) {
+        } else if (resizeUp || resizeDown) {
             resizing = true;
             deltaY = resizeUp ? event.getSceneY() - y : y - event.getSceneY();
             y = event.getSceneY();
@@ -259,8 +284,10 @@ public class SceneHandler {
     }
 
     // Function to stop resizing windows
-    @FXML protected void stopResize() {
-        resizing = false; moving = false;
+    @FXML
+    protected void stopResize() {
+        resizing = false;
+        moving = false;
         anchorPane.setCursor(Cursor.DEFAULT);
     }
 }

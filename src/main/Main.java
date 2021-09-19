@@ -25,7 +25,7 @@ import main.SceneController.SceneHandler;
 public class Main extends Application {
 
     @Override
-    public void start(Stage stage) throws Exception{
+    public void start(Stage stage) throws Exception {
         Scene scene = new SceneHandler().loadMenuScene();
 
         // Adding css styles

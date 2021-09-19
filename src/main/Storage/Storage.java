@@ -17,6 +17,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import main.Model.Item;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,13 +33,14 @@ public class Storage {
     private final HashMap<String, Image> images = new HashMap<>(); // Store entry image with key imgSrc for reuse
     private final HashMap<String, ObservableList<Node>> articles = new HashMap<>(); // Store entry article with key link for reuse
     private final ArrayList<Image> icons = new ArrayList<>(
-        List.of(new Image("/image/iconVE.png", ICONSIZE, ICONSIZE, true, true),
-                new Image("/image/iconTT.png", ICONSIZE, ICONSIZE, true, true),
-                new Image("/image/iconTN.png", ICONSIZE, ICONSIZE, true, true),
-                new Image("/image/iconZING.png", ICONSIZE, ICONSIZE, true, true),
-                new Image("/image/iconND.png", ICONSIZE, ICONSIZE, true, true)));
+            List.of(new Image("/image/iconVE.png", ICONSIZE, ICONSIZE, true, true),
+                    new Image("/image/iconTT.png", ICONSIZE, ICONSIZE, true, true),
+                    new Image("/image/iconTN.png", ICONSIZE, ICONSIZE, true, true),
+                    new Image("/image/iconZING.png", ICONSIZE, ICONSIZE, true, true),
+                    new Image("/image/iconND.png", ICONSIZE, ICONSIZE, true, true)));
 
-    private Storage() {}
+    private Storage() {
+    }
 
     // Get current instance of storage. Create a new storage if not existed
     public static Storage getInstance() {

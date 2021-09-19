@@ -43,6 +43,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -58,19 +59,29 @@ public class ArticleController extends SceneHandler implements Initializable {
     private final Storage storage = Storage.getInstance();
 
     // UI components in Article scene
-    @FXML private AnchorPane anchorPane;
-    @FXML private FlowPane content;
-    @FXML private ImageView thumbnail;
-    @FXML private Label title;
-    @FXML private Label timeLabel;
-    @FXML private Label sourceLabel;
-    @FXML private Button previousButton;
-    @FXML private Button nextButton;
-    @FXML private ScrollPane scrollPane;
-    @FXML private Pane blackPane;
+    @FXML
+    private AnchorPane anchorPane;
+    @FXML
+    private FlowPane content;
+    @FXML
+    private ImageView thumbnail;
+    @FXML
+    private Label title;
+    @FXML
+    private Label timeLabel;
+    @FXML
+    private Label sourceLabel;
+    @FXML
+    private Button previousButton;
+    @FXML
+    private Button nextButton;
+    @FXML
+    private ScrollPane scrollPane;
+    @FXML
+    private Pane blackPane;
 
     // Setter with parameters to receive data from main menu scene
-    public void passDataArticle(ArrayList<Item> items, int index, int categoryIndex){
+    public void passDataArticle(ArrayList<Item> items, int index, int categoryIndex) {
         this.items = items;
         this.index = index;
         this.categoryIndex = categoryIndex;
@@ -94,14 +105,13 @@ public class ArticleController extends SceneHandler implements Initializable {
         String vidURL = urlAddress.replaceFirst("d1.", "v.");
         vidURL = vidURL.replaceFirst("video/video", "video");
 
-        if (vidURL.contains("/vne/master.m3u8")){
+        if (vidURL.contains("/vne/master.m3u8")) {
             String temp1 = vidURL.substring(0, vidURL.indexOf("/mp4") + 4);
             String temp2 = vidURL.substring(vidURL.indexOf("/mp4/") + 5);
             temp2 = temp2.substring(temp2.indexOf("/"));
             temp2 = temp2.replace("/vne/master.m3u8", ".mp4");
             vidURL = temp1 + temp2;
-        }
-        else if (vidURL.contains("index-v1-a1.m3u8")){
+        } else if (vidURL.contains("index-v1-a1.m3u8")) {
             vidURL = vidURL.replace("/index-v1-a1.m3u8", ".mp4");
         }
 
@@ -125,7 +135,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         if (index == 0) previousButton.setDisable(true);
     }
 
-    public void readArticle(){
+    public void readArticle() {
         System.gc();
         Platform.runLater(() -> {
             // Clear previous article and read new article
@@ -139,7 +149,7 @@ public class ArticleController extends SceneHandler implements Initializable {
             else {
                 // Call read article function depends on which source
                 try {
-                    switch (item.getSource()){
+                    switch (item.getSource()) {
                         case VE -> readArticleVE(item.getLink());
                         case TT -> readArticleTT(item.getLink());
                         case TN -> readArticleTN(item.getLink());
@@ -149,8 +159,7 @@ public class ArticleController extends SceneHandler implements Initializable {
 
                     ObservableList<Node> nodes = FXCollections.observableArrayList(content.getChildren());
                     storage.getArticles().put(item.getLink(), nodes);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     System.out.println(e.getMessage());
 
                     if (e instanceof IOException)
@@ -172,14 +181,12 @@ public class ArticleController extends SceneHandler implements Initializable {
         try {
             if (storage.getImage().containsKey(item.getImgSrc())) {
                 thumbnail.setImage(storage.getImage().get(item.getImgSrc()));
-            }
-            else {
+            } else {
                 Image background = new Image(item.getImgSrc(), thumbnail.getFitWidth(), thumbnail.getFitHeight(), false, true, true);
                 thumbnail.setImage(background);
                 storage.getImage().put(item.getImgSrc(), background);
             }
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             thumbnail.setImage(null);
         }
     }
@@ -201,8 +208,8 @@ public class ArticleController extends SceneHandler implements Initializable {
             // Add video label
             try {
                 content.getChildren().add(createVideoLabel(videoVE(videoURL), ""));
+            } catch (IllegalArgumentException e) {
             }
-            catch (IllegalArgumentException e) {}
 
             // Create description, video, and author label and add after video
             Label description = createDescription(doc.select("div.lead_detail").text());
@@ -255,7 +262,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         addTT(article, content);
 
         // Adding author label
-        if (body.select("div.author").size() > 0){
+        if (body.select("div.author").size() > 0) {
             Label author = createDescription(body.select("div.author").text());
             author.setAlignment(Pos.TOP_RIGHT);
             content.getChildren().add(author);
@@ -272,7 +279,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         Document doc = response.parse();
 
         // Video article
-        if (urlAddress.contains("https://thanhnien.vn/video")){
+        if (urlAddress.contains("https://thanhnien.vn/video")) {
             // Extract main article, description and author
             Elements article = doc.select("div[id=abody]");
             Label label = createDescription(doc.select("div.sapo").text()); // Create description label
@@ -286,23 +293,22 @@ public class ArticleController extends SceneHandler implements Initializable {
                 videoSrc = extract(videoSrc, "src=\"", "\"");
                 Label videoLabel = createVideoLabel(videoSrc, ""); // Create video
                 content.getChildren().add(videoLabel); // Add all created components to article view
-            }
-            catch (Exception e) {} // Catch exception mostly due to video being a live stream
+            } catch (Exception e) {
+            } // Catch exception mostly due to video being a live stream
 
             // Loop through main article and add content, finally add author
             checkDivTN(article.first(), content);
             content.getChildren().add(author);
         }
         // Normal article
-        else{
+        else {
             Elements body = doc.select("div[class~=.*content]");
             Elements article = doc.select("div[id=abody]");
 
             // Create Description label
             if (body.select("div.sapo").size() > 0) {
                 content.getChildren().add(createDescription(body.select("div.sapo").text()));
-            }
-            else {
+            } else {
                 content.getChildren().add(createDescription(doc.select("div.summary").text()));
             }
 
@@ -313,7 +319,8 @@ public class ArticleController extends SceneHandler implements Initializable {
                 content.getChildren().add(tnImage);
             }
             // If no thumbnail image
-            catch (IllegalArgumentException e) {}
+            catch (IllegalArgumentException e) {
+            }
 
             // Loop through elements in main article
             checkDivTN(article.first(), content);
@@ -334,7 +341,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         Document doc = response.parse();
 
         // Video article
-        if (urlAddress.contains("https://zingnews.vn/video")){
+        if (urlAddress.contains("https://zingnews.vn/video")) {
             // Extract video URL and information
             Elements body = doc.select("div[id=video-featured]");
             Elements videos = body.select("video");
@@ -347,16 +354,16 @@ public class ArticleController extends SceneHandler implements Initializable {
                 Label author = createDescription(articles.select("span.video-author").text());
                 author.setAlignment(Pos.TOP_RIGHT);
                 content.getChildren().addAll(videoLabel, label, author);
+            } catch (Exception e) {
             }
-            catch (Exception e) {}
         }
         // Normal article
-        else{
+        else {
             // Extract article components
             Elements article = doc.select("div.the-article-body > *");
 
             // Creating and adding description label
-            Label description =createDescription(doc.select("p.the-article-summary").text());
+            Label description = createDescription(doc.select("p.the-article-summary").text());
             content.getChildren().add(description);
 
             // Loop through article elements
@@ -400,8 +407,8 @@ public class ArticleController extends SceneHandler implements Initializable {
                 Image thumb = new Image(body.select("div.box-detail-thumb img").attr("src"), true);
                 Label thumbnail = createImageLabel(thumb, body.select("div.box-detail-thumb span").text());
                 content.getChildren().add(thumbnail);
+            } catch (IllegalArgumentException ex) {
             }
-            catch (IllegalArgumentException ex) {}
 
             // Create and add Description label
             Label description = createDescription(body.select("div.box-des-detail p").text());
@@ -503,8 +510,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                 }
 
                 content.getChildren().add(pane); // Add wrapnote into content
-            }
-            else if (e.is("div")) {
+            } else if (e.is("div")) {
                 checkDivVE(e, content); // Check inside div element if element is <div>
             }
         }
@@ -513,7 +519,7 @@ public class ArticleController extends SceneHandler implements Initializable {
     // Utilities function to read Thanh Nien article
     private void checkDivTN(Element div, FlowPane content) {
         // If element has 0 children and is not an ad div
-        if (div.select("> *").size() == 0 && !div.className().contains("ads") && div.hasText()){
+        if (div.select("> *").size() == 0 && !div.className().contains("ads") && div.hasText()) {
             content.getChildren().add(createLabel(div.text()));
             return;
         }
@@ -544,8 +550,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                     if (i.select("img").size() > 0) {
                         Image image = new Image(i.select("img").attr("data-src"), true);
                         content.getChildren().add(createImageLabel(image, i.select("figcaption").text()));
-                    }
-                    else if (i.hasText()) {
+                    } else if (i.hasText()) {
                         content.getChildren().add(createLabel(i.text()));
                     }
                 }
@@ -567,8 +572,9 @@ public class ArticleController extends SceneHandler implements Initializable {
                     content.getChildren().add(createLabel(div.text()));
                     if (i.nextElementSiblings().select("table,figure").size() == 0) break;
                 }
+            } catch (IllegalArgumentException ex) {
+                continue;
             }
-            catch (IllegalArgumentException ex) { continue; }
         }
     }
 
@@ -591,8 +597,8 @@ public class ArticleController extends SceneHandler implements Initializable {
                         String imageSrc = e.select("img").attr("src");
                         try {
                             imageSrc = imageSrc.replace("thumb_w/586/", "");
+                        } catch (StringIndexOutOfBoundsException exception) {
                         }
-                        catch (StringIndexOutOfBoundsException exception) {}
 
                         Image image = new Image(imageSrc, true);
                         content.getChildren().add(createImageLabel(image, e.select("p").text()));
@@ -623,8 +629,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                         content.getChildren().add(pane);
                     }
                 }
-            }
-            catch (IllegalArgumentException ex) {
+            } catch (IllegalArgumentException ex) {
             }
         }
     }
@@ -638,7 +643,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                     content.getChildren().add(createLabel(e.text()));
                 }
                 // Create and add wrapnote if element is wrapnote
-                else if (e.is("div") && e.attr("class").equals("notebox ncenter")){
+                else if (e.is("div") && e.attr("class").equals("notebox ncenter")) {
                     FlowPane pane = createWrapNote();
                     addZing(e.select("> *"), pane);
                     content.getChildren().add(pane);
@@ -674,7 +679,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                     content.getChildren().add(createImageLabel(image, " "));
                 }
                 // Create and add group of text
-                else if (e.is("ul")  || e.is("div")) {
+                else if (e.is("ul") || e.is("div")) {
                     addZing(e.select("> *"), content);
                 }
                 // Create and add label into group of text above
@@ -688,8 +693,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                     addZing(e.select("> *"), pane);
                     content.getChildren().add(pane);
                 }
-            }
-            catch (IllegalArgumentException ex) {
+            } catch (IllegalArgumentException ex) {
             }
         }
     }
@@ -702,8 +706,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                 if (e.is("p")) {
                     if (e.select("video").size() == 0) {
                         content.getChildren().add(createLabel(e.text()));
-                    }
-                    else {
+                    } else {
                         content.getChildren().add(createVideoLabel(e.select("source").attr("src"), ""));
                     }
                 }
@@ -724,8 +727,7 @@ public class ArticleController extends SceneHandler implements Initializable {
                     addND(e.select("> *"), pane);
                     content.getChildren().add(pane);
                 }
-            }
-            catch (IllegalArgumentException ex) {
+            } catch (IllegalArgumentException ex) {
             }
         }
     }
@@ -750,17 +752,16 @@ public class ArticleController extends SceneHandler implements Initializable {
             else if (e.is("blockquote")) {
                 FlowPane pane = createWrapNote();
 
-                if (!e.select("> *").first().is("footer")){
+                if (!e.select("> *").first().is("footer")) {
                     addSpecialND(e.select("> *"), pane, urlAddress);
                     pane.getChildren().add(createLabel(e.select("footer").text()));
-                }
-                else {
+                } else {
                     pane.getChildren().add(createLabel(e.text()));
                 }
                 content.getChildren().add(pane);
             }
             // Create and add image if element is image
-            else if ((e.is("figure") && e.select("img").size() > 0) || e.is("picture")){
+            else if ((e.is("figure") && e.select("img").size() > 0) || e.is("picture")) {
                 try {
                     String imgSrc = e.select("img").attr("data-src");
                     imgSrc = imgSrc.replace("./", "");
@@ -772,15 +773,15 @@ public class ArticleController extends SceneHandler implements Initializable {
 
                     if (imgSrc.endsWith("g") || imgSrc.endsWith(".gif"))
                         content.getChildren().add(createImageLabel(image, caption));
+                } catch (StringIndexOutOfBoundsException | IllegalArgumentException exception) {
                 }
-                catch (StringIndexOutOfBoundsException | IllegalArgumentException exception) {}
             }
             // Create and add label if element is text
             else if (e.is("span") && e.hasText()) {
                 content.getChildren().add(createLabel(e.text()));
             }
             // Create and add label if element is text
-            else if (e.is("div") && e.attr("class").contains("Caption") && e.select("p").size() > 0){
+            else if (e.is("div") && e.attr("class").contains("Caption") && e.select("p").size() > 0) {
                 Label caption = createLabel(e.selectFirst("p").text());
                 caption.setAlignment(Pos.CENTER);
                 content.getChildren().add(caption);
@@ -794,7 +795,7 @@ public class ArticleController extends SceneHandler implements Initializable {
 
     // Create UI components to add to article view
     // Default article Label design
-    protected Label createLabel(String text){
+    protected Label createLabel(String text) {
         Label label = new Label(text);
 
         label.setFont(Font.font("Roboto", WORDSIZE));
@@ -816,7 +817,7 @@ public class ArticleController extends SceneHandler implements Initializable {
     }
 
     // Description label design
-    protected Label createDescription(String text){
+    protected Label createDescription(String text) {
         Label description = createLabel(text);
         description.setFont(Font.font("Corbel", FontWeight.BOLD, WORDSIZE + 4));
 
@@ -840,8 +841,7 @@ public class ArticleController extends SceneHandler implements Initializable {
         label.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             if (imageView.getFitWidth() == 600) {
                 imageView.setFitWidth(Math.min(image.getWidth(), MAX_WIDTH));
-            }
-            else {
+            } else {
                 imageView.setFitWidth(600);
             }
         });
@@ -851,7 +851,7 @@ public class ArticleController extends SceneHandler implements Initializable {
     }
 
     // Video label with caption
-    protected Label createVideoLabel(String videoSrc, String caption){
+    protected Label createVideoLabel(String videoSrc, String caption) {
         // Create media player
         Media media = new Media(videoSrc);
         MediaPlayer mediaPlayer = new MediaPlayer(media);
@@ -939,7 +939,7 @@ public class ArticleController extends SceneHandler implements Initializable {
     }
 
     // Function to navigate next and previous articles
-    public void nextArticle(){
+    public void nextArticle() {
         if (index == items.size() - 1) return; // If last item of the list reached, return
 
         // If not last item, increase current item index and load that article
@@ -953,7 +953,7 @@ public class ArticleController extends SceneHandler implements Initializable {
             nextButton.setDisable(true);
     }
 
-    public void previousArticle(){
+    public void previousArticle() {
         if (index == 0) return; // If first item of the list reached, return
 
         // If not first item, decrease current item index and load that article
@@ -967,7 +967,8 @@ public class ArticleController extends SceneHandler implements Initializable {
             previousButton.setDisable(true);
     }
 
-    @FXML private void menuHome(){
+    @FXML
+    private void menuHome() {
         content.getChildren().clear();
         menuHome(categoryIndex, false);
     }

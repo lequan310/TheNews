@@ -19,7 +19,7 @@ import java.time.format.DateTimeFormatter;
 
 public class Item implements Comparable<Item> {
     // News Source (VNExpress, TuoiTre, ThanhNien, ZingNews, NhanDan)
-    public enum Source { VE, TT, TN, ZING, ND }
+    public enum Source {VE, TT, TN, ZING, ND}
 
     // Item title, source link, published date, duration since posted, thumbnail link, source
     private final String title;
@@ -38,14 +38,17 @@ public class Item implements Comparable<Item> {
         this.imgSrc = imgSrc;
         this.source = source;
     }
+
     // Obtaining Title
     public String getTitle() {
         return title;
     }
+
     // Obtaining link
     public String getLink() {
         return link;
     }
+
     // Obtaining published date
     public String getPubDate() {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm a");
@@ -63,20 +66,20 @@ public class Item implements Comparable<Item> {
     }
 
     // String functions
-    public String durationToString(){
+    public String durationToString() {
         String day = "", hour = "", min = "", sec = "";
         Duration current = Duration.between(pubDate, LocalDateTime.now());
 
-        if (current.toDaysPart() != 0){
+        if (current.toDaysPart() != 0) {
             day += current.toDaysPart() + " days ";
         }
-        if (current.toHoursPart() != 0){
+        if (current.toHoursPart() != 0) {
             hour += current.toHoursPart() + " hours ";
         }
-        if (current.toMinutesPart() != 0){
+        if (current.toMinutesPart() != 0) {
             min += current.toMinutesPart() + " minutes ";
         }
-        if (current.toSecondsPart() != 0){
+        if (current.toSecondsPart() != 0) {
             sec += current.toSecondsPart() + " seconds ";
         }
 
@@ -84,7 +87,7 @@ public class Item implements Comparable<Item> {
     }
 
     // Turns output to string
-    public String toString(){
+    public String toString() {
         String res = "";
         res += title + "\t" + link + "\t" + durationToString() + "\t" + imgSrc;
         return res;

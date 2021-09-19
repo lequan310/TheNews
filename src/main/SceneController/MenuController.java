@@ -30,77 +30,139 @@ import javafx.scene.layout.*;
 import main.Model.Item;
 import main.Model.NewsController;
 import main.Storage.Storage;
+
 import java.net.URL;
 import java.util.*;
 
 public class MenuController extends SceneHandler implements Initializable {
     // UI components in Main Menu scene
-    @FXML private Label categoryLabel;
-    @FXML private Label header;
-    @FXML private Label header1;
-    @FXML private Label header2;
-    @FXML private Label header3;
-    @FXML private Label header4;
-    @FXML private Label header5;
-    @FXML private Label header6;
-    @FXML private Label header7;
-    @FXML private Label header8;
-    @FXML private Label header9;
+    @FXML
+    private Label categoryLabel;
+    @FXML
+    private Label header;
+    @FXML
+    private Label header1;
+    @FXML
+    private Label header2;
+    @FXML
+    private Label header3;
+    @FXML
+    private Label header4;
+    @FXML
+    private Label header5;
+    @FXML
+    private Label header6;
+    @FXML
+    private Label header7;
+    @FXML
+    private Label header8;
+    @FXML
+    private Label header9;
 
-    @FXML private Label time;
-    @FXML private Label time1;
-    @FXML private Label time2;
-    @FXML private Label time3;
-    @FXML private Label time4;
-    @FXML private Label time5;
-    @FXML private Label time6;
-    @FXML private Label time7;
-    @FXML private Label time8;
-    @FXML private Label time9;
+    @FXML
+    private Label time;
+    @FXML
+    private Label time1;
+    @FXML
+    private Label time2;
+    @FXML
+    private Label time3;
+    @FXML
+    private Label time4;
+    @FXML
+    private Label time5;
+    @FXML
+    private Label time6;
+    @FXML
+    private Label time7;
+    @FXML
+    private Label time8;
+    @FXML
+    private Label time9;
 
-    @FXML private ImageView image;
-    @FXML private ImageView image1;
-    @FXML private ImageView image2;
-    @FXML private ImageView image3;
-    @FXML private ImageView image4;
-    @FXML private ImageView image5;
-    @FXML private ImageView image6;
-    @FXML private ImageView image7;
-    @FXML private ImageView image8;
-    @FXML private ImageView image9;
+    @FXML
+    private ImageView image;
+    @FXML
+    private ImageView image1;
+    @FXML
+    private ImageView image2;
+    @FXML
+    private ImageView image3;
+    @FXML
+    private ImageView image4;
+    @FXML
+    private ImageView image5;
+    @FXML
+    private ImageView image6;
+    @FXML
+    private ImageView image7;
+    @FXML
+    private ImageView image8;
+    @FXML
+    private ImageView image9;
 
-    @FXML private ImageView icon;
-    @FXML private ImageView icon1;
-    @FXML private ImageView icon2;
-    @FXML private ImageView icon3;
-    @FXML private ImageView icon4;
-    @FXML private ImageView icon5;
-    @FXML private ImageView icon6;
-    @FXML private ImageView icon7;
-    @FXML private ImageView icon8;
-    @FXML private ImageView icon9;
+    @FXML
+    private ImageView icon;
+    @FXML
+    private ImageView icon1;
+    @FXML
+    private ImageView icon2;
+    @FXML
+    private ImageView icon3;
+    @FXML
+    private ImageView icon4;
+    @FXML
+    private ImageView icon5;
+    @FXML
+    private ImageView icon6;
+    @FXML
+    private ImageView icon7;
+    @FXML
+    private ImageView icon8;
+    @FXML
+    private ImageView icon9;
 
-    @FXML private Button button;
-    @FXML private Button button1;
-    @FXML private Button button2;
-    @FXML private Button button3;
-    @FXML private Button button4;
-    @FXML private Button button5;
-    @FXML private Button button6;
-    @FXML private Button button7;
-    @FXML private Button button8;
-    @FXML private Button button9;
-    @FXML private Button categoryButton;
+    @FXML
+    private Button button;
+    @FXML
+    private Button button1;
+    @FXML
+    private Button button2;
+    @FXML
+    private Button button3;
+    @FXML
+    private Button button4;
+    @FXML
+    private Button button5;
+    @FXML
+    private Button button6;
+    @FXML
+    private Button button7;
+    @FXML
+    private Button button8;
+    @FXML
+    private Button button9;
+    @FXML
+    private Button categoryButton;
 
-    @FXML private Button page1;
-    @FXML private Button page2;
-    @FXML private Button page3;
-    @FXML private Button page4;
-    @FXML private Button page5;
-    @FXML private AnchorPane anchorPane;
-    @FXML private ScrollPane scrollPane;
-    @FXML private FlowPane content;
-    @FXML private ProgressBar pb;
+    @FXML
+    private Button page1;
+    @FXML
+    private Button page2;
+    @FXML
+    private Button page3;
+    @FXML
+    private Button page4;
+    @FXML
+    private Button page5;
+    @FXML
+    private AnchorPane anchorPane;
+    @FXML
+    private ScrollPane scrollPane;
+    @FXML
+    private FlowPane content;
+    @FXML
+    private ProgressBar pb;
 
     //Initialize Array List for component
     private final ArrayList<ImageView> images = new ArrayList<>();
@@ -180,15 +242,12 @@ public class MenuController extends SceneHandler implements Initializable {
                     }
                 };
                 service.start();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throwAlert(e.getClass().getCanonicalName(), e.getMessage(), e.toString());
-            }
-            finally {
+            } finally {
                 System.gc();
             }
-        }
-        else {
+        } else {
             items = storage.getItems();
             Platform.runLater(() -> {
                 changePage(0);
@@ -283,8 +342,7 @@ public class MenuController extends SceneHandler implements Initializable {
 
                             if (storage.getImage().containsKey(currentImgSrc)) {
                                 images.get(currentButton).setImage(storage.getImage().get(currentImgSrc));
-                            }
-                            else {
+                            } else {
                                 Image background = new Image(currentImgSrc, image.getFitWidth(), image.getFitHeight(), true, true, true);
                                 images.get(currentButton).setImage(background);
                                 storage.getImage().put(currentImgSrc, background);
@@ -304,8 +362,7 @@ public class MenuController extends SceneHandler implements Initializable {
                     }
                 });
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throwAlert(e.getClass().getCanonicalName(), e.getMessage(), e.toString());
         }
     }
@@ -316,7 +373,8 @@ public class MenuController extends SceneHandler implements Initializable {
     }
 
     // Function to switch to category scene
-    @FXML private void menuCategories() {
+    @FXML
+    private void menuCategories() {
         menuCategories(categoryIndex);
     }
 }
