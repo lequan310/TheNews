@@ -239,6 +239,12 @@ public class MenuController extends SceneHandler implements Initializable {
 
     public void changePage(int page) {
         try {
+            // Release memory
+            if (storage.getImage().size() >= 150) {
+                storage.getImage().clear();
+                System.gc();
+            }
+
             // Change page if selected page is not the current active page
             final int ITEMCOUNT = 10;
 
